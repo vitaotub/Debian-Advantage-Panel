@@ -1,0 +1,89 @@
+{
+    "_meta": {
+        "lang": "es",
+        "nome": "Español"
+    },
+
+    "comum": {
+        "atualizacao_disponivel_titulo": "¡Nueva versión disponible! Haz clic para actualizar.",
+        "voltar_inicio": "← Volver al inicio",
+        "btn_instalar": "Instalar",
+        "btn_desinstalar": "↩️ Desinstalar",
+        "btn_remover": "↩️ Eliminar",
+        "btn_concluido": "✅ Completado",
+        "btn_abrir": "🚀 Abrir",
+        "desinstalar_app": "Eliminar {nome}",
+        "desinstalar_app_generico": "🗑️ Eliminar aplicación",
+        "btn_desfazer_tudo": "🗑️ Eliminar completamente {nome}",
+        "desfazer_tudo_confirm1": "⚠️ ¿Eliminar completamente {nome}?\n\nEste botón elimina TODO lo que DAP instaló:\n• Paquetes del sistema\n• Archivos de configuración creados\n• Grupos de usuario y servicios\n\nAcción irreversible.",
+        "desfazer_tudo_confirm2": "🔄 ¡Última confirmación!\n\nTodos los rastros de {nome} serán eliminados.\n\n¿Estás absolutamente seguro?",
+        "confirmar_desinstalar": "¿Desinstalar {nome}?",
+        "desinstalar_flatpak": "Desinstalar {nome}",
+        "erro_conexao": "❌ Error de conexión: {msg}",
+        "erro_http": "❌ Error HTTP: {status}",
+        "log_execucao": "📋 Registro de ejecución",
+        "log_sessao": "📋 Registro de la Sesión",
+        "sessao_label": "Sesión {n}",
+        "sessao_posicao": "{atual} de {total}",
+        "sessao_info_nav": "<strong>{n}/{total}</strong> - {nome}",
+        "loading_sessao": "Cargando {nome}...",
+        "spinner_carregando_sessao": "Cargando sesión...",
+        "erro_script_js": "❌ Error: ¡script.js no se cargó!",
+        "erro_script_js_msg": "Recarga la página o verifica si el archivo existe.",
+        "erro_carregar_sessao": "❌ Error al cargar la sesión",
+        "btn_tentar_novamente": "🔄 Intentar de nuevo",
+        "btn_anterior": "◀ Anterior",
+        "btn_proximo": "Siguiente ▶",
+        "autenticacao_cancelada": "❌ Autenticación cancelada por el usuario.",
+        "ja_executado": "Este comando ya ha sido ejecutado anteriormente.",
+        "nao_instalado": "{nome} no está instalado.",
+        "status_iniciando": "⏳ Iniciando...",
+        "status_executando": "⏳ Ejecutando...",
+        "status_concluido": "✅ ¡Completado!",
+        "status_falha": "❌ Fallo en la ejecución",
+        "erro_timeout_desinstalar": "❌ Se agotó el tiempo esperando la desinstalación.",
+        "erro_falha_desinstalar": "❌ Error al desinstalar {nome}.",
+        "erro_desinstalar": "❌ Error al desinstalar: {msg}",
+        "sucesso_desinstalar": "✅ ¡{nome} desinstalado con éxito!",
+        "tema_para_claro": "Cambiar a tema claro",
+        "tema_para_escuro": "Cambiar a tema oscuro",
+        "notif_tarefa_concluida_titulo": "DAP — Tarea completada",
+        "notif_tarefa_concluida_corpo": "La tarea ha finalizado. Consulta el registro para más detalles.",
+        "status_pacote": "Paquete {atual} de {total}",
+        "badge_atualizar": "Actualizar",
+        "badge_atualizando": "🔄 Actualizando DAP... Sigue el progreso en Acerca de DAP.",
+        "badge_ja_atualizando": "⏳ Actualización ya en curso...",
+        "navegacao_bloqueada": "Espera a que terminen los comandos de esta sesión antes de cambiar de sesión."
+    },
+
+    "index": {
+        "badge_versao": "🚀 v<span class=\"dap-version\">{versao}</span>",
+        "subtitulo": "Panel de automatización para configurar, optimizar y personalizar tu Debian Linux de forma rápida y segura.",
+        "btn_github": "🐙 GitHub",
+        "btn_criador": "👤 Creado por: <strong>VitãoTub</strong>",
+        "card_guiado_titulo": "Iniciar Configuración de Debian",
+        "card_guiado_desc_1": "Al hacer clic en <strong>Iniciar</strong>, accedes a sesiones que optimizan, configuran y hacen tu instalación de Debian más práctica para el día a día.",
+        "card_guiado_desc_2": "DAP es intuitivo y explica cada paso con claridad — pero, por decisión de diseño, <strong>no hace copia de seguridad de tus archivos</strong>. Aunque cada comando es probado, pueden ocurrir imprevistos. Por eso: lee los consejos con atención antes de aplicar cualquier cambio y, siempre que sea posible, <strong>haz una copia de seguridad antes de continuar</strong>.",
+        "card_guiado_botao": "🚀 Iniciar",
+        "footer_creditos": "Debian Advantage Panel — Hecho con ❤️ por <a href=\"https://www.vitaotub.com\">VitãoTub</a>",
+        "footer_link_github": "GitHub",
+        "footer_link_doc": "Documentación",
+        "footer_link_bug": "Reportar error",
+        "footer_legal": "Debian es una marca registrada de Software in the Public Interest, Inc. Este proyecto no está afiliado a SPI.",
+        "seletor_idioma_label": "🌐 Idioma:"
+    },
+
+    "guiado": {
+        "titulo": "Configuración de Debian",
+        "badge_modo": "🧭 Paso a Paso"
+    },
+
+    "sessoes": {},
+
+    "seletor": {
+        "label": "🌐 Idioma:",
+        "pt": "Português",
+        "en": "English",
+        "es": "Español"
+    }
+}

@@ -1,1 +1,89 @@
-aaa
+{
+    "_meta": {
+        "lang": "en",
+        "nome": "English"
+    },
+
+    "comum": {
+        "atualizacao_disponivel_titulo": "New version available! Click to update.",
+        "voltar_inicio": "← Back to start",
+        "btn_instalar": "Install",
+        "btn_desinstalar": "↩️ Uninstall",
+        "btn_remover": "↩️ Remove",
+        "btn_concluido": "✅ Done",
+        "btn_abrir": "🚀 Open",
+        "desinstalar_app": "Remove {nome}",
+        "desinstalar_app_generico": "🗑️ Remove application",
+        "btn_desfazer_tudo": "🗑️ Completely remove {nome}",
+        "desfazer_tudo_confirm1": "⚠️ Completely remove {nome}?\n\nThis button removes EVERYTHING that DAP installed:\n• System packages\n• Configuration files created\n• User groups and services\n\nIrreversible action.",
+        "desfazer_tudo_confirm2": "🔄 Final confirmation!\n\nAll traces of {nome} will be removed.\n\nAre you absolutely sure?",
+        "confirmar_desinstalar": "Uninstall {nome}?",
+        "desinstalar_flatpak": "Uninstall {nome}",
+        "erro_conexao": "❌ Connection error: {msg}",
+        "erro_http": "❌ HTTP error: {status}",
+        "log_execucao": "📋 Execution log",
+        "log_sessao": "📋 Session log",
+        "sessao_label": "Session {n}",
+        "sessao_posicao": "{atual} of {total}",
+        "sessao_info_nav": "<strong>{n}/{total}</strong> - {nome}",
+        "loading_sessao": "Loading {nome}...",
+        "spinner_carregando_sessao": "Loading session...",
+        "erro_script_js": "❌ Error: script.js was not loaded!",
+        "erro_script_js_msg": "Reload the page or check if the file exists.",
+        "erro_carregar_sessao": "❌ Error loading session",
+        "btn_tentar_novamente": "🔄 Try again",
+        "btn_anterior": "◀ Previous",
+        "btn_proximo": "Next ▶",
+        "autenticacao_cancelada": "❌ Authentication cancelled by user.",
+        "ja_executado": "This command has already been executed.",
+        "nao_instalado": "{nome} is not installed.",
+        "status_iniciando": "⏳ Starting...",
+        "status_executando": "⏳ Running...",
+        "status_concluido": "✅ Done!",
+        "status_falha": "❌ Execution failed",
+        "erro_timeout_desinstalar": "❌ Timeout waiting for uninstall.",
+        "erro_falha_desinstalar": "❌ Failed to uninstall {nome}.",
+        "erro_desinstalar": "❌ Error uninstalling: {msg}",
+        "sucesso_desinstalar": "✅ {nome} uninstalled successfully!",
+        "tema_para_claro": "Switch to light theme",
+        "tema_para_escuro": "Switch to dark theme",
+        "notif_tarefa_concluida_titulo": "DAP — Task completed",
+        "notif_tarefa_concluida_corpo": "The task has finished. Check the log for details.",
+        "status_pacote": "Package {atual} of {total}",
+        "badge_atualizar": "Update",
+        "badge_atualizando": "🔄 Updating DAP... Follow progress in About DAP.",
+        "badge_ja_atualizando": "⏳ Update already in progress...",
+        "navegacao_bloqueada": "Wait for this session's commands to finish before switching sessions."
+    },
+
+    "index": {
+        "badge_versao": "🚀 v<span class=\"dap-version\">{versao}</span>",
+        "subtitulo": "Automation panel to configure, optimize and customize your Debian Linux quickly and safely.",
+        "btn_github": "🐙 GitHub",
+        "btn_criador": "👤 Created by: <strong>VitãoTub</strong>",
+        "card_guiado_titulo": "Start Debian Setup",
+        "card_guiado_desc_1": "By clicking <strong>Start</strong>, you get access to sessions that optimize, configure and make your Debian installation more practical for everyday use.",
+        "card_guiado_desc_2": "DAP is intuitive and explains every step clearly — but, by design, it <strong>does not back up your files</strong>. Although every command is tested, things can go wrong. So: read the tips carefully before applying any changes and, whenever possible, <strong>back up before moving forward</strong>.",
+        "card_guiado_botao": "🚀 Start",
+        "footer_creditos": "Debian Advantage Panel — Made with ❤️ by <a href=\"https://www.vitaotub.com\">VitãoTub</a>",
+        "footer_link_github": "GitHub",
+        "footer_link_doc": "Documentation",
+        "footer_link_bug": "Report Bug",
+        "footer_legal": "Debian is a registered trademark of Software in the Public Interest, Inc. This project is not affiliated with SPI.",
+        "seletor_idioma_label": "🌐 Language:"
+    },
+
+    "guiado": {
+        "titulo": "Debian Setup",
+        "badge_modo": "🧭 Step by Step"
+    },
+
+    "sessoes": {},
+
+    "seletor": {
+        "label": "🌐 Language:",
+        "pt": "Português",
+        "en": "English",
+        "es": "Español"
+    }
+}
