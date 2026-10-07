@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DAP - Configuração</title>
+<script>
+(function() {
+    try {
+        var t = localStorage.getItem('dap_tema') || 'claro';
+        document.documentElement.setAttribute('data-tema', t === 'escuro' ? 'escuro' : 'claro');
+    } catch (e) {
+        document.documentElement.setAttribute('data-tema', 'claro');
+    }
+})();
+</script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container modo-guiado">
+
+<!-- ===== HEADER ===== -->
+<div class="header-guide">
+    <div class="titulo">
+        <img src="icone_app.png" alt="DAP" style="width: 40px; height: 40px; border-radius: 50%; object-fit: contain; flex-shrink: 0;" onerror="this.style.display='none'">
+        <h1 data-i18n="guiado.titulo">Configuração do Debian</h1>
+        <span class="badge-modo" data-i18n="guiado.badge_modo">🧭 Passo a Passo</span>
+        <span class="progresso-global" id="progresso-global" title="—">0/0</span>
+        <span style="color: var(--text-muted); font-size: 0.8rem; white-space: nowrap;">v<span class="dap-version"></span></span>
+    </div>
+    <div class="header-direita">
+        <div class="header-controles">
+            <div class="i18n-seletor-container" id="i18n-seletor"></div>
+            <div class="tema-toggle-container"></div>
+            <a href="index.html"
+               class="btn-voltar-inicio"
+               data-i18n-title="comum.voltar_inicio"
+               data-i18n-aria-label="comum.voltar_inicio"
+               aria-label="← Voltar ao início"
+               title="← Voltar ao início">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    <polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- ===== MENU DE SESSÕES FIXO ===== -->
+<!--
+    Substitui as bolinhas coloridas (.sessao-indicador).
+    Criado dinamicamente via JS (criarMenuSessoes).
+    Permanece visível durante a rolagem (position: sticky).
+-->
+<div class="session-menu-wrapper" id="session-menu-wrapper" style="display: none;">
+    <div class="session-menu" id="session-menu" role="tablist" aria-label="Sessões"></div>
+</div>
+
+<!-- ===== BARRA DE POSIÇÃO ===== -->
+<div class="progress-guide">
+    <div class="barra">
+        <div class="fill" id="progress-guia-fill"></div>
+    </div>
+    <div class="info">
+        <span class="sessao-atual" id="progress-guia-text">0 de 0</span>
+    </div>
+</div>
+
+<!-- ===== CONTAINER DAS SESSÕES ===== -->
+<div id="sessao-container">
+    <div class="loading-sessao">
+        <div class="spinner"></div>
+        <p id="loading-inicial-texto">Carregando sessão...</p>
+    </div>
+</div>
+
+<!-- ===== NAVEGAÇÃO ===== -->
+<div class="nav-guide" id="nav-guide">
+    <div class="info">
+        <span id="info-sessao"><strong>0/0</strong> - Carregando...</span>
+    </div>
+    <div class="botoes">
+        <button class="btn-voltar" id="btn-anterior" onclick="sessaoAnterior()" data-i18n="comum.btn_anterior">◀ Anterior</button>
+        <button class="btn-proximo" id="btn-proximo" onclick="proximaSessao()" data-i18n="comum.btn_proximo">Próximo ▶</button>
+    </div>
+</div>
+
+</div>
+
+<script src="i18n.js"></script>
+<script src="script.js"></script>
+<script>
+// ============================================================
+// CONFIGURAÇÃO DO DEBIAN - CARREGAMENTO DINÂMICO DE SESSÕES
+// ============================================================
+
+var sessaoAtual = 0;
+var sessoesCarregadas = {};
+
+// Token de geração: cada chamada a carregarSessao() incrementa
+// este contador. Se outra chamada começar antes desta terminar,
+// a mais antiga percebe que foi cancelada e não escreve no DOM.
+// Sem isso, o carregamento da sessão 0 (disparado no boot) e o
+// de outra sessão (via ?session=X) podiam competir e deixar a
+// tela em branco.
+var _geracaoCarregamento = 0;
+
+// ------------------------------------------------------------
+// ÍCONES das sessões (emoji usado no menu fixo).
+// A ORDEM DESTE MAPA não importa — a ordem de exibição é
+// definida pela posição em SESSOES_PRINCIPAIS (script.js).
+//
+// IMPORTANTE: mantenha este mapa em sincronia com
+// SESSOES_PRINCIPAIS (script.js). Se você adicionar uma sessão
+// nova no array SESSOES, adicione também uma entrada aqui com o
+// mesmo id. Se você renomear uma sessão, atualize a chave aqui
+// também.
+//
+// Sessões sem entrada aqui NÃO quebram — só aparecem sem ícone
+// no menu (o chip fica com o número e o label, sem emoji).
+//
+// ============================================================
+// FASE 1 — MAPA VAZIO
+// ============================================================
+//
+// Na Fase 1 não há sessões registradas. A Fase 2 vai preencher
+// com os ícones das 8 sessões do escopo:
+//
+//   'sobre-dap': '📖'
+//   'primeiros-passos': '🚀'
+//   'codecs': '🔤'
+//   'hardware': '🖥️'
+//   'aplicativos': '📦'
+//   'casa-escritorio': '🏠'
+//   'gaming': '🎮'
+//   'diagnostico': '📊'
+// ------------------------------------------------------------
+var ICONES_SESSOES = {};
+
+// ------------------------------------------------------------
+// i18n helpers locais (wrappers sobre tOr global)
+// ------------------------------------------------------------
+function _t(chave, fallback) {
+    return (typeof tOr === 'function') ? tOr(chave, fallback) : fallback;
+}
+
+function _tVars(chave, fallback, vars) {
+    return (typeof tOr === 'function') ? tOr(chave, fallback, vars) : fallback;
+}
+
+// ------------------------------------------------------------
+// Carregar uma sessão específica no container
+// ------------------------------------------------------------
+async function carregarSessao(index) {
+    var container = document.getElementById('sessao-container');
+    if (!container) return;
+
+    var minhaGeracao = ++_geracaoCarregamento;
+
+    var nomeSessao = SESSOES_PRINCIPAIS[index];
+
+    // FASE 1: sem sessões registradas. Mostra um placeholder
+    // amigável em vez de tentar carregar um arquivo inexistente.
+    if (!nomeSessao) {
+        container.innerHTML = `
+            <div class="sessao-container" style="text-align:center; padding: 3rem 1rem;">
+                <h3 style="color: var(--accent); margin-bottom: 1rem;">🐧 Debian Advantage Panel</h3>
+                <p style="color: var(--text-muted); line-height: 1.6;">
+                    Fase 1 do desenvolvimento concluída.<br>
+                    As sessões serão adicionadas na próxima fase.
+                </p>
+            </div>
+        `;
+        return;
+    }
+
+    var arquivo = nomeSessao + '.html';
+    var nomeTraduzido = nomeDaSessao(nomeSessao);
+
+    container.innerHTML = `
+        <div class="loading-sessao">
+            <div class="spinner"></div>
+            <p>${_tVars('comum.loading_sessao', 'Carregando ' + nomeTraduzido + '...', { nome: nomeTraduzido })}</p>
+        </div>
+    `;
+
+    await getProgress();
+
+    if (minhaGeracao !== _geracaoCarregamento) return;
+
+    try {
+        var response = await fetch(arquivo);
+        if (!response.ok) {
+            throw new Error('Erro ao carregar ' + arquivo + ': ' + response.status);
+        }
+
+        var html = await response.text();
+
+        if (minhaGeracao !== _geracaoCarregamento) return;
+        var bodyMatch = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+        var conteudo = bodyMatch ? bodyMatch[1] : html;
+        var scriptMatch = conteudo.match(/<script[^>]*>([\s\S]*?)<\/script>/gi);
+        var conteudoSemScripts = conteudo.replace(/<script[^>]*>([\s\S]*?)<\/script>/gi, '');
+
+        container.innerHTML = conteudoSemScripts;
+
+        // FIX #1: capturar textos originais ANTES de rodar os scripts da sessão
+        container.querySelectorAll('.btn-executar').forEach(function(btn) {
+            if (!btn.hasAttribute('data-texto-original')) {
+                btn.setAttribute('data-texto-original', btn.textContent);
+            }
+        });
+
+        if (scriptMatch) {
+            scriptMatch.forEach(function(script) {
+                var scriptContent = script.replace(/<script[^>]*>/, '').replace(/<\/script>/, '');
+                try {
+                    var win = window;
+                    eval.call(win, scriptContent);
+                } catch (e) {
+                    console.error('Erro ao executar script:', e);
+                }
+            });
+        }
+
+        if (typeof restaurarEstadoSessao === 'function') {
+            try {
+                restaurarEstadoSessao();
+            } catch (e) {
+                console.error('Erro ao restaurar estado da sessão ' + nomeSessao + ':', e);
+            }
+        }
+
+        if (typeof inicializarLogsDaSessao === 'function') {
+            try {
+                inicializarLogsDaSessao(container);
+            } catch (e) {
+                console.error('Erro ao inicializar logs da sessão ' + nomeSessao + ':', e);
+            }
+        }
+
+        numerarSessao(nomeSessao, container);
+
+        if (typeof I18N !== 'undefined' && typeof I18N.aplicarTraducoes === 'function') {
+            I18N.aplicarTraducoes(container);
+        }
+
+        sessoesCarregadas[nomeSessao] = true;
+        var event = new CustomEvent('sessao-carregada', { detail: { sessao: nomeSessao } });
+        document.dispatchEvent(event);
+        console.log('✅ Sessão carregada: ' + nomeSessao);
+
+        } catch (e) {
+        if (minhaGeracao !== _geracaoCarregamento) return;
+
+        console.error('Erro ao carregar sessão:', e);
+        var msgErro = _t('comum.erro_carregar_sessao', '❌ Erro ao carregar sessão');
+        var msgTentar = _t('comum.btn_tentar_novamente', '🔄 Tentar novamente');
+        container.innerHTML = `
+            <div class="sessao-container" style="text-align:center; padding: 3rem 1rem; color: #ef4444; border: 1px solid #ef4444; border-radius: 12px;">
+                <h3>${msgErro}</h3>
+                <p style="color: var(--text-muted);">${e.message}</p>
+                <button onclick="carregarSessao(${index})" style="margin-top: 1rem; padding: 0.5rem 1.5rem; background: var(--accent); color: white; border: none; border-radius: 6px; cursor: pointer;">
+                    ${msgTentar}
+                </button>
+            </div>
+        `;
+    }
+}
+
+// ------------------------------------------------------------
+// Decide em qual sessão abrir no boot
+// ------------------------------------------------------------
+//
+// Prioridade:
+//   1. Parâmetro ?session=X na URL (deep-link) — se válido
+//   2. Chave 'dap_sessao_ativa' no localStorage — se válida
+//   3. Sessão 0 (fallback)
+function irParaSessaoInicial() {
+    var total = SESSOES_PRINCIPAIS.length;
+
+    // FASE 1: sem sessões. Mostra o placeholder e retorna.
+    if (total === 0) {
+        carregarSessao(0);
+        return;
+    }
+
+    // 1. Deep-link ?session=X
+    try {
+        var params = new URLSearchParams(window.location.search);
+        var sessaoAlvo = params.get('session');
+        if (sessaoAlvo && SESSOES_PRINCIPAIS.indexOf(sessaoAlvo) !== -1) {
+            var idx = SESSOES_PRINCIPAIS.indexOf(sessaoAlvo);
+            irParaSessao(idx);
+            return;
+        }
+    } catch (e) { /* URLSearchParams indisponível ou URL malformada */ }
+
+    // 2. Sessão ativa salva
+    try {
+        var salvo = parseInt(localStorage.getItem('dap_sessao_ativa'), 10);
+        if (!isNaN(salvo) && salvo >= 0 && salvo < total) {
+            irParaSessao(salvo);
+            return;
+        }
+    } catch (e) { /* localStorage indisponível */ }
+
+    // 3. Fallback: primeira sessão
+    irParaSessao(0);
+}
+
+// ------------------------------------------------------------
+// Navegar para uma sessão (usado pelo menu, botões e deep-link)
+// ------------------------------------------------------------
+function irParaSessao(index) {
+    var total = SESSOES_PRINCIPAIS.length;
+
+    // FASE 1: sem sessões. Chama carregarSessao(0) que mostra o
+    // placeholder, e atualiza a UI para refletir o estado vazio.
+    if (total === 0) {
+        sessaoAtual = 0;
+        carregarSessao(0);
+        var btnAnt = document.getElementById('btn-anterior');
+        var btnProx = document.getElementById('btn-proximo');
+        if (btnAnt) btnAnt.disabled = true;
+        if (btnProx) btnProx.disabled = true;
+        var infoEl = document.getElementById('info-sessao');
+        if (infoEl) infoEl.innerHTML = '<strong>—</strong> - Nenhuma sessão registrada';
+        return;
+    }
+
+    if (index < 0 || index >= total) return;
+
+    sessaoAtual = index;
+
+    try {
+        localStorage.setItem('dap_sessao_ativa', String(index));
+    } catch (e) { /* localStorage indisponível */ }
+
+    carregarSessao(index);
+
+    var btnAnterior = document.getElementById('btn-anterior');
+    var btnProximo = document.getElementById('btn-proximo');
+    var infoSessao = document.getElementById('info-sessao');
+
+    if (btnAnterior) btnAnterior.disabled = (index === 0);
+    if (btnProximo) btnProximo.disabled = (index === total - 1);
+
+    if (infoSessao) {
+        infoSessao.innerHTML = _tVars(
+            'comum.sessao_info_nav',
+            '<strong>' + (index + 1) + '/' + total + '</strong> - ' + nomeDaSessao(SESSOES_PRINCIPAIS[index]),
+            { n: index + 1, total: total, nome: nomeDaSessao(SESSOES_PRINCIPAIS[index]) }
+        );
+    }
+
+    atualizarBarraPosicao(index, total);
+    atualizarMenuSessoes();
+
+    setTimeout(carregarProgressoInicial, 300);
+}
+
+// ------------------------------------------------------------
+// Atualiza a barra de posição (progresso do fluxo)
+// ------------------------------------------------------------
+function atualizarBarraPosicao(atual, total) {
+    var fill = document.getElementById('progress-guia-fill');
+    var text = document.getElementById('progress-guia-text');
+    if (fill) {
+        var percent = total > 0 ? ((atual + 1) / total) * 100 : 0;
+        fill.style.width = percent + '%';
+    }
+    if (text) {
+        if (total === 0) {
+            text.textContent = '—';
+        } else {
+            text.textContent = _tVars(
+                'comum.sessao_posicao',
+                (atual + 1) + ' de ' + total,
+                { atual: atual + 1, total: total }
+            );
+        }
+    }
+}
+
+// ------------------------------------------------------------
+// Navegação Anterior / Próximo
+// ------------------------------------------------------------
+function sessaoAnterior() {
+    if (sessaoAtual > 0) irParaSessao(sessaoAtual - 1);
+}
+
+function proximaSessao() {
+    var total = SESSOES_PRINCIPAIS.length;
+    if (total > 0 && sessaoAtual < total - 1) {
+        irParaSessao(sessaoAtual + 1);
+    }
+}
+
+// ============================================================
+// MENU DE SESSÕES FIXO
+// ============================================================
+
+function criarMenuSessoes() {
+    var wrapper = document.getElementById('session-menu-wrapper');
+    var menu = document.getElementById('session-menu');
+    if (!wrapper || !menu) return;
+
+    // Se já foi criado, não duplica
+    if (menu.children.length > 0) return;
+
+    var total = SESSOES_PRINCIPAIS.length;
+
+    // FASE 1: sem sessões. Esconde o wrapper e retorna.
+    if (total === 0) {
+        wrapper.style.display = 'none';
+        return;
+    }
+
+    for (var i = 0; i < total; i++) {
+        var sessaoId = SESSOES_PRINCIPAIS[i];
+        var nome = nomeDaSessao(sessaoId);
+        var icone = ICONES_SESSOES[sessaoId] || '•';
+
+        var item = document.createElement('div');
+        item.className = 'session-menu-item';
+        item.dataset.index = String(i);
+        item.dataset.sessao = sessaoId;
+        item.setAttribute('role', 'tab');
+        item.setAttribute('tabindex', '0');
+        item.title = nome;
+
+        var chaveNome = 'sessoes.' + sessaoId + '.nome';
+        item.innerHTML =
+            '<span class="session-icon">' + icone + '</span>' +
+            '<span class="session-numero">' + (i + 1) + '</span>' +
+            '<span class="session-label" data-i18n="' + chaveNome + '">' + nome + '</span>';
+
+        item.addEventListener('click', function() {
+            if (this.classList.contains('bloqueado')) {
+                if (typeof mostrarToast === 'function') {
+                    mostrarToast(_t('comum.navegacao_bloqueada',
+                        'Aguarde o término dos comandos desta sessão para trocar de sessão.'),
+                        'info', 4000);
+                }
+                return;
+            }
+            var idx = parseInt(this.dataset.index, 10);
+            if (idx !== sessaoAtual) irParaSessao(idx);
+        });
+
+        item.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                if (this.classList.contains('bloqueado')) {
+                    if (typeof mostrarToast === 'function') {
+                        mostrarToast(_t('comum.navegacao_bloqueada',
+                            'Aguarde o término dos comandos desta sessão para trocar de sessão.'),
+                            'info', 4000);
+                    }
+                    return;
+                }
+                var idx = parseInt(this.dataset.index, 10);
+                if (idx !== sessaoAtual) irParaSessao(idx);
+            }
+        });
+
+        menu.appendChild(item);
+    }
+
+    wrapper.style.display = '';
+
+    atualizarMenuSessoes();
+}
+
+function atualizarMenuSessoes() {
+    var menu = document.getElementById('session-menu');
+    if (!menu) return;
+
+    var itens = menu.querySelectorAll('.session-menu-item');
+    itens.forEach(function(item, idx) {
+        var sessaoId = item.dataset.sessao;
+
+        if (idx === sessaoAtual) {
+            item.classList.add('ativa');
+            item.setAttribute('aria-selected', 'true');
+        } else {
+            item.classList.remove('ativa');
+            item.setAttribute('aria-selected', 'false');
+        }
+
+        if (typeof getStatusSessao === 'function' && getStatusSessao(sessaoId) === 'executado') {
+            item.classList.add('concluida');
+        } else {
+            item.classList.remove('concluida');
+        }
+    });
+
+    var ativo = menu.querySelector('.session-menu-item.ativa');
+    if (ativo && typeof ativo.scrollIntoView === 'function') {
+        try {
+            ativo.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        } catch (e) {
+            ativo.scrollIntoView(false);
+        }
+    }
+}
+
+// ============================================================
+// SOBRESCRITAS (marcadores que disparam atualização do menu)
+// ============================================================
+
+var marcarComoExecutadoOriginal = marcarComoExecutado;
+var desmarcarComoExecutadoOriginal = desmarcarComoExecutado;
+var marcarComoPuladoOriginal = marcarComoPulado;
+
+marcarComoExecutado = async function(idComando) {
+    await marcarComoExecutadoOriginal(idComando);
+    setTimeout(function() {
+        atualizarMenuSessoes();
+    }, 100);
+};
+
+desmarcarComoExecutado = async function(idComando) {
+    await desmarcarComoExecutadoOriginal(idComando);
+    atualizarMenuSessoes();
+};
+
+marcarComoPulado = async function(idComando) {
+    await marcarComoPuladoOriginal(idComando);
+    atualizarMenuSessoes();
+};
+
+// ============================================================
+// REAPLICAÇÃO DE TEXTOS DINÂMICOS APÓS O I18N CARREGAR
+// ============================================================
+
+function _reaplicarTextosDinamicos() {
+    var total = SESSOES_PRINCIPAIS.length;
+    if (total === 0) return;
+
+    if (sessaoAtual < 0 || sessaoAtual >= total) sessaoAtual = 0;
+
+    atualizarBarraPosicao(sessaoAtual, total);
+
+    var infoSessao = document.getElementById('info-sessao');
+    if (infoSessao) {
+        var nomeAtual = nomeDaSessao(SESSOES_PRINCIPAIS[sessaoAtual]);
+        infoSessao.innerHTML = _tVars(
+            'comum.sessao_info_nav',
+            '<strong>' + (sessaoAtual + 1) + '/' + total + '</strong> - ' + nomeAtual,
+            { n: sessaoAtual + 1, total: total, nome: nomeAtual }
+        );
+    }
+
+    var container = document.getElementById('sessao-container');
+    if (container && typeof numerarSessao === 'function') {
+        numerarSessao(SESSOES_PRINCIPAIS[sessaoAtual], container);
+    }
+
+    var menu = document.getElementById('session-menu');
+    if (menu && typeof I18N !== 'undefined' && typeof I18N.aplicarTraducoes === 'function') {
+        I18N.aplicarTraducoes(menu);
+    }
+}
+
+document.addEventListener('i18n-pronto', function() {
+    setTimeout(_reaplicarTextosDinamicos, 100);
+});
+
+// ============================================================
+// INICIALIZAÇÃO
+// ============================================================
+
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof I18N !== 'undefined' && typeof I18N.criarSeletorIdioma === 'function') {
+        I18N.criarSeletorIdioma();
+    }
+
+    if (typeof criarBotaoTema === 'function') {
+        criarBotaoTema();
+    }
+
+    var loadingTexto = document.getElementById('loading-inicial-texto');
+    if (loadingTexto) {
+        loadingTexto.textContent = _t('comum.spinner_carregando_sessao', 'Carregando sessão...');
+    }
+
+    if (typeof getProgress !== 'undefined' && typeof SESSOES_PRINCIPAIS !== 'undefined') {
+        criarMenuSessoes();
+        irParaSessaoInicial();
+    } else {
+        console.warn('⏳ Aguardando script.js carregar...');
+        setTimeout(function() {
+            if (typeof getProgress !== 'undefined' && typeof SESSOES_PRINCIPAIS !== 'undefined') {
+                criarMenuSessoes();
+                irParaSessaoInicial();
+            } else {
+                console.error('❌ script.js não foi carregado!');
+                var msgErro = _t('comum.erro_script_js', '❌ Erro: script.js não foi carregado!');
+                var msgDica = _t('comum.erro_script_js_msg', 'Recarregue a página ou verifique se o arquivo existe.');
+                document.getElementById('sessao-container').innerHTML = `
+                    <div class="sessao-container" style="text-align:center; padding: 3rem 1rem; color: #ef4444; border: 1px solid #ef4444;">
+                        <h3>${msgErro}</h3>
+                        <p style="color: var(--text-muted);">${msgDica}</p>
+                    </div>
+                `;
+            }
+        }, 200);
+    }
+});
+
+document.addEventListener('sessao-carregada', function() {
+    setTimeout(function() {
+        atualizarMenuSessoes();
+        _reaplicarTextosDinamicos();
+    }, 150);
+});
+</script>
+</body>
+</html>

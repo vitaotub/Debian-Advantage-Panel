@@ -1,0 +1,66 @@
+# ============================================================
+# Debian Advantage Panel (DAP) - .gitignore
+# ============================================================
+
+# ------------------------------------------------------------
+# Node.js
+# ------------------------------------------------------------
+node_modules/
+npm-debug.log*
+yarn-error.log*
+.npm/
+
+# ------------------------------------------------------------
+# Build do container nativo
+# ------------------------------------------------------------
+dap-container
+*.o
+*.so
+*.a
+
+# ------------------------------------------------------------
+# Estado do DAP (runtime — específico da máquina do usuário)
+# ------------------------------------------------------------
+.progresso.json
+.dap.pid
+
+# ------------------------------------------------------------
+# Perfis de navegador (criados pelo fallback)
+# ------------------------------------------------------------
+.perfil_firefox/
+.perfil_app/
+
+# ------------------------------------------------------------
+# Logs
+# ------------------------------------------------------------
+*.log
+
+# ------------------------------------------------------------
+# Defesa em profundidade: nunca commitar estado do apt
+# ------------------------------------------------------------
+*.deb
+*.dsc
+*.changes
+*.buildinfo
+
+# ------------------------------------------------------------
+# SO / IDE
+# ------------------------------------------------------------
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ------------------------------------------------------------
+# NÃO IGNORAR (arquivos lidos em runtime — precisam ser
+# rastreados para o DAP funcionar depois do clone)
+# ------------------------------------------------------------
+# hardware_map.json precisa ser rastreado — o hardware-service.js
+# o lê em runtime para o endpoint /hardware-scan.
+# CHANGELOG.md precisa ser rastreado — o endpoint /changelog
+# do server.js o lê em runtime.
+# locales/en.json e locales/es.json precisam ser rastreados —
+# o i18n.js os carrega em runtime.

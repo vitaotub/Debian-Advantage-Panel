@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Debian Advantage Panel (DAP)</title>
+<script>
+// Aplica o tema antes do CSS pintar (evita flash do tema errado).
+// Padrão do DAP é CLARO (o FAP usava escuro).
+(function() {
+try {
+var t = localStorage.getItem('dap_tema') || 'claro';
+document.documentElement.setAttribute('data-tema', t === 'escuro' ? 'escuro' : 'claro');
+} catch (e) {
+document.documentElement.setAttribute('data-tema', 'claro');
+}
+})();
+</script>
+<style>
+:root {
+--bg-primary: #f7f7f7;
+--bg-card: #ffffff;
+--accent: #a80030;
+--accent-hover: #870026;
+--text-main: #1a1a1a;
+--text-muted: #5a5a5a;
+--border: #d4d4d4;
+--success: #059669;
+--warning-bg: rgba(245, 158, 11, 0.12);
+--warning-border: #d97706;
+--warning-soft: #b45309;
+--danger: #ef4444;
+}
+
+[data-tema="escuro"] {
+--bg-primary: #1a1a1a;
+--bg-card: #222222;
+--accent: #a80030;
+--accent-hover: #c70036;
+--text-main: #f0f0f0;
+--text-muted: #a0a0a0;
+--border: #333333;
+--success: #34d399;
+--warning-bg: rgba(245, 158, 11, 0.12);
+--warning-border: #f59e0b;
+--warning-soft: #f59e0b;
+--danger: #ef4444;
+}
+
+* {
+box-sizing: border-box;
+margin: 0;
+padding: 0;
+}
+
+body {
+font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+background-color: var(--bg-primary);
+color: var(--text-main);
+min-height: 100vh;
+display: flex;
+justify-content: center;
+align-items: flex-start;
+padding: 2rem 1rem;
+margin: 0;
+transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.container {
+max-width: 900px;
+width: 100%;
+margin: 0 auto;
+}
+
+.hero {
+text-align: center;
+padding: 1rem 0 0.5rem 0;
+width: 100%;
+}
+
+.hero .logo {
+width: 150px;
+height: 150px;
+object-fit: contain;
+border-radius: 50%;
+box-shadow: 0 4px 30px rgba(168, 0, 48, 0.3);
+margin: 0 auto 1.5rem auto;
+display: block;
+transition: transform 0.3s ease;
+}
+
+.hero .logo:hover {
+transform: scale(1.05) rotate(-2deg);
+}
+
+/* ============================================================
+ * VERSION BADGE
+ * ============================================================
+ * position: relative — âncora para o .badge-atualizacao, que
+ * fica posicionado absolutamente no canto superior direito.
+ */
+
+.hero .version-badge {
+display: inline-block;
+position: relative;
+background-color: rgba(168, 0, 48, 0.1);
+border: 1px solid var(--accent);
+border-radius: 20px;
+padding: 0.4rem 1.5rem;
+font-size: 1rem;
+color: var(--accent);
+margin-bottom: 0.5rem;
+}
+
+/* ============================================================
+ * BADGE "ATUALIZAÇÃO DISPONÍVEL"
+ * ============================================================
+ * Botão circular flutuante no canto superior direito do
+ * .version-badge. Só o ícone SVG — sem texto.
+ */
+
+.badge-atualizacao {
+position: absolute;
+top: -8px;
+right: -8px;
+width: 30px;
+height: 30px;
+border-radius: 50%;
+background-color: var(--warning-border);
+color: #ffffff;
+border: 2px solid var(--bg-primary);
+display: inline-flex;
+align-items: center;
+justify-content: center;
+padding: 0;
+margin: 0;
+cursor: pointer;
+appearance: none;
+-webkit-appearance: none;
+-moz-appearance: none;
+box-sizing: border-box;
+font-family: inherit;
+line-height: 1;
+box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4);
+transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+animation: pulse-badge 2.5s infinite ease-in-out;
+z-index: 10;
+outline: none;
+text-decoration: none;
+}
+
+.badge-atualizacao:hover {
+background-color: #d97706;
+transform: scale(1.1);
+animation: none;
+box-shadow: 0 4px 12px rgba(245, 158, 11, 0.6);
+}
+
+.badge-atualizacao:focus,
+.badge-atualizacao:focus-visible {
+outline: none;
+box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.5);
+}
+
+.badge-atualizacao:active {
+transform: scale(0.95);
+}
+
+.badge-atualizacao-icon {
+width: 16px;
+height: 16px;
+display: block;
+stroke: currentColor;
+fill: none;
+stroke-width: 2.5;
+stroke-linecap: round;
+stroke-linejoin: round;
+pointer-events: none;
+}
+
+@keyframes pulse-badge {
+0%, 100% { transform: scale(1); }
+50% { transform: scale(1.08); }
+}
+
+.hero h1 {
+font-size: 2.8rem;
+font-weight: 700;
+background: linear-gradient(135deg, #d70a53, #a80030, #6b001e);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+margin: 0 0 0.5rem 0;
+text-align: center;
+}
+
+.hero .subtitle {
+font-size: 1.2rem;
+color: var(--text-muted);
+max-width: 600px;
+margin: 0 auto 1rem;
+line-height: 1.6;
+text-align: center;
+}
+
+.hero-buttons {
+display: flex;
+justify-content: center;
+gap: 0.75rem;
+flex-wrap: wrap;
+margin: 0.5rem auto 0;
+}
+
+.hero-buttons .badge {
+text-decoration: none;
+padding: 0.4rem 1rem;
+font-size: 0.95rem;
+border-radius: 6px;
+display: inline-flex;
+align-items: center;
+justify-content: center;
+gap: 0.4rem;
+transition: background-color 0.2s ease;
+width: 200px;
+border: 1px solid var(--border);
+background-color: var(--bg-card);
+color: var(--text-main);
+white-space: nowrap;
+}
+
+.hero-buttons .badge:hover {
+background-color: var(--accent);
+color: #fff;
+}
+
+/* ============================================================
+ * CARD PRINCIPAL
+ * ============================================================ */
+
+.iniciar-card {
+display: block;
+background-color: var(--bg-card);
+border: 2px solid var(--border);
+border-radius: 16px;
+padding: 2.5rem 2.5rem 2rem;
+text-decoration: none;
+color: inherit;
+transition: all 0.3s ease;
+position: relative;
+overflow: hidden;
+margin: 2.5rem 0 2rem;
+cursor: pointer;
+}
+
+.iniciar-card::before {
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background: radial-gradient(circle at 50% 0%, rgba(168, 0, 48, 0.06), transparent 70%);
+opacity: 0;
+transition: opacity 0.3s ease;
+pointer-events: none;
+}
+
+.iniciar-card:hover::before {
+opacity: 1;
+}
+
+.iniciar-card:hover {
+border-color: var(--accent);
+transform: translateY(-6px);
+box-shadow: 0 12px 40px rgba(168, 0, 48, 0.15);
+}
+
+/* ============================================================
+ * RELÓGIO (topo do card)
+ * ============================================================ */
+
+.relogio-container {
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 0.25rem;
+padding-bottom: 1.5rem;
+margin-bottom: 1.5rem;
+border-bottom: 1px solid var(--border);
+position: relative;
+}
+
+.relogio-hora {
+font-size: 2.4rem;
+font-weight: 700;
+font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+color: var(--accent);
+letter-spacing: 0.05em;
+line-height: 1;
+text-shadow: 0 0 20px rgba(168, 0, 48, 0.25);
+transition: color 0.3s ease;
+}
+
+.relogio-data {
+font-size: 0.9rem;
+color: var(--text-muted);
+text-transform: capitalize;
+letter-spacing: 0.02em;
+}
+
+/* ============================================================
+ * CONTEÚDO DO CARD (grid 2 colunas)
+ * ============================================================ */
+
+.iniciar-conteudo {
+display: grid;
+grid-template-columns: 1fr auto;
+gap: 2rem;
+align-items: center;
+position: relative;
+}
+
+.iniciar-texto h2 {
+font-size: 1.6rem;
+color: var(--text-main);
+margin: 0 0 1rem 0;
+line-height: 1.3;
+}
+
+.iniciar-texto p {
+color: var(--text-muted);
+font-size: 0.95rem;
+line-height: 1.65;
+margin: 0 0 0.9rem 0;
+}
+
+.iniciar-texto p:last-child {
+margin-bottom: 0;
+}
+
+.iniciar-texto strong {
+color: var(--text-main);
+font-weight: 600;
+}
+
+.iniciar-acao {
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+.btn-grande {
+display: inline-flex;
+align-items: center;
+justify-content: center;
+gap: 0.5rem;
+padding: 1rem 2.5rem;
+border-radius: 30px;
+font-size: 1.15rem;
+font-weight: 600;
+background-color: #3c67e3;
+color: #fff;
+border: none;
+transition: all 0.3s ease;
+white-space: nowrap;
+box-shadow: 0 4px 20px rgba(60, 103, 227, 0.25);
+}
+
+.iniciar-card:hover .btn-grande {
+background-color: #527bee;
+transform: scale(1.04);
+box-shadow: 0 6px 28px rgba(60, 103, 227, 0.4);
+}
+
+@media (max-width: 700px) {
+.iniciar-conteudo {
+grid-template-columns: 1fr;
+gap: 1.5rem;
+text-align: center;
+}
+
+.iniciar-acao {
+justify-content: center;
+}
+
+.btn-grande {
+width: 100%;
+max-width: 320px;
+}
+}
+
+footer {
+text-align: center;
+padding: 2rem 0 0;
+border-top: 1px solid var(--border);
+margin-top: 1rem;
+width: 100%;
+}
+
+footer p {
+color: var(--text-muted);
+font-size: 0.9rem;
+margin: 0;
+}
+
+footer p:first-of-type {
+margin-bottom: 1rem;
+}
+
+footer a {
+color: var(--accent);
+text-decoration: none;
+}
+
+footer a:hover {
+text-decoration: underline;
+}
+
+/* i18n + tema */
+.header-controles {
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 0.75rem;
+margin: 1rem 0;
+flex-wrap: wrap;
+}
+
+.i18n-seletor-container {
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 0.5rem;
+font-size: 0.9rem;
+color: var(--text-muted);
+}
+
+.i18n-seletor-container .i18n-seletor-label {
+font-size: 1rem;
+}
+
+.i18n-seletor-container select.i18n-seletor {
+background-color: var(--bg-card);
+color: var(--text-main);
+border: 1px solid var(--accent);
+border-radius: 6px;
+padding: 0.4rem 0.8rem;
+font-size: 0.9rem;
+cursor: pointer;
+appearance: none;
+-webkit-appearance: none;
+-moz-appearance: none;
+padding-right: 2rem;
+background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a80030' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+background-repeat: no-repeat;
+background-position: right 0.6rem center;
+background-size: 1em;
+}
+
+.i18n-seletor-container select.i18n-seletor:focus {
+outline: none;
+border-color: var(--accent-hover);
+box-shadow: 0 0 0 2px rgba(168, 0, 48, 0.3);
+}
+
+.i18n-seletor-container select.i18n-seletor option {
+background-color: var(--bg-primary);
+color: var(--text-main);
+}
+
+.tema-toggle-container {
+display: inline-flex;
+align-items: center;
+}
+
+.btn-tema {
+background-color: var(--bg-card);
+color: var(--text-main);
+border: 1px solid var(--accent);
+border-radius: 6px;
+width: 38px;
+height: 38px;
+display: inline-flex;
+align-items: center;
+justify-content: center;
+font-size: 1.1rem;
+cursor: pointer;
+transition: all 0.2s ease;
+padding: 0;
+line-height: 1;
+}
+
+.btn-tema:hover {
+border-color: var(--accent-hover);
+transform: translateY(-1px);
+}
+
+.btn-tema:focus {
+outline: none;
+box-shadow: 0 0 0 2px rgba(168, 0, 48, 0.3);
+}
+
+/* ============================================================
+ * TOASTS
+ * ============================================================ */
+
+.dap-toast-container {
+position: fixed;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+z-index: 99999;
+pointer-events: none;
+display: flex;
+flex-direction: column;
+align-items: flex-end;
+justify-content: flex-start;
+padding: 1rem;
+gap: 0.5rem;
+overflow: hidden;
+}
+
+.dap-toast {
+background-color: var(--bg-card);
+border: 1px solid var(--border);
+border-left: 4px solid var(--accent);
+border-radius: 8px;
+padding: 0.75rem 1rem;
+color: var(--text-main);
+box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+font-size: 0.9rem;
+line-height: 1.4;
+pointer-events: auto;
+animation: slideInToast 0.3s ease-out;
+max-width: min(360px, calc(100vw - 2rem));
+word-wrap: break-word;
+overflow-wrap: break-word;
+box-sizing: border-box;
+flex-shrink: 0;
+}
+
+.dap-toast.success {
+border-left-color: var(--success);
+}
+
+.dap-toast.error {
+border-left-color: var(--danger);
+}
+
+.dap-toast.info {
+border-left-color: var(--accent);
+}
+
+.dap-toast.removendo {
+animation: slideOutToast 0.3s ease-in forwards;
+}
+
+@keyframes slideInToast {
+from { transform: translateX(120%); opacity: 0; }
+to   { transform: translateX(0);   opacity: 1; }
+}
+
+@keyframes slideOutToast {
+from { transform: translateX(0);   opacity: 1; }
+to   { transform: translateX(120%); opacity: 0; }
+}
+
+@media (max-width: 768px) {
+body {
+padding: 1rem;
+}
+}
+
+@media (max-width: 480px) {
+.hero h1 {
+font-size: 2rem;
+}
+
+.hero .subtitle {
+font-size: 1rem;
+}
+
+.iniciar-card {
+padding: 1.75rem 1.25rem 1.5rem;
+}
+
+.iniciar-texto h2 {
+font-size: 1.35rem;
+}
+
+.relogio-hora {
+font-size: 2rem;
+}
+
+.btn-grande {
+font-size: 1rem;
+padding: 0.85rem 2rem;
+}
+
+.hero-buttons .badge {
+width: 160px;
+font-size: 0.85rem;
+}
+}
+
+@media (max-width: 380px) {
+.hero-buttons {
+flex-direction: column;
+align-items: center;
+}
+
+.hero-buttons .badge {
+width: 100%;
+justify-content: center;
+}
+}
+</style>
+<script src="i18n.js"></script>
+<script src="script.js"></script>
+</head>
+<body>
+<div class="container">
+<div class="hero">
+<img src="icone_app.png" alt="Debian Advantage Panel" class="logo" onerror="this.style.display='none'">
+<div class="version-badge" data-i18n-html="index.badge_versao">🚀 v<span class="dap-version"></span></div>
+<h1>Debian Advantage Panel</h1>
+<p class="subtitle" data-i18n="index.subtitulo">
+Painel de automação para configurar, otimizar e personalizar seu Debian Linux de forma rápida e segura.
+</p>
+
+<div class="hero-buttons">
+<a href="https://github.com/vitaotub/Debian-Advantage-Panel" class="badge" data-i18n="index.btn_github">
+🐙 GitHub
+</a>
+<a href="https://www.vitaotub.com" class="badge" data-i18n-html="index.btn_criador">
+👤 Criador: <strong>VitãoTub</strong>
+</a>
+</div>
+</div>
+
+<!-- ============================================================
+CARD PRINCIPAL — relógio + textos + botão Iniciar
+============================================================ -->
+<a href="guiado.html" class="iniciar-card" id="card-iniciar">
+
+<!-- Relógio -->
+<div class="relogio-container">
+<time class="relogio-hora" id="relogio-hora" aria-live="polite">--:--:--</time>
+<span class="relogio-data" id="relogio-data">—</span>
+</div>
+
+<!-- Conteúdo: textos à esquerda, botão à direita -->
+<div class="iniciar-conteudo">
+<div class="iniciar-texto">
+<h2 data-i18n="index.card_guiado_titulo">Iniciar Configurações do Debian</h2>
+<p data-i18n-html="index.card_guiado_desc_1">
+Clicando em <strong>Iniciar</strong>, você acessa sessões que otimizam, configuram e deixam sua instalação do Debian mais prática no dia a dia.
+</p>
+<p data-i18n-html="index.card_guiado_desc_2">
+O DAP é intuitivo e explica cada passo com clareza — mas, por escolha de projeto, <strong>não faz backup dos seus arquivos</strong>. Apesar de cada comando ser testado, imprevistos podem acontecer. Por isso: leia as dicas com atenção antes de aplicar qualquer alteração e, sempre que possível, <strong>faça backup antes de seguir adiante</strong>.
+</p>
+</div>
+
+<div class="iniciar-acao">
+<span class="btn-grande" data-i18n="index.card_guiado_botao">🚀 Iniciar</span>
+</div>
+</div>
+
+</a>
+
+<!-- i18n + tema -->
+<div class="header-controles">
+<div class="i18n-seletor-container" id="i18n-seletor"></div>
+<div class="tema-toggle-container"></div>
+</div>
+
+<footer>
+<p>
+<span data-i18n-html="index.footer_creditos">Debian Advantage Panel — Feito com ❤️ por <a href="https://www.vitaotub.com">VitãoTub</a></span>
+&bull;
+<a href="https://github.com/vitaotub/Debian-Advantage-Panel" data-i18n="index.footer_link_github">GitHub</a>
+&bull;
+<a href="https://github.com/vitaotub/Debian-Advantage-Panel/blob/main/README.md" data-i18n="index.footer_link_doc">Documentação</a>
+&bull;
+<a href="https://github.com/vitaotub/Debian-Advantage-Panel/issues" data-i18n="index.footer_link_bug">Reportar Bug</a>
+</p>
+<p style="font-size: 0.8rem; color: var(--text-muted);" data-i18n="index.footer_legal">
+Debian é uma marca registrada da Software in the Public Interest, Inc. Este projeto não é afiliado à SPI.
+</p>
+</footer>
+</div>
+
+<!-- ============================================================
+RELÓGIO — atualiza a cada segundo, com locale do i18n.js
+============================================================ -->
+<script>
+(function() {
+function atualizarRelogio() {
+var horaEl = document.getElementById('relogio-hora');
+var dataEl = document.getElementById('relogio-data');
+if (!horaEl || !dataEl) return;
+
+var agora = new Date();
+var locale = document.documentElement.getAttribute('lang') || 'pt-BR';
+
+try {
+var hora = agora.toLocaleTimeString(locale, {
+hour: '2-digit',
+minute: '2-digit',
+second: '2-digit',
+hour12: false
+});
+horaEl.textContent = hora;
+horaEl.setAttribute('datetime', agora.toISOString());
+
+var data = agora.toLocaleDateString(locale, {
+weekday: 'long',
+day: 'numeric',
+month: 'long',
+year: 'numeric'
+});
+dataEl.textContent = data.charAt(0).toUpperCase() + data.slice(1);
+} catch (e) {
+// Fallback silencioso
+}
+}
+
+atualizarRelogio();
+setInterval(atualizarRelogio, 1000);
+})();
+</script>
+</body>
+</html>

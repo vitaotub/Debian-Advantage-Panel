@@ -1,0 +1,1866 @@
+/* ============================================
+ * Debian Advantage Panel (DAP) - Estilos Compartilhados
+ * ============================================ */
+
+:root {
+    /* --------------------------------------------------------
+     * TEMA CLARO (padrão do DAP)
+     * --------------------------------------------------------
+     * Fundo branco, texto escuro, acento vermelho Debian.
+     * Estas variáveis são sobrescritas pelo bloco
+     * [data-tema="escuro"] mais abaixo, quando o usuário
+     * alterna o tema.
+     */
+    --bg-primary: #f7f7f7;
+    --bg-card: #ffffff;
+    --accent: #a80030;
+    --accent-hover: #870026;
+    --text-main: #1a1a1a;
+    --text-muted: #5a5a5a;
+    --border: #d4d4d4;
+    --warning-bg: rgba(245, 158, 11, 0.12);
+    --warning-border: #d97706;
+    --success-bg: rgba(5, 150, 105, 0.12);
+    --success-border: #059669;
+    --danger: #ef4444;
+    --danger-hover: #dc2626;
+    --success: #059669;
+
+    /* Auxiliares (tema claro) */
+    --bg-secondary: #ececec;
+    --bg-tertiary: #f9f9f9;
+    --bg-comando: rgba(0, 0, 0, 0.02);
+    --bg-input: #ffffff;
+
+    /* Cores temáticas de acento */
+    --accent-soft: #a80030;
+    --warning-soft: #b45309;
+    --success-soft: #047857;
+
+    /* Matrix theme (mantido verde — decisão de projeto) */
+    --matrix-green: #00ff41;
+    --matrix-green-dim: #00cc33;
+    --matrix-green-glow: rgba(0, 255, 65, 0.6);
+    --matrix-bg: #000000;
+}
+
+/* ============================================================
+ * TEMA ESCURO (alternativa)
+ * ============================================================
+ * Sobrescreve a paleta quando o usuário clica no botão de tema.
+ * Fundo escuro neutro (sem viés azulado), acento vermelho Debian.
+ */
+
+[data-tema="escuro"] {
+    --bg-primary: #1a1a1a;
+    --bg-card: #222222;
+    --accent: #a80030;
+    --accent-hover: #c70036;
+    --text-main: #f0f0f0;
+    --text-muted: #a0a0a0;
+    --border: #333333;
+    --warning-bg: rgba(245, 158, 11, 0.12);
+    --warning-border: #f59e0b;
+    --success-bg: rgba(52, 211, 153, 0.12);
+    --success-border: #34d399;
+    --danger: #ef4444;
+    --danger-hover: #dc2626;
+    --success: #34d399;
+
+    --bg-secondary: #2a2a2a;
+    --bg-tertiary: #141414;
+    --bg-comando: rgba(0, 0, 0, 0.3);
+    --bg-input: #2a2a2a;
+
+    --accent-soft: #e63946;
+    --warning-soft: #f59e0b;
+    --success-soft: #34d399;
+
+    --matrix-green: #00ff41;
+    --matrix-green-dim: #00cc33;
+    --matrix-green-glow: rgba(0, 255, 65, 0.6);
+    --matrix-bg: #000000;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-main);
+    margin: 0;
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.container {
+    max-width: 900px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+/* ============================================================
+ * BLOCO COMANDO
+ * ============================================================ */
+
+.bloco-comando {
+    background-color: var(--bg-comando);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+}
+
+.bloco-comando:last-child {
+    margin-bottom: 0;
+}
+
+.bloco-comando.destaque {
+    border-left: 4px solid var(--accent);
+}
+
+.comando-info h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.1rem;
+    color: var(--text-main);
+}
+
+.comando-info p {
+    margin: 0 0 1rem 0;
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+.lista-nao-faz {
+    margin: 0.5rem 0 0 0;
+    padding-left: 1.5rem;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.lista-nao-faz li {
+    margin-bottom: 0.35rem;
+}
+
+.lista-nao-faz li:last-child {
+    margin-bottom: 0;
+}
+
+/* ============================================================
+ * AVISOS E INFO EXTRA
+ * ============================================================ */
+
+.aviso-caixa {
+    background-color: var(--warning-bg);
+    border: 1px solid var(--warning-border);
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    margin: 1rem 0;
+    color: var(--warning-soft);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.aviso-sucesso {
+    background-color: var(--success-bg);
+    border: 1px solid var(--success-border);
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    margin: 1rem 0;
+    color: var(--success);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.info-extra {
+    margin-top: 1.25rem;
+    margin-bottom: 0.25rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.grupo-botoes + .info-extra {
+    margin-top: 1.25rem;
+}
+
+.botoes-flex + .info-extra {
+    margin-top: 1.25rem;
+}
+
+.aviso-caixa + .info-extra {
+    margin-top: 0.5rem;
+}
+
+/* ============================================================
+ * BOTÕES
+ * ============================================================
+ * Esquema de cores semântico (mantido do FAP):
+ *
+ *   1. AZUL   (.btn-executar, padrão) — ação principal
+ *              instalar, executar, aplicar, detectar, atualizar,
+ *              configurar, ativar. É a cor da maioria dos botões.
+ *
+ *   2. VERDE  (.btn-executar.verde) — abrir aplicativo
+ *              só para botões "Abrir X" (aparecem após o install).
+ *
+ *   3. VERMELHO (.btn-executar.vermelho) — remover/reverter
+ *              desinstalar, reverter, desativar, remover.
+ *
+ *   4. VERMELHO DESTRUTIVO (.btn-executar.destrutivo) — exceção
+ *              ações irreversíveis: desinstalar DAP, remover repo,
+ *              remover Waydroid completamente. Vermelho + contorno
+ *              tracejado, para dar peso visual.
+ *
+ * Botão cinza = botão DESABILITADO. Nunca use cinza como estado
+ * normal — o `:disabled` já aplica `opacity: 0.5` + cursor
+ * `not-allowed` automaticamente.
+ *
+ * IMPORTANTE: as cores dos botões são FIXAS, não usam var(--accent).
+ * Isso foi decisão deliberada: o acento do DAP é vermelho, mas os
+ * botões primários continuam azuis (padrão visual estabelecido pelo
+ * FAP). Alterar isso quebra a semântica de "botão azul = ação
+ * principal" que o usuário já conhece.
+ */
+
+.grupo-botoes {
+    display: inline-flex;
+    gap: 0.5rem;
+    align-items: stretch;
+    margin-top: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.botoes-flex {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.btn-executar,
+.btn-reverter {
+    min-width: 0;
+    white-space: normal;
+    word-break: break-word;
+}
+
+.btn-executar {
+    background-color: #3c67e3;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    line-height: 1.3;
+}
+
+.btn-executar:hover:not(:disabled) {
+    background-color: #527bee;
+    transform: translateY(-1px);
+}
+
+.btn-executar:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* --- Verde: abrir aplicativo --- */
+.btn-executar.verde {
+    background-color: #10b981;
+}
+
+.btn-executar.verde:hover:not(:disabled) {
+    background-color: #059669;
+}
+
+/* --- Vermelho: remover / reverter / desativar --- */
+.btn-executar.vermelho {
+    background-color: #ef4444;
+}
+
+.btn-executar.vermelho:hover:not(:disabled) {
+    background-color: #dc2626;
+}
+
+/* --- Vermelho destrutivo: ações irreversíveis ---
+ *
+ * Usa `outline` em vez de `border` para não deslocar o layout
+ * (outline não ocupa espaço no box model). O `outline-offset`
+ * negativo puxa o contorno para dentro do botão, criando o
+ * efeito de "borda tracejada interna" sem alterar padding ou
+ * dimensão.
+ */
+.btn-executar.destrutivo {
+    background-color: #ef4444;
+    outline: 2px dashed rgba(255, 255, 255, 0.45);
+    outline-offset: -5px;
+}
+
+.btn-executar.destrutivo:hover:not(:disabled) {
+    background-color: #dc2626;
+    outline-color: rgba(255, 255, 255, 0.7);
+}
+
+/* --- Botão de reverter genérico (legado, mantido para
+ *     compatibilidade com sessões futuras) --- */
+.btn-reverter {
+    background-color: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    line-height: 1.3;
+}
+
+.btn-reverter:hover:not(:disabled) {
+    background-color: #dc2626;
+}
+
+.btn-reverter:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ============================================================
+ * GRID LAUNCHERS
+ * ============================================================ */
+
+.grid-launchers {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.grid-launchers .btn-executar {
+    width: 100%;
+}
+
+.grid-launchers .launcher-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 0;
+}
+
+.grid-launchers .launcher-item .btn-reverter {
+    width: 100%;
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+}
+
+@media (max-width: 600px) {
+    .grid-launchers {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ============================================================
+ * ACORDEÃO
+ * ============================================================ */
+
+.acordeao {
+    background-color: var(--bg-comando);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+    transition: border-color 0.2s ease;
+}
+
+.acordeao[open] {
+    border-color: var(--accent);
+}
+
+.acordeao summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 1rem 1.25rem;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    user-select: none;
+    transition: background-color 0.2s ease;
+}
+
+.acordeao summary::-webkit-details-marker {
+    display: none;
+}
+
+.acordeao summary::after {
+    content: '▼';
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+}
+
+.acordeao[open] summary::after {
+    transform: rotate(180deg);
+}
+
+.acordeao summary:hover {
+    background-color: var(--bg-secondary);
+}
+
+.acordeao .acordeao-conteudo {
+    padding: 0 1.25rem 1.25rem 1.25rem;
+    border-top: 1px solid var(--border);
+    padding-top: 1rem;
+}
+
+.acordeao .acordeao-conteudo .bloco-comando:last-child {
+    margin-bottom: 0;
+}
+
+/* ============================================================
+ * ACÓRDEÃO PRINCIPAL
+ * ============================================================
+ * Cada sessão começa com um retângulo cujo conteúdo é a própria
+ * descrição da sessão. É um <div> estático, não um <details>.
+ */
+
+.acordeao-principal {
+    background-color: rgba(168, 0, 48, 0.04);
+    border: 1px solid var(--accent);
+    border-left: 4px solid var(--accent);
+    border-radius: 8px;
+    margin-bottom: 1.25rem;
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    font-size: 0.95rem;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--text-muted);
+    line-height: 1.55;
+}
+
+.acordeao-principal::before {
+    content: 'ℹ️';
+    font-style: normal;
+    font-size: 1rem;
+    flex-shrink: 0;
+    line-height: 1.55;
+}
+
+.acordeao-principal > span {
+    flex: 1;
+    min-width: 0;
+}
+
+/* ============================================================
+ * PROGRESSO
+ * ============================================================ */
+
+.progress-container {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    display: none;
+    background-color: var(--bg-tertiary);
+    border-radius: 8px;
+    padding: 0.4rem 0.7rem;
+    border: 1px solid var(--border);
+}
+
+.progress-bar {
+    width: 100%;
+    height: 6px;
+    background-color: var(--bg-secondary);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #a80030, #870026, #a80030);
+    background-size: 200% 100%;
+    border-radius: 4px;
+    transition: width 0.5s ease;
+    animation: shimmer 2s infinite linear;
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+.progress-fill.complete {
+    background: linear-gradient(90deg, #34d399, #10b981);
+    animation: none;
+}
+
+.progress-text {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-top: 0.15rem;
+}
+
+.progress-text .percentage {
+    color: var(--accent-soft);
+    font-weight: bold;
+    font-family: "SFMono-Regular", monospace;
+}
+
+.progress-text .status {
+    color: var(--text-muted);
+}
+
+.progress-text .status.running {
+    color: var(--accent-soft);
+}
+
+.progress-text .status.success {
+    color: var(--success-soft);
+}
+
+.progress-text .status.error {
+    color: var(--danger);
+}
+
+/* ============================================================
+ * TERMINAL LOG — MATRIX THEME
+ * ============================================================
+ * Mantido verde por decisão de projeto — o "log Matrix" é uma
+ * assinatura visual do FAP que o DAP preserva.
+ */
+
+.terminal-log-wrapper {
+    position: relative;
+    margin-top: 1rem;
+}
+
+.terminal-log-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: transparent;
+    border: none;
+    padding: 0.4rem 0.8rem;
+    cursor: pointer;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    transition: all 0.2s ease;
+    user-select: none;
+    width: 100%;
+    border-radius: 6px;
+}
+
+.terminal-log-toggle:hover {
+    background-color: rgba(0, 255, 65, 0.05);
+    color: var(--matrix-green);
+}
+
+.terminal-log-toggle .toggle-arrow {
+    transition: transform 0.3s ease;
+    font-size: 0.7rem;
+    color: var(--matrix-green);
+}
+
+.terminal-log-toggle.expandido .toggle-arrow {
+    transform: rotate(180deg);
+}
+
+.terminal-log-toggle .toggle-text {
+    flex: 1;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.terminal-log {
+    background-color: var(--matrix-bg);
+    border: 1px solid rgba(0, 255, 65, 0.3);
+    border-radius: 6px;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+    padding: 0.6rem 0.8rem;
+    min-height: 120px;
+    max-height: 200px;
+    overflow-y: auto;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    display: block;
+    scroll-behavior: smooth;
+    line-height: 1.4;
+    transition: all 0.3s ease;
+    opacity: 1;
+    box-shadow: inset 0 0 20px rgba(0, 255, 65, 0.08);
+}
+
+.terminal-log:not(.expandido) {
+    height: 0;
+    min-height: 0;
+    max-height: 0;
+    padding: 0;
+    overflow: hidden;
+    opacity: 0;
+}
+
+.terminal-log .log-line {
+    display: block;
+    padding: 1px 0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    animation: fadeIn 0.15s ease-in;
+    color: var(--matrix-green);
+    text-shadow:
+    0 0 3px var(--matrix-green-glow),
+    0 0 6px rgba(0, 255, 65, 0.3);
+}
+
+.terminal-log .log-line.output {
+    color: var(--matrix-green);
+}
+
+.terminal-log .log-line.error {
+    color: #ff6b6b;
+    text-shadow:
+    0 0 4px rgba(255, 107, 107, 0.7),
+    0 0 8px rgba(255, 107, 107, 0.4);
+}
+
+.terminal-log .log-line.success {
+    color: #66ff66;
+    font-weight: 500;
+    text-shadow:
+    0 0 4px rgba(102, 255, 102, 0.8),
+    0 0 8px rgba(0, 255, 65, 0.5);
+}
+
+.terminal-log .log-line.info {
+    color: var(--matrix-green-dim);
+    text-shadow: 0 0 3px rgba(0, 204, 51, 0.5);
+}
+
+.terminal-log .log-line.warning {
+    color: #99ff99;
+    text-shadow:
+    0 0 3px rgba(153, 255, 153, 0.6),
+    0 0 6px rgba(0, 255, 65, 0.3);
+}
+
+.terminal-log .log-line.separator {
+    color: #00aa22;
+    font-style: italic;
+    margin-top: 0.6rem;
+    padding-top: 0.4rem;
+    border-top: 1px dashed rgba(0, 255, 65, 0.3);
+    animation: fadeIn 0.2s ease-in;
+    text-shadow: 0 0 3px rgba(0, 170, 34, 0.5);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-2px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.terminal-log::-webkit-scrollbar {
+    width: 6px;
+}
+
+.terminal-log::-webkit-scrollbar-track {
+    background: #000000;
+    border-radius: 4px;
+}
+
+.terminal-log::-webkit-scrollbar-thumb {
+    background: rgba(0, 255, 65, 0.4);
+    border-radius: 4px;
+}
+
+.terminal-log::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 255, 65, 0.7);
+}
+
+/* ============================================================
+ * SELECTS PERSONALIZADOS
+ * ============================================================ */
+
+.custom-select {
+    position: relative;
+    display: inline-block;
+    width: 180px;
+    user-select: none;
+    font-size: 0.9rem;
+}
+
+.custom-select-trigger {
+    background-color: var(--bg-input);
+    color: var(--text-main);
+    border: 1px solid #3c67e3;
+    border-radius: 6px;
+    padding: 0.4rem 0.8rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.custom-select-trigger:hover {
+    border-color: #527bee;
+}
+
+.custom-select-trigger.open {
+    border-color: #527bee;
+    box-shadow: 0 0 0 2px rgba(60, 103, 227, 0.3);
+}
+
+.custom-select-arrow {
+    font-size: 0.6rem;
+    transition: transform 0.2s ease;
+    color: #3c67e3;
+}
+
+.custom-select-trigger.open .custom-select-arrow {
+    transform: rotate(180deg);
+}
+
+.custom-select-options {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 4px;
+    background-color: var(--bg-primary);
+    border: 1px solid #3c67e3;
+    border-radius: 6px;
+    padding: 0.2rem 0;
+    list-style: none;
+    display: none;
+    z-index: 1000;
+    max-height: 200px;
+    overflow-y: auto;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.custom-select-options.open {
+    display: block;
+}
+
+.custom-select-options li {
+    padding: 0.4rem 0.8rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.custom-select-options li:hover {
+    background-color: var(--bg-secondary);
+    color: var(--text-main);
+}
+
+.custom-select-options li.selected {
+    background-color: var(--bg-secondary);
+    color: var(--text-main);
+    font-weight: 500;
+}
+
+/* ============================================================
+ * KERNEL DROPDOWN
+ * ============================================================ */
+
+.kernel-dropdown {
+    background-color: var(--bg-input) !important;
+    color: var(--text-main) !important;
+    border: 1px solid #3c67e3 !important;
+    border-radius: 6px;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    min-width: 200px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233c67e3' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.6rem center;
+    background-size: 1em;
+    padding-right: 2rem;
+}
+
+.kernel-dropdown:focus {
+    outline: none;
+    border-color: #527bee !important;
+    box-shadow: 0 0 0 2px rgba(60, 103, 227, 0.3);
+}
+
+.kernel-dropdown option {
+    background-color: var(--bg-primary) !important;
+    color: var(--text-main) !important;
+    padding: 0.4rem;
+}
+
+.kernel-dropdown:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ============================================================
+ * SESSÕES
+ * ============================================================ */
+
+.sessao-container {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.sessao-titulo {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.sessao-titulo .sessao-label {
+    display: inline-block;
+    font-size: 0.7rem;
+    padding: 0.15rem 0.6rem;
+    border-radius: 10px;
+    background-color: var(--bg-secondary);
+    color: var(--text-muted);
+    margin-right: 0.5rem;
+    vertical-align: middle;
+}
+
+.sessao-descricao {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--text-main);
+    margin-bottom: 1.25rem;
+}
+
+/* ============================================================
+ * HEADER DOS MODOS
+ * ============================================================ */
+
+.header-guide {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.header-guide .titulo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 0;
+    flex-shrink: 1;
+    overflow: hidden;
+}
+
+.header-guide .titulo h1 {
+    font-size: 1.5rem;
+    color: var(--text-main);
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+}
+
+.header-guide .titulo .badge-modo {
+    background-color: rgba(168, 0, 48, 0.15);
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 0.2rem 0.8rem;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+/* ============================================================
+ * HEADER-DIREITA
+ * ============================================================ */
+
+.header-direita {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+}
+
+/* ============================================================
+ * HEADER-CONTROLES
+ * ============================================================ */
+
+.header-controles {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: nowrap;
+}
+
+/* ============================================================
+ * i18n: SELETOR DE IDIOMA
+ * ============================================================ */
+
+.i18n-seletor-container {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.i18n-seletor-container .i18n-seletor-label {
+    font-size: 1rem;
+    color: var(--text-muted);
+}
+
+.i18n-seletor-container select.i18n-seletor {
+    background-color: var(--bg-input);
+    color: var(--text-main);
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding-right: 2rem;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a80030' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.6rem center;
+    background-size: 1em;
+    font-family: inherit;
+}
+
+.i18n-seletor-container select.i18n-seletor:hover {
+    border-color: var(--accent-hover);
+}
+
+.i18n-seletor-container select.i18n-seletor:focus {
+    outline: none;
+    border-color: var(--accent-hover);
+    box-shadow: 0 0 0 2px rgba(168, 0, 48, 0.3);
+}
+
+.i18n-seletor-container select.i18n-seletor option {
+    background-color: var(--bg-primary);
+    color: var(--text-main);
+}
+
+/* ============================================================
+ * TEMA: BOTÃO DE ALTERNÂNCIA
+ * ============================================================ */
+
+.tema-toggle-container {
+    display: inline-flex;
+    align-items: center;
+}
+
+.btn-tema {
+    background-color: var(--bg-input);
+    color: var(--text-main);
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+    width: 38px;
+    height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 0;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.btn-tema:hover {
+    border-color: var(--accent-hover);
+    background-color: var(--bg-secondary);
+    transform: translateY(-1px);
+}
+
+.btn-tema:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(168, 0, 48, 0.3);
+}
+
+/* ============================================================
+ * BOTÃO "VOLTAR AO INÍCIO"
+ * ============================================================ */
+
+.btn-voltar-inicio {
+    background-color: var(--bg-input);
+    color: var(--text-main);
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+    width: 38px;
+    height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 0;
+    line-height: 1;
+    text-decoration: none;
+    flex-shrink: 0;
+}
+
+.btn-voltar-inicio:hover {
+    border-color: var(--accent-hover);
+    background-color: var(--bg-secondary);
+    transform: translateY(-1px);
+}
+
+.btn-voltar-inicio:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(168, 0, 48, 0.3);
+}
+
+.btn-voltar-inicio svg {
+    width: 18px;
+    height: 18px;
+    display: block;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* ============================================================
+ * BADGE "ATUALIZAÇÃO DISPONÍVEL"
+ * ============================================================
+ * Botão circular flutuante no canto superior direito do
+ * .version-badge. Só ícone SVG — sem texto.
+ *
+ * Mantido laranja (não vermelho) para não competir com o acento
+ * Debian. O laranja sinaliza "atenção" universalmente sem
+ * colidir com a identidade visual da distribuição.
+ */
+
+.badge-atualizacao {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: var(--warning-border);
+    color: #ffffff;
+    border: 2px solid var(--bg-primary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    box-sizing: border-box;
+    font-family: inherit;
+    line-height: 1;
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4);
+    transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+    animation: pulse-badge 2.5s infinite ease-in-out;
+    z-index: 10;
+    outline: none;
+    text-decoration: none;
+}
+
+.badge-atualizacao:hover {
+    background-color: #d97706;
+    transform: scale(1.1);
+    animation: none;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.6);
+}
+
+.badge-atualizacao:focus,
+.badge-atualizacao:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.5);
+}
+
+.badge-atualizacao:active {
+    transform: scale(0.95);
+}
+
+.badge-atualizacao-icon {
+    width: 16px;
+    height: 16px;
+    display: block;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    pointer-events: none;
+}
+
+@keyframes pulse-badge {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+}
+
+/* ============================================================
+ * BARRA DE PROGRESSO GUIADA
+ * ============================================================ */
+
+.progress-guide {
+    background-color: var(--bg-tertiary);
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 2rem;
+    border: 1px solid var(--border);
+}
+
+.progress-guide .barra {
+    width: 100%;
+    height: 8px;
+    background-color: var(--bg-secondary);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-guide .barra .fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #a80030, #34d399);
+    border-radius: 4px;
+    transition: width 0.5s ease;
+}
+
+.progress-guide .info {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.progress-guide .info .sessao-atual {
+    color: var(--accent-soft);
+    font-weight: bold;
+}
+
+/* ============================================================
+ * NAVEGAÇÃO GUIADA
+ * ============================================================ */
+
+.nav-guide {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.nav-guide .info {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.nav-guide .info strong {
+    color: var(--text-main);
+}
+
+.nav-guide .botoes {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.btn-voltar {
+    background-color: #4b5563;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    min-width: 0;
+    white-space: normal;
+}
+
+.btn-voltar:hover:not(:disabled) {
+    background-color: #6b7280;
+}
+
+.btn-voltar:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-proximo {
+    background-color: #3c67e3;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 0;
+    white-space: normal;
+}
+
+.btn-proximo:hover:not(:disabled) {
+    background-color: #527bee;
+    transform: translateY(-1px);
+}
+
+.btn-proximo:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ============================================================
+ * LOADING
+ * ============================================================ */
+
+.loading-sessao {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--text-muted);
+}
+
+.loading-sessao .spinner {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-bottom: 1rem;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes fadeInCard {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+ * RESPONSIVIDADE
+ * ============================================================ */
+
+@media (max-width: 768px) {
+    body {
+        padding: 1rem;
+    }
+
+    .nav-guide {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .nav-guide .botoes {
+        justify-content: center;
+    }
+
+    .custom-select {
+        width: 100%;
+        max-width: 200px;
+    }
+}
+
+@media (max-width: 480px) {
+    .grupo-botoes {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .grupo-botoes .btn-executar,
+    .grupo-botoes .btn-reverter {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .grid-launchers {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ============================================================
+ * FEEDBACK TÁTIL
+ * ============================================================
+ * Dá uma resposta visual imediata ao clique, sem depender do
+ * JS. O :active dispara antes do :hover, então o efeito é
+ * sentido mesmo em cliques rápidos.
+ */
+
+.btn-executar:active:not(:disabled),
+.btn-reverter:active:not(:disabled),
+.btn-voltar:active:not(:disabled),
+.btn-proximo:active:not(:disabled),
+.btn-tema:active,
+.btn-voltar-inicio:active,
+.session-menu-item:active {
+    transform: translateY(0) scale(0.97);
+    transition-duration: 0.05s;
+}
+
+/* ============================================================
+ * PROGRESSO GLOBAL
+ * ============================================================
+ * Mostrado no header de guiado.html.
+ * "N/M" onde N é o número de sessões concluídas.
+ */
+
+.progresso-global {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    padding: 0.15rem 0.6rem;
+    background-color: var(--bg-secondary);
+    border-radius: 10px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.progresso-global .numero {
+    color: var(--accent-soft);
+    font-weight: 600;
+}
+
+/* ============================================================
+ * TOASTS
+ * ============================================================
+ * O container é um overlay full-viewport com pointer-events: none
+ * e overflow: hidden. Os toasts são alinhados ao topo-direito
+ * dentro dele.
+ */
+
+.dap-toast-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 99999;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: flex-start;
+    padding: 1rem;
+    gap: 0.5rem;
+    overflow: hidden;
+}
+
+.dap-toast {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    color: var(--text-main);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    font-size: 0.9rem;
+    line-height: 1.4;
+    pointer-events: auto;
+    animation: slideInToast 0.3s ease-out;
+    max-width: min(360px, calc(100vw - 2rem));
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    box-sizing: border-box;
+    flex-shrink: 0;
+}
+
+.dap-toast.success {
+    border-left-color: var(--success);
+}
+
+.dap-toast.error {
+    border-left-color: var(--danger);
+}
+
+.dap-toast.info {
+    border-left-color: var(--accent);
+}
+
+.dap-toast.removendo {
+    animation: slideOutToast 0.3s ease-in forwards;
+}
+
+@keyframes slideInToast {
+    from { transform: translateX(120%); opacity: 0; }
+    to   { transform: translateX(0);   opacity: 1; }
+}
+
+@keyframes slideOutToast {
+    from { transform: translateX(0);   opacity: 1; }
+    to   { transform: translateX(120%); opacity: 0; }
+}
+
+/* ============================================================
+ * MENU DE SESSÕES FIXO
+ * ============================================================
+ * Substitui as bolinhas coloridas por um menu horizontal de
+ * "chips" clicáveis, fixo no topo da página.
+ */
+
+.session-menu-wrapper {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background-color: var(--bg-primary);
+    border-bottom: 1px solid var(--border);
+    padding: 0.75rem 1rem;
+    margin: -2rem -2rem 1.5rem -2rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.session-menu {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    max-width: 900px;
+    margin: 0 auto;
+    justify-content: center;
+    list-style: none;
+    padding: 0;
+}
+
+.session-menu-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.4rem 0.75rem;
+    background-color: var(--bg-secondary);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+    white-space: nowrap;
+    text-decoration: none;
+    line-height: 1.2;
+}
+
+.session-menu-item:hover {
+    border-color: var(--accent);
+    color: var(--text-main);
+    transform: translateY(-1px);
+}
+
+.session-menu-item.ativa {
+    background-color: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(168, 0, 48, 0.25);
+    font-weight: 600;
+}
+
+.session-menu-item .session-icon {
+    font-size: 0.95rem;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.session-menu-item .session-label {
+    font-size: 0.78rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.session-menu-item .session-numero {
+    font-size: 0.65rem;
+    opacity: 0.7;
+    font-weight: 600;
+    padding: 0 0.25rem;
+    border-radius: 6px;
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.session-menu-item.ativa .session-numero {
+    background-color: rgba(255, 255, 255, 0.2);
+    opacity: 1;
+}
+
+.session-menu-item.concluida::after {
+    content: '✓';
+    font-size: 0.7rem;
+    color: var(--success);
+    margin-left: 0.1rem;
+    font-weight: 700;
+}
+
+.session-menu-item.ativa.concluida::after {
+    color: #fff;
+}
+
+/* ============================================================
+ * MENU DE SESSÕES — ESTADO BLOQUEADO
+ * ============================================================ */
+
+.session-menu-item.bloqueado {
+    opacity: 0.5;
+    cursor: not-allowed;
+    filter: grayscale(0.4);
+}
+
+.session-menu-item.bloqueado:hover {
+    border-color: var(--border);
+    color: var(--text-muted);
+    transform: none;
+}
+
+.session-menu-item.ativa.bloqueado {
+    opacity: 0.7;
+    filter: grayscale(0.2);
+}
+
+@media (max-width: 900px) {
+    .session-menu-wrapper {
+        margin: -1rem -1rem 1rem -1rem;
+        padding: 0.6rem 0.75rem;
+    }
+
+    .session-menu {
+        justify-content: flex-start;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        scrollbar-width: thin;
+        padding-bottom: 0.25rem;
+    }
+
+    .session-menu::-webkit-scrollbar {
+        height: 4px;
+    }
+
+    .session-menu::-webkit-scrollbar-thumb {
+        background-color: var(--border);
+        border-radius: 2px;
+    }
+
+    .session-menu::-webkit-scrollbar-thumb:hover {
+        background-color: var(--accent);
+    }
+
+    .session-menu-item {
+        flex-shrink: 0;
+    }
+}
+
+/* ============================================================
+ * DASHBOARD
+ * ============================================================
+ * Grid de cards usada pela sessão de diagnóstico.
+ */
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.dashboard-card {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    transition: all 0.2s ease;
+}
+
+.dashboard-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(168, 0, 48, 0.12);
+}
+
+.dashboard-card .dashboard-titulo {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.dashboard-card .dashboard-valor {
+    font-size: 1.3rem;
+    color: var(--text-main);
+    font-weight: 600;
+    font-family: "SFMono-Regular", Consolas, monospace;
+    line-height: 1.2;
+    word-break: break-word;
+}
+
+.dashboard-card .dashboard-subtexto {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 0.25rem;
+}
+
+.dashboard-card.destaque-card {
+    border-left: 3px solid var(--accent);
+}
+
+.dashboard-card .dashboard-valor.ok {
+    color: var(--success-soft);
+}
+
+.dashboard-card .dashboard-valor.alerta {
+    color: var(--warning-soft);
+}
+
+.dashboard-card .dashboard-valor.erro {
+    color: var(--danger);
+}
+
+@media (max-width: 600px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-card .dashboard-valor {
+        font-size: 1.15rem;
+    }
+}
+
+/* ============================================================
+ * ESTILOS ESPECÍFICOS DAS SESSÕES
+ * ============================================================ */
+
+.lista-info {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0;
+}
+
+.lista-info li {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.4rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.9rem;
+}
+
+.lista-info li:last-child {
+    border-bottom: none;
+}
+
+.lista-info li .label {
+    color: var(--text-muted);
+    flex-shrink: 0;
+}
+
+.lista-info li .valor {
+    color: var(--text-main);
+    font-weight: 500;
+    text-align: right;
+    word-break: break-word;
+}
+
+.bloco-info {
+    background-color: var(--bg-secondary);
+    border-left: 3px solid var(--accent);
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    margin: 0.75rem 0;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+.bloco-info strong {
+    color: var(--text-main);
+}
+
+/* ============================================================
+ * ACORDEÃO ANINHADO
+ * ============================================================
+ * Corrige a rotação da seta (::after) quando um acordeão está
+ * dentro de outro. A regra padrão gira 180deg em [open], mas
+ * dentro de um acordeão pai o navegador pode herdar o estado
+ * do pai. Forçamos o estado baseado no atributo [open] do
+ * próprio elemento, sem herança.
+ */
+
+.acordeao .acordeao summary::after {
+    transform: rotate(0deg);
+}
+
+.acordeao .acordeao[open] summary::after {
+    transform: rotate(180deg);
+}
+
+/* ============================================================
+ * WRAPPER DE FLATPAK COM ÍCONE DE DESINSTALAR
+ * ============================================================
+ * Estrutura:
+ *   <div class="btn-flatpak-wrapper">
+ *     <button class="btn-executar">...</button>
+ *     <button class="btn-flatpak-uninstall">🗑️</button>
+ *   </div>
+ */
+
+.btn-flatpak-wrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: stretch;
+    gap: 0.35rem;
+}
+
+.btn-flatpak-wrapper .btn-executar {
+    min-width: 0;
+}
+
+.btn-flatpak-uninstall {
+    background-color: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    width: 34px;
+    min-width: 34px;
+    align-self: stretch;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 0;
+    flex-shrink: 0;
+    opacity: 0.85;
+}
+
+.btn-flatpak-uninstall:hover:not(:disabled) {
+    background-color: #ef4444;
+    color: #fff;
+    border-color: #ef4444;
+    opacity: 1;
+    transform: translateY(-1px);
+}
+
+.btn-flatpak-uninstall:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.3);
+}
+
+.btn-flatpak-uninstall:active:not(:disabled) {
+    transform: translateY(0) scale(0.96);
+    transition-duration: 0.05s;
+}
+
+.btn-flatpak-uninstall svg {
+    width: 16px;
+    height: 16px;
+    display: block;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    pointer-events: none;
+}
+
+.grid-launchers .btn-flatpak-wrapper,
+.grid-launchers .launcher-item .btn-flatpak-wrapper {
+    width: 100%;
+}
+
+@media (max-width: 480px) {
+    .btn-flatpak-wrapper {
+        flex-wrap: wrap;
+    }
+}
+
+/* ============================================================
+ * ESTADOS DE BOTÕES — padrão unificado
+ * ============================================================
+ *
+ * `aplicarEstadoInstalavel` (em script.js) alterna o mesmo botão
+ * entre três estados visuais, sem recriar elementos:
+ *
+ *   data-estado="instalado-abrir"
+ *     → botão verde com texto de "Abrir X"; clique chama o handler
+ *       do botão de abrir que estava escondido. A lixeira aparece
+ *       ao lado (criada por `_mostrarLixeira`).
+ *
+ *   data-estado="instalado-sem-abrir"
+ *     → botão cinza com "✅ Nome do recurso instalado"; sem
+ *       handler de clique. Usado em módulos de kernel, pacotes
+ *       sem interface gráfica e configurações de sistema.
+ *
+ *   (sem data-estado)
+ *     → estado original (azul, clicável, texto de instalar).
+ */
+
+.btn-executar[data-estado="instalado-abrir"] {
+    background-color: #10b981 !important;
+}
+
+.btn-executar[data-estado="instalado-abrir"]:hover:not(:disabled) {
+    background-color: #059669 !important;
+}
+
+.btn-executar[data-estado="instalado-sem-abrir"] {
+    background-color: #4b5563 !important;
+    cursor: default;
+}
