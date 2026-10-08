@@ -12,7 +12,7 @@ que exibe a seção da versão atual dentro do DAP, na sessão **Sobre o DAP**.
 
 ---
 
-## v0.1-10072026
+## v0.1-10082026
 
 ### 📌 Origem do projeto
 
@@ -20,49 +20,56 @@ que exibe a seção da versão atual dentro do DAP, na sessão **Sobre o DAP**.
 - **Distribuição alvo:** Debian **Stable**, instalado a partir de **Live ISO** (não netinst, não DVD). Live ISOs trazem pacotes incompletos por padrão — localização, corretor ortográfico, codecs, firmware, Flatpak — e o DAP existe para resolver isso.
 - **Filosofia:** tudo opcional. Nada é habilitado por padrão sem clique explícito do usuário. Repositórios como `backports` e `non-free` são botões, não pré-requisitos do instalador.
 
-### ✨ Fase 1 — Esqueleto funcional
+### ✨ Sessões implementadas
 
-Esta é a primeira versão do DAP. Ela entrega **a base técnica completa**, sem nenhuma sessão de automação ainda. As sessões entram na Fase 2.
+Esta versão entrega **13 sessões de automação**, cobrindo o escopo completo definido no kickoff:
 
-#### Arquitetura
+1. 🚀 **Primeiros Passos** — `apt update`/`upgrade`, conversão para deb822, ativação de `non-free`/`contrib`/`non-free-firmware`, Flatpak + Flathub, backports (kernel/Mesa/firmware), `extrepo`, locale PT-BR, hunspell e arquitetura i386.
+2. 📦 **Aplicativos Recomendados** — ~45 apps Flatpak em 8 blocos temáticos, Suíte ArtCraft (7 apps Rust distribuídos como `.deb` no GitHub) e Ferramentas de Acesso Remoto (RustDesk, Remmina, GNOME Connections, KRDC).
+3. 🔤 **Codecs e Compatibilidade** — codecs multimídia essenciais, `libdvdcss2` via deb-multimedia, fontes Microsoft com substitutos métricos (`caladea` e `carlito`) e perfil de renderização `fontconfig`.
+4. 🖥️ **Hardware** — drivers AMD (Vulkan/Mesa/RADV, VA-API/VDPAU, CoreCtrl, LACT), NVIDIA (detecção via `nvidia-detect` com fallback de heurística, CUDA + NVENC, modeset) e Intel (VA-API).
+5. 🔌 **Dispositivos e Periféricos** — detecção automática de hardware via `/hardware-scan`, firmware-linux adicional, driver Broadcom, grupo `input` e regras udev do `steam-devices`.
+6. 🎮 **Gaming** — launchers (Steam nativo, Heroic, Lutris), Wine/Proton (Wine, Winetricks, Bottles), desempenho (GameMode, MangoHud, Goverlay, Gamescope), ferramentas avançadas (ProtonUp-Qt, vkBasalt, presets) e emuladores (RetroArch, Dolphin, PCSX2, RPCS3, Duckstation).
+7. 🏠 **Casa e Escritório** — CUPS + Avahi, Samba, LocalSend, Warpinator, KeePassXC e Okular + Tesseract.
+8. 📊 **Diagnóstico** — painel do sistema, top 5 processos, partições, saúde de disco (GSmartControl), monitoramento e controle térmico (CoolerControl) e logs do journal.
+9. 🎬 **Produção Multimídia** — OBS Studio (Flatpak) + câmera virtual (`v4l2loopback-dkms`) e EasyEffects.
+10. 💻 **Virtualização** — QEMU/KVM + virt-manager (com configuração automática da rede padrão do libvirt) e GNOME Boxes.
+11. 🛠️ **Ajustes e Manutenção** — tunings de performance (`vm.max_map_count`, `vm.swappiness`, `vfs_cache_pressure`, TCP BBR), ajustes de áudio (realtime, PipeWire quantum), configuração de paralelismo do APT, correção de horário em dual-boot, limpeza, gerenciamento de kernels e GRUB.
+12. 🐧 **Estado do Debian** — versão do Debian, detecção de variante (Stable/Testing/Sid/derivados) e AppArmor (o sistema de controle de acesso padrão do Debian).
+13. 📖 **Sobre o DAP** — atualizar, desinstalar e changelog dinâmico.
 
-- **Container WebKitGTK** (`src/dap-container.c`): janela GTK3 com `WebKitWebView` embutido. Compila contra `libwebkit2gtk-4.1-dev` + `libgtk-3-dev` (Debian 12+). Intercepta navegação via `decide-policy` para abrir links externos no navegador padrão via `xdg-open`. `g_set_prgname("dap-container")` e `gtk_window_set_wmclass("dap-container", "dap-container")` para que o KDE Plasma em Wayland associe o ícone correto.
-- **Servidor Node.js local** (`server.js`): roda em `127.0.0.1:3000`, sem acesso externo. Serve arquivos estáticos, locales, SSE para logs em tempo real e endpoints de execução.
-- **Frontend** (`index.html`, `guiado.html`, `script.js`, `i18n.js`, `style.css`): UI carregada dentro do container, com i18n (PT-BR/EN/ES), tema claro/escuro, fila de Flatpak, bloqueio de sessão durante execução e sistema de estado por comando.
+### 🔧 Correções
 
-#### Autenticação e segurança
+- **`firmware-linux` e `firmware-misc-nonfree`** agora são instalados via backports quando disponíveis, para garantir compatibilidade com hardware recente.
+- **Detecção de driver recomendado** em `hardware.html` — o DAP agora informa explicitamente se o sistema já está usando o driver recomendado (`amdgpu` em AMD, `nvidia`/`nvidia_drm` em NVIDIA, `i915`/`xe` em Intel).
 
-- **Whitelist de comandos sem autenticação**: `dpkg-query`, `dpkg -l`, `uname -r`, `cat /etc/debian_version`, `cat /etc/os-release`, `flatpak install`, `flatpak uninstall`, `gtk-launch`, `systemctl --user` e os comandos de abrir apps GUI via `setsid -f`. Comandos que exigem privilégio (`apt`, `dpkg`, `dpkg-reconfigure`, `update-grub`, `update-initramfs`, `locale-gen`, `usermod`, etc.) passam pela cadeia de autenticação.
-- **Rejeição de comandos com encadeamento shell** (`;`, `&&`, `|`, `$(...)`, backticks) quando vêm da whitelist — evita burlar a validação com `dpkg-query -W foo; rm -rf ~`.
-- **Cadeia de autenticação gráfica** em ordem de preferência: `kdesu` (KDE, via `kde-cli-tools`) → `pkexec` (PolicyKit) → `sudo -A` com `SUDO_ASKPASS` (`lxqt-sudo`, `ssh-askpass`, `ssh-askpass-gnome`, `beesu`, `ksshaskpass`) → fallback `zenity`/`kdialog` + `sudo -S` via stdin. O `install.sh` detecta o DE e instala o diálogo apropriado.
-- **Rate limiting** de 1 execução por `idComando` a cada 1,5s.
-- **Rastreamento de processos filhos** em um `Set`, com kill em árvore (grupo de processos) no `SIGINT`.
+### 🎯 Melhorias
 
-#### Detecção de hardware
+- **Steam no Debian** — usa `steam-installer` (não `steam`), com binário em `/usr/games/steam`.
+- **NTSYNC removido** — o Debian 13 (kernel 6.12) não tem o módulo; o DAP explica isso na sessão Gaming.
+- **Gamescope Session** — fica para v1.5.
+- **AppArmor no painel de Estado do Debian** — substitui o SELinux do Fedora.
+- **CoolerControl via repositório oficial** — não está no `main` do Debian, mas o desenvolvedor mantém um repositório APT oficial.
 
-- **`hardware-service.js`** e **`hardware_map.json`**: estrutura pronta, mas o mapeamento ainda é o do FAP (baseado em `rpm`). O endpoint `/hardware-scan` existe e responde, mas retorna lista vazia no Debian até a Fase 5, quando o mapeamento vendor→pacote será reescrito para `dpkg-query` e pacotes Debian.
+### 📝 Notas de desenvolvimento
 
-#### Internacionalização
+- **Serviço de hardware reescrito para Debian** — `hardware-service.js` usa `dpkg-query` (não mais `rpm -q`), detecta NVIDIA via `nvidia-detect` (com fallback de heurística via `lspci`) e `hardware_map.json` aponta para pacotes Debian (`nvidia-open-kernel-dkms`, `broadcom-sta-dkms`, `firmware-realtek`, etc.).
+- **Formato deb822** — o DAP detecta se o sistema está no formato legado e converte automaticamente via `apt modernize-sources`.
+- **Backports** — `trixie-backports` (codename detectado dinamicamente via `/etc/os-release`).
+- **Parser de progresso do `apt`** — por enquanto, o `_detectarProgressoPacotes()` do `server.js` retorna sempre `null` (o `apt` não emite `[N/M]`). A barra de progresso cai no fallback do timer.
 
-- **`i18n.js`**: sistema completo, reaproveitado do FAP. PT-BR é o HTML nativo, EN/ES vêm de `locales/<lang>.json`. Cache em `localStorage` por versão, invalidação automática quando o DAP é atualizado.
-- **`locales/en.json`** e **`locales/es.json`**: contêm apenas as chaves de `comum`, `index`, `guiado` e `seletor`. A chave `sessoes` está **vazia** — será preenchida conforme cada sessão for adicionada na Fase 2.
+### 📝 Notas de versão
 
-#### Tema visual
+- **Versionamento**: `MAJOR.MINOR-DDMMYYYY`. O sufixo de data é o dia/mês/ano da publicação.
+- **Testado em**: Debian 13 (Trixie) com KDE Plasma, a partir de Live ISO.
+- **Distribuição alvo explícita**: Debian puro. Derivados (MX Linux, LMDE, Kali, Raspberry Pi OS) podem funcionar, mas não são oficialmente suportados.
 
-- **Tema claro como padrão**, com acento vermelho Debian (`#a80030`, cor do site oficial). Tema escuro como alternativa.
-- **Log Matrix verde** mantido (assinatura visual do projeto).
-- **Botões com as cores do FAP**: azul `#3c67e3` para ação principal, verde `#10b981` para "Abrir", vermelho `#ef4444` para remover/reverter, vermelho destrutivo com contorno tracejado para ações irreversíveis.
+---
 
-#### Instalação e inicialização
+## Próximas versões (roadmap)
 
-- **`install.sh`**: detecta Debian via `/etc/os-release` (`ID=debian`), avisa (mas não bloqueia) derivados (`ID_LIKE` contendo `debian`) e Testing/Sid. Instala dependências do container via `apt`, detecta o DE e instala a dependência de autenticação apropriada, clona o repositório, compila o container, cria symlinks (`dap`, `dap-compat`, `dap-container`) e atalhos `.desktop` + ícone em `hicolor`.
-- **`iniciar_dap.sh`**: detecta o DE, abre o terminal nativo do desktop, inicia o servidor Node.js, abre o container WebKitGTK (ou cai no Firefox/Chromium como fallback).
-- **`iniciar_dap_compat.sh`**: força renderização por software (`LIBGL_ALWAYS_SOFTWARE=1`, `GALLIUM_DRIVER=llvmpipe`, `GDK_BACKEND=x11`) para GPUs sem aceleração 3D.
+As versões abaixo são planejadas. Elas só entram neste changelog quando forem publicadas.
 
-#### Comandos disponíveis
-
-```bash
-dap                       # Iniciar (modo normal)
-dap-compat                # Iniciar (modo compatibilidade — GPUs antigas)
-./install.sh --update     # Atualizar
-./install.sh --uninstall  # Desinstalar
+- **v0.2** — Refinamentos visuais e correções de bugs reportados pela comunidade.
+- **v0.3** — Gamescope Session (sessão de login que abre direto no Big Picture).
+- **v1.0** — Primeira versão estável, com paridade funcional completa e revisão geral do código.

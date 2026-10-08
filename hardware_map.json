@@ -1,8 +1,9 @@
 {
     "_meta": {
-        "description": "Mapa de hardware do FAP. Associa IDs de dispositivo (PCI/USB) a pacotes e repositórios. PRs bem-vindos em github.com/vitaotub/Fedora-Advantage-Panel.",
-        "format_version": "1.1",
-        "notes": "Este arquivo é lido em runtime pelo endpoint /hardware-scan do server.js. Alterações aqui afetam a sessão 'Dispositivos e Periféricos'."
+        "description": "Mapa de hardware do DAP. Associa IDs de dispositivo (PCI/USB) a pacotes Debian. PRs bem-vindos em github.com/vitaotub/Debian-Advantage-Panel.",
+        "format_version": "1.0",
+        "target_distro": "Debian 13 (Trixie) e superiores",
+        "notes": "Este arquivo é lido em runtime pelo endpoint /hardware-scan do server.js. Alterações aqui afetam a sessão 'Hardware'."
     },
 
     "pci_vendors": {
@@ -10,52 +11,52 @@
             "name": "NVIDIA Corporation",
             "category": "gpu",
             "detection": "nvidia-detect",
-            "packages": ["akmod-nvidia"],
-            "repo_required": "rpmfusion-nonfree",
-            "notes": "Requer RPM Fusion nonfree. O FOF tenta usar nvidia-detect para identificar a geração exata e sugerir o pacote correto (akmod-nvidia, akmod-nvidia-470xx ou akmod-nvidia-390xx).",
-            "notesKey": "sessoes.dispositivos-perifericos.notes.nvidia"
+            "packages_turing_plus": ["nvidia-open-kernel-dkms", "nvidia-driver", "firmware-misc-nonfree"],
+            "packages_legacy": ["nvidia-kernel-dkms", "nvidia-driver", "firmware-misc-nonfree"],
+            "repo_required": null,
+            "notes": "Para GPUs Turing (RTX 20xx / GTX 16xx) ou mais recentes, o driver open-kernel é recomendado pelo Debian 13. Para Maxwell, Pascal, Volta e anteriores, o driver proprietário clássico é obrigatório.",
+            "notesKey": "sessoes.hardware.notes.nvidia"
         },
         "1002": {
             "name": "AMD/ATI",
             "category": "gpu",
-            "packages": ["mesa-va-drivers-freeworld"],
-            "repo_required": "rpmfusion-free",
-            "notes": "Aceleração de vídeo por hardware (VA-API) em GPUs AMD. O Mesa padrão do Fedora tem esse suporte bloqueado por licenciamento.",
-            "notesKey": "sessoes.dispositivos-perifericos.notes.amd_gpu"
+            "packages": ["mesa-vulkan-drivers", "mesa-vulkan-drivers:i386", "mesa-va-drivers", "mesa-vdpau-drivers", "vulkan-tools", "vulkan-loader"],
+            "repo_required": "main",
+            "notes": "Mesa, RADV e VA-API no Debian já vem com suporte completo a AMD. Não é preciso instalar pacotes 'freeworld' como no Fedora.",
+            "notesKey": "sessoes.hardware.notes.amd_gpu"
         },
         "1022": {
             "name": "AMD (APU)",
             "category": "gpu",
-            "packages": ["mesa-va-drivers-freeworld"],
-            "repo_required": "rpmfusion-free",
-            "notes": "APUs AMD com gráficos integrados (Ryzen com Radeon Vega ou RDNA).",
-            "notesKey": "sessoes.dispositivos-perifericos.notes.amd_apu"
+            "packages": ["mesa-vulkan-drivers", "mesa-vulkan-drivers:i386", "mesa-va-drivers", "mesa-vdpau-drivers"],
+            "repo_required": "main",
+            "notes": "APUs AMD com gráficos integrados (Ryzen com Radeon Vega, RDNA ou RDNA2). O Mesa do Debian já cobre tudo.",
+            "notesKey": "sessoes.hardware.notes.amd_apu"
         },
         "8086": {
             "name": "Intel Corporation",
             "category": "gpu",
-            "packages": ["intel-media-driver"],
-            "repo_required": "fedora",
-            "notes": "Aceleração de vídeo em iGPUs Intel Skylake (6ª geração) ou mais recentes. Chips mais antigos (Haswell ou anteriores) usam o driver i965, já presente no Fedora.",
-            "notesKey": "sessoes.dispositivos-perifericos.notes.intel_gpu"
+            "packages": ["intel-media-va-driver", "intel-media-va-driver-non-free"],
+            "repo_required": "non-free",
+            "notes": "Para iGPUs Intel Skylake (6ª geração) ou mais recentes. O pacote non-free traz o driver VA-API completo. Chips Haswell e anteriores usam o i965, que já vem no Debian.",
+            "notesKey": "sessoes.hardware.notes.intel_gpu"
         },
         "14e4": {
             "name": "Broadcom Inc.",
             "category": "wifi",
-            "packages": ["akmod-wl"],
-            "repo_required": "rpmfusion-nonfree",
+            "packages": ["broadcom-sta-dkms", "firmware-brcm80211"],
+            "repo_required": "non-free",
             "conflict_check": ["brcmfmac", "b43", "bcma"],
-            "notes": "Só instale se o driver open-source (brcmfmac/b43) não funcionar. akmod-wl conflita com eles e pode derrubar o Wi-Fi que já funcionava.",
-            "notesKey": "sessoes.dispositivos-perifericos.notes.broadcom_wifi"
+            "notes": "O driver `broadcom-sta-dkms` conflita com os drivers open-source (brcmfmac, b43). Só instale se o Wi-Fi não funcionar com os drivers padrão do Debian.",
+            "notesKey": "sessoes.hardware.notes.broadcom_wifi"
         },
         "10ec": {
             "name": "Realtek Semiconductor",
             "category": "ethernet",
-            "packages": ["akmod-r8168"],
-            "repo_required": "rpmfusion-nonfree",
-            "conflict_check": ["r8169"],
-            "notes": "Driver alternativo para placas Ethernet Realtek. O driver padrão (r8169) funciona na maioria dos casos — só instale akmod-r8168 se o cabo não for reconhecido.",
-            "notesKey": "sessoes.dispositivos-perifericos.notes.realtek_ethernet"
+            "packages": ["firmware-realtek"],
+            "repo_required": "main",
+            "notes": "O driver r8169 do kernel cobre quase todas as placas Realtek. O pacote `firmware-realtek` traz firmware adicional para modelos recentes.",
+            "notesKey": "sessoes.hardware.notes.realtek_ethernet"
         }
     },
 

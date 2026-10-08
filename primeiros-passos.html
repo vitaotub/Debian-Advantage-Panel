@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DAP - Primeiros Passos</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="sessao-container" id="sessao-primeiros-passos" style="border-left: 4px solid #a80030;">
+<div class="sessao-titulo">
+<span class="sessao-label">Sessão</span>
+<span data-i18n="sessoes.primeiros-passos.titulo">🚀 Primeiros Passos</span>
+</div>
+
+<!-- Acórdeão principal — descrição da sessão -->
+<div class="acordeao-principal">
+<span data-i18n="sessoes.primeiros-passos.descricao">Antes de qualquer configuração, atualize o sistema e habilite os repositórios essenciais. Estes passos são pré-requisito para todas as próximas sessões.</span>
+</div>
+
+<!-- ============================================================
+BLOCO 1 — ATUALIZAR O DEBIAN
+============================================================ -->
+<details class="acordeao" open>
+<summary data-i18n="sessoes.primeiros-passos.apt_update_titulo">🔄 Atualizar o Debian</summary>
+<div class="acordeao-conteudo">
+
+<!-- apt update -->
+<div class="bloco-comando">
+<div class="comando-info">
+<h3 data-i18n="sessoes.primeiros-passos.apt_update_titulo">🔄 Atualizar índice de pacotes</h3>
+<p data-i18n-html="sessoes.primeiros-passos.apt_update_desc">Sincroniza a lista local de pacotes com os repositórios Debian configurados. Rode isto antes de instalar qualquer coisa.</p>
+<div class="grupo-botoes">
+<button class="btn-executar" onclick="executarAptUpdate()" data-comando="apt-update" data-logbox="log-sessao-primeiros-passos" id="btn-apt-update" data-i18n="sessoes.primeiros-passos.btn_apt_update">
+🔄 Atualizar índices
+</button>
+</div>
+</div>
+<div class="progress-container" id="progress-apt-update">
+<div class="progress-bar"><div class="progress-fill" id="progress-fill-apt-update"></div></div>
+<div class="progress-text"><span class="status" id="progress-status-apt-update">⏳ Iniciando...</span><span class="percentage" id="progress-percent-apt-update">0%</span></div>
+</div>
+</div>
+
+<!-- apt upgrade -->
+<div class="bloco-comando">
+<div class="comando-info">
+<h3 data-i18n="sessoes.primeiros-passos.apt_upgrade_titulo">⬆️ Atualizar pacotes instalados</h3>
+<p data-i18n-html="sessoes.primeiros-passos.apt_upgrade_desc">Atualiza todos os pacotes já instalados no sistema, incluindo correções de segurança e versões pontuais.</p>
+<div class="grupo-botoes">
+<button class="btn-executar" onclick="executarAptUpgrade()" data-comando="apt-upgrade" data-logbox="log-sessao-primeiros-passos" id="btn-apt-upgrade" data-i18n="sessoes.primeiros-passos.btn_apt_upgrade">
+⬆️ Atualizar sistema
+</button>
+</div>
+</div>
+<div class="progress-container" id="progress-apt-upgrade">
+<div class="progress-bar"><div class="progress-fill" id="progress-fill-apt-upgrade"></div></div>
+<div class="progress-text"><span class="status" id="progress-status-apt-upgrade">⏳ Iniciando...</span><span class="percentage" id="progress-percent-apt-upgrade">0%</span></div>
+</div>
+</div>
+
+</div>
+</details>
+
+<!-- ============================================================
+BLOCO 2 — CONVERTER SOURCES PARA DEB822
+============================================================ -->
+<details class="acordeao">
+<summary data-i18n="sessoes.primeiros-passos.deb822_titulo">📄 Converter sources para formato deb822</summary>
+<div class="acordeao-conteudo">
+
+<div class="bloco-comando">
+<div class="comando-info">
+<p data-i18n-html="sessoes.primeiros-passos.deb822_desc">O Debian 13 usa o formato moderno <code>.sources</code> (deb822) por padrão. Se o seu sistema ainda usa o <code>/etc/apt/sources.list</code> legado, este botão converte automaticamente usando <code>apt modernize-sources</code>. Se você já está em deb822, nada muda.</p>
+<div class="grupo-botoes">
+<button class="btn-executar" onclick="executarDeb822Converter()" data-comando="deb822-converter" data-logbox="log-sessao-primeiros-passos" id="btn-deb822-converter" data-i18n="sessoes.primeiros-passos.btn_deb822_converter">
+📄 Converter para deb822
+</button>
+</div>
+</div>
+<div class="progress-container" id="progress-deb822-converter">
+<div class="progress-bar"><div class="progress-fill" id="progress-fill-deb822-converter"></div></div>
+<div class="progress-text"><span class="status" id="progress-status-deb822-converter">⏳ Iniciando...</span><span class="percentage" id="progress-percent-deb822-converter">0%</span></div>
+</div>
+</div>
+
+</div>
+</details>
+
+<!-- ============================================================
+BLOCO 3 — ATIVAR NON-FREE / CONTRIB / NON-FREE-FIRMWARE
+============================================================ -->
+<details class="acordeao">
+<summary data-i18n="sessoes.primeiros-passos.non_free_titulo">📦 Ativar non-free, contrib e non-free-firmware</summary>
+<div class="acordeao-conteudo">
+
+<div class="bloco-comando">
+<div class="comando-info">
+<p data-i18n-html="sessoes.primeiros-passos.non_free_desc">Adiciona os componentes <code>contrib</code>, <code>non-free</code> e <code>non-free-firmware</code> aos repositórios do Debian. Necessários para drivers proprietários, firmware e alguns codecs.</p>
+<div class="info-extra" data-i18n-html="sessoes.primeiros-passos.non_free_info">
+ℹ️ Instalações novas do Debian 13 já vêm com esses componentes ativos. Este botão é para instalações antigas convertidas para deb822 ou Live ISOs que não os trazem.
+</div>
+<div class="grupo-botoes">
+<button class="btn-executar" onclick="executarNonFreeEnable()" data-comando="non-free-enable" data-logbox="log-sessao-primeiros-passos" id="btn-non-free-enable" data-i18n="sessoes.primeiros-passos.btn_non_free_enable">
+📦 Ativar repositórios non-free
+</button>
+</div>
+</div>
+<div class="progress-container" id="progress-non-free-enable">
+<div class="progress-bar"><div class="progress-fill" id="progress-fill-non-free-enable"></div></div>
+<div class="progress-text"><span class="status" id="progress-status-non-free-enable">⏳ Iniciando...</span><span class="percentage" id="progress-percent-non-free-enable">0%</span></div>
+</div>
+</div>
+
+</div>
+</details>
+
+<!-- ============================================================
+BLOCO 4 — FLATPAK + FLATHUB + BACKEND DO DESKTOP
+============================================================ -->
+<details class="acordeao">
+<summary data-i18n="sessoes.primeiros-passos.flatpak_titulo">📦 Instalar Flatpak, Flathub e integração com a loja</summary>
+<div class="acordeao-conteudo">
+
+<div class="bloco-comando">
+<div class="comando-info">
+<p data-i18n-html="sessoes.primeiros-passos.flatpak_desc">Instala o runtime do Flatpak, adiciona o remote do Flathub e instala o backend do Flatpak para a loja do seu desktop (GNOME Software no GNOME, Plasma Discover no KDE). Depois disso, apps do Flathub aparecem diretamente na sua loja.</p>
+<div class="info-extra" data-i18n-html="sessoes.primeiros-passos.flatpak_info">
+ℹ️ Em desktops sem loja nativa, apenas o Flatpak (linha de comando) é instalado.
+</div>
+<div class="grupo-botoes">
+<button class="btn-executar" onclick="executarFlatpakInstall()" data-comando="flatpak-install" data-logbox="log-sessao-primeiros-passos" id="btn-flatpak-install" data-i18n="sessoes.primeiros-passos.btn_flatpak_install">
+📦 Instalar Flatpak + Flathub
+</button>
+</div>
+</div>
+<div class="progress-container" id="progress-flatpak-install">
+<div class="progress-bar"><div class="progress-fill" id="progress-fill-flatpak-install"></div></div>
+<div class="progress-text"><span class="status" id="progress-status-flatpak-install">⏳ Iniciando...</span><span class="percentage" id="progress-percent-flatpak-install">0%</span></div>
+</div>
+</div>
+
+</div>
+</details>
+
+<!-- ============================================================
+BLOCO 5 — HABILITAR BACKPORTS
+============================================================ -->
+<details class="acordeao">
+<summary data-i18n="sessoes.primeiros-passos.backports_titulo">📦 Habilitar repositório backports</summary>
+<div class="acordeao-conteudo">
+
+<div class="bloco-comando">
+<div class="comando-info">
+<p data-i18n-html="sessoes.primeiros-passos.backports_desc">Adiciona o repositório <code>trixie-backports</code>. Backports traz versões mais novas de pacotes específicos (kernel, Mesa, firmware) ao Debian Stable sem forçar um upgrade completo.</p>
+<div class="info-extra" data-i18n-html="sessoes.primeiros-passos.backports_info">
+ℹ️ Pacotes de backports não recebem suporte de segurança oficial do Debian Security Team. Instale apenas se precisar de suporte a hardware mais novo ou de uma função específica.
+</div>
+<div class="grupo-botoes">
+<button class="btn-executar" onclick="executarBackportsEnable()" data-comando="backports-enable" data-logbox="log-sessao-primeiros-passos" id="btn-backports-enable" data-i18n="sessoes.primeiros-passos.btn_backports_enable">
+📦 Habilitar backports
+</button>
+</div>
+</div>
+<div class="progress-container" id="progress-backports-enable">
+<div class="progress-bar"><div class="progress-fill" id="progress-fill-backports-enable"></div></div>
+<div class="progress-text"><span class="status" id="progress-status-backports-enable">⏳ Iniciando...</span><span class="percentage" id="progress-percent-backports-enable">0%</span></div>
+</div>
+</div>
+
+</div>
+</details>
+
+<!-- ============================================================
+BLOCO 6 — KERNEL MAIS RECENTE VIA BACKPORTS
+============================================================ -->
+<details class="acordeao">
+<summary data-i18n="sessoes.primeiros-passos.kernel_titulo">🐧 Instalar kernel mais recente via backports</summary>
+<div class="acordeao-conteudo">
+
+<div class="bloco-comando">
+<div class="comando-info">
+<p data-i18n-html="sessoes.primeiros-passos.kernel_desc">Instala <code>linux-image-amd64</code> e <code>linux-headers-amd64</code> do backports. Traz versões mais novas do kernel para hardware recente (Wi-Fi, GPUs, chipsets).</p>
+<div class="aviso-caixa" data-i18n-html="sessoes.primeiros-passos.kernel_aviso">
+⚠️ Requer o backports habilitado (bloco anterior). O kernel de backports não é coberto pelo time de segurança do Debian Stable. Reinicie após instalar para usar o novo kernel.
+</div>
+<div class="grupo-botoes">
+<button class="btn-executar" onclick="executarKernelBackports()" data-comando="kernel-backports" data-logbox="log-sessao-primeiros-passos" id="btn-kernel-backports" data-i18n="sessoes.primeiros-passos.btn_kernel_backports">
+🐧 Instalar kernel de backports
+</button>
+</div>
+<!-- Botão "Reiniciar agora" — aparece após instalação bem-sucedida -->
+<div class="grupo-botoes" id="grupo-reboot-kernel" style="display: none; margin-top: 1rem;">
+<button class="btn-executar vermelho" onclick="reiniciarSistema()" id="btn-reboot-kernel" data-i18n="sessoes.primeiros-passos.btn_reboot_kernel">
+🔄 Reiniciar agora
+</button>
+</div>
+</div>
+<div class="progress-container" id="progress-kernel-backports">
+<div class="progress-bar"><div class="progress-fill" id="progress-fill-kernel-backports"></div></div>
+<div class="progress-text"><span class="status" id="progress-status-kernel-backports">⏳ Iniciando...</span><span class="percentage" id="progress-percent-kernel-backports">0%</span></div>
+</div>
+</div>
+
+</div>
+</details>
+
+<!-- ============================================================
+BLOCO 7 — MESA + FIRMWARE DA GPU VIA BACKPORTS
+============================================================ -->
+<details class="acordeao">
+<summary data-i18n="sessoes.primeiros-passos.mesa_titulo">🎮 Atualizar Mesa e firmware via backports</summary>
+<div class="acordeao-conteudo">
+
+<div class="bloco-comando">
+<div class="comando-info">
+<p data-i18n-html="sessoes.primeiros-passos.mesa_desc">Atualiza todos os pacotes <code>mesa-*</code> instalados para a versão do backports e instala o <strong>firmware-linux completo</strong> de backports, trazendo firmware atualizado para GPU, Wi-Fi, Bluetooth e demais periféricos compatíveis.</p>
+<div class="aviso-caixa" data-i18n-html="sessoes.primeiros-passos.mesa_aviso">
+⚠️ Requer o backports habilitado (bloco anterior). Mesa mais novo melhora desempenho e compatibilidade em GPUs AMD e Intel.
+</div>
+<div class="grupo-botoes">
+<button class="btn-executar" onclick="executarMesaBackports()" data-comando="mesa-backports" data-logbox="log-sessao-primeiros-passos" id="btn-mesa-backports" data-i18n="sessoes.primeiros-passos.btn_mesa_backports">
+🎮 Atualizar Mesa + firmware
+</button>
+</div>
+</div>
+<div class="progress-container" id="progress-mesa-backports">
+<div class="progress-bar"><div class="progress-fill" id="progress-fill-mesa-backports"></div></div>
+<div class="progress-text"><span class="status" id="progress-status-mesa-backports">⏳ Iniciando...</span><span class="percentage" id="progress-percent-mesa-backports">0%</span></div>
+</div>
+</div>
+
+</div>
+</details>
+
+<!-- ============================================================
+BLOCO 8 — EXTREPO
+============================================================ -->
+<details class="acordeao">
+<summary data-i18n="sessoes.primeiros-passos.extrepo_titulo">🌐 Instalar extrepo</summary>
+<div class="acordeao-conteudo">
+
+<div class="bloco-comando">
+<div class="comando-info">
+<p data-i18n-html="sessoes.primeiros-passos.extrepo_desc">Instala o <code>extrepo</code>, a ferramenta oficial do Debian para habilitar repositórios de terceiros (Brave, Google Chrome, Signal, Spotify, VSCode) com segurança. O DAP não habilita nenhum repositório de terceiros automaticamente — a ferramenta apenas fica disponível para uso posterior.</p>
+<div class="grupo-botoes">
+<button class="btn-executar" onclick="executarExtrepoInstall()" data-comando="extrepo-install" data-logbox="log-sessao-primeiros-passos" id="btn-extrepo-install" data-i18n="sessoes.primeiros-passos.btn_extrepo_install">
+🌐 Instalar extrepo
+</button>
+</div>
+</div>
+<div class="progress-container" id="progress-extrepo-install">
+<div class="progress-bar"><div class="progress-fill" id="progress-fill-extrepo-install"></div></div>
+<div class="progress-text"><span class="status" id="progress-status-extrepo-install">⏳ Iniciando...</span><span class="percentage" id="progress-percent-extrepo-install">0%</span></div>
+</div>
+</div>
+
+</div>
+</details>
+
+<!-- ============================================================
+BLOCO 9 — LOCALIZAÇÃO PT-BR
+============================================================ -->
+<details class="acordeao">
+<summary data-i18n="sessoes.primeiros-passos.locale_titulo">🌐 Configuração de idioma e localidade (PT-BR)</summary>
+<div class="acordeao-conteudo">
+
+<div class="bloco-comando">
+<div class="comando-info">
+<p data-i18n="sessoes.primeiros-passos.locale_desc">Instala pacotes de tradução, o corretor ortográfico de português (Brasil) e altera a localidade padrão do sistema. Live ISOs não trazem a localidade PT-BR gerada por padrão.</p>
+<div class="aviso-caixa" data-i18n="sessoes.primeiros-passos.locale_aviso">
+⚠️ Reinicie o computador depois de concluir o passo 3 para aplicar as mudanças de idioma em todos os lugares.
+</div>
+<div class="botoes-flex">
+<button class="btn-executar" onclick="executarLocalePacks()" data-comando="locale-ptbr-packs" data-logbox="log-sessao-primeiros-passos" id="btn-locale-ptbr-packs" data-i18n="sessoes.primeiros-passos.btn_locale_packs">
+1. Instalar tradução
+</button>
+<button class="btn-executar" onclick="executarLocaleHunspell()" data-comando="locale-ptbr-hunspell" data-logbox="log-sessao-primeiros-passos" id="btn-locale-ptbr-hunspell" data-i18n="sessoes.primeiros-passos.btn_locale_hunspell">
+2. Corretor ortográfico
+</button>
+<button class="btn-executar" onclick="executarLocaleSet()" data-comando="locale-ptbr-set" data-logbox="log-sessao-primeiros-passos" id="btn-locale-ptbr-set" data-i18n="sessoes.primeiros-passos.btn_locale_set">
+3. Localidade PT-BR
+</button>
+</div>
+</div>
+<div class="progress-container" id="progress-locale-ptbr-packs">
+<div class="progress-bar"><div class="progress-fill" id="progress-fill-locale-ptbr-packs"></div></div>
+<div class="progress-text"><span class="status" id="progress-status-locale-ptbr-packs">⏳ Iniciando...</span><span class="percentage" id="progress-percent-locale-ptbr-packs">0%</span></div>
+</div>
+<div class="progress-container" id="progress-locale-ptbr-hunspell">
+<div class="progress-bar"><div class="progress-fill" id="progress-fill-locale-ptbr-hunspell"></div></div>
+<div class="progress-text"><span class="status" id="progress-status-locale-ptbr-hunspell">⏳ Iniciando...</span><span class="percentage" id="progress-percent-locale-ptbr-hunspell">0%</span></div>
+</div>
+<div class="progress-container" id="progress-locale-ptbr-set">
+<div class="progress-bar"><div class="progress-fill" id="progress-fill-locale-ptbr-set"></div></div>
+<div class="progress-text"><span class="status" id="progress-status-locale-ptbr-set">⏳ Iniciando...</span><span class="percentage" id="progress-percent-locale-ptbr-set">0%</span></div>
+</div>
+</div>
+
+</div>
+</details>
+
+<!-- ============================================================
+BLOCO 10 — ARQUITETURA i386
+============================================================ -->
+<details class="acordeao">
+<summary data-i18n="sessoes.primeiros-passos.i386_titulo">🎮 Habilitar arquitetura i386</summary>
+<div class="acordeao-conteudo">
+
+<div class="bloco-comando">
+<div class="comando-info">
+<p data-i18n="sessoes.primeiros-passos.i386_desc">Adiciona a arquitetura i386 ao dpkg. Necessária para pacotes de 32 bits, incluindo Steam, Wine e alguns programas antigos.</p>
+<div class="info-extra" data-i18n-html="sessoes.primeiros-passos.i386_info">
+ℹ️ Habilitar i386 aumenta o tamanho do índice do apt e o tempo de <code>apt update</code>. Ative apenas se pretende usar Steam, Wine ou outro software de 32 bits.
+</div>
+<div class="grupo-botoes">
+<button class="btn-executar" onclick="executarI386Enable()" data-comando="i386-enable" data-logbox="log-sessao-primeiros-passos" id="btn-i386-enable" data-i18n="sessoes.primeiros-passos.btn_i386_enable">
+🎮 Habilitar arquitetura i386
+</button>
+</div>
+</div>
+<div class="progress-container" id="progress-i386-enable">
+<div class="progress-bar"><div class="progress-fill" id="progress-fill-i386-enable"></div></div>
+<div class="progress-text"><span class="status" id="progress-status-i386-enable">⏳ Iniciando...</span><span class="percentage" id="progress-percent-i386-enable">0%</span></div>
+</div>
+</div>
+
+</div>
+</details>
+
+<!-- Log único da sessão -->
+<div class="terminal-log sessao-compartilhado" id="log-sessao-primeiros-passos"></div>
+</div>
+
+<script>
+// ============================================================
+// SESSÃO: PRIMEIROS PASSOS
+// ============================================================
+
+function _t(chave, fallback) {
+    return (typeof tOr === 'function') ? tOr(chave, fallback) : fallback;
+}
+
+// ============================================================
+// BLOCO 1 — ATUALIZAR O DEBIAN
+// ============================================================
+
+async function executarAptUpdate() {
+    var idComando = 'apt-update';
+    var comando = 'sudo apt update';
+    await executarComandoGenerico(idComando, comando,
+        _t('sessoes.primeiros-passos.btn_apt_update', '🔄 Atualizar índices'));
+}
+
+async function executarAptUpgrade() {
+    var idComando = 'apt-upgrade';
+    var comando = 'sudo apt upgrade -y && sudo apt full-upgrade -y';
+    await executarComandoGenerico(idComando, comando,
+        _t('sessoes.primeiros-passos.btn_apt_upgrade', '⬆️ Atualizar sistema'));
+}
+
+// ============================================================
+// BLOCO 2 — CONVERTER SOURCES PARA DEB822
+// ============================================================
+//
+// `apt modernize-sources` é o utilitário oficial do Debian 13 para
+// converter o formato legado (sources.list de uma linha) para o
+// formato moderno deb822 (.sources). É idempotente: se o sistema já
+// está em deb822, não faz nada.
+
+async function executarDeb822Converter() {
+    var idComando = 'deb822-converter';
+
+    var comando =
+        'if [ -f /etc/apt/sources.list.d/debian.sources ]; then ' +
+        '  echo "✅ Sistema já está em formato deb822."; ' +
+        '  echo "   /etc/apt/sources.list.d/debian.sources existe."; ' +
+        'else ' +
+        '  echo "📄 Convertendo sources.list legado para deb822..."; ' +
+        '  sudo apt modernize-sources -y; ' +
+        '  echo ""; ' +
+        '  echo "✅ Conversão concluída."; ' +
+        'fi';
+
+    await executarComandoGenerico(idComando, comando,
+        _t('sessoes.primeiros-passos.btn_deb822_converter', '📄 Converter para deb822'));
+}
+
+// ============================================================
+// BLOCO 3 — ATIVAR NON-FREE / CONTRIB / NON-FREE-FIRMWARE
+// ============================================================
+//
+// Edita o debian.sources existente (formato deb822). Se não
+// existir, cria o arquivo. Idempotente: se os componentes já
+// estão presentes, não faz nada.
+
+async function executarNonFreeEnable() {
+    var idComando = 'non-free-enable';
+
+    var comando =
+        'ARQUIVO="/etc/apt/sources.list.d/debian.sources"; ' +
+        'if [ ! -f "$ARQUIVO" ]; then ' +
+        '  echo "ℹ️ $ARQUIVO não encontrado."; ' +
+        '  echo "   Rode primeiro o bloco 2 (deb822-converter)."; ' +
+        '  exit 1; ' +
+        'fi; ' +
+        'if grep -q "^Components:.*non-free-firmware" "$ARQUIVO"; then ' +
+        '  echo "✅ Componentes contrib, non-free e non-free-firmware já estão ativos."; ' +
+        'else ' +
+        '  echo "📦 Adicionando contrib, non-free e non-free-firmware..."; ' +
+        '  sudo sed -i "s/^Components:.*/Components: main contrib non-free non-free-firmware/" "$ARQUIVO"; ' +
+        '  sudo apt update; ' +
+        '  echo ""; ' +
+        '  echo "✅ Repositórios non-free ativos."; ' +
+        'fi';
+
+    await executarComandoGenerico(idComando, comando,
+        _t('sessoes.primeiros-passos.btn_non_free_enable', '📦 Ativar repositórios non-free'));
+}
+
+// ============================================================
+// BLOCO 4 — FLATPAK + FLATHUB + BACKEND DO DESKTOP
+// ============================================================
+//
+// Instala o flatpak, adiciona o remote do Flathub e — se o
+// desktop tiver loja nativa — instala o backend correspondente.
+// Não instala gnome-software como fallback (decisão de projeto).
+
+async function executarFlatpakInstall() {
+    var idComando = 'flatpak-install';
+
+    var comando =
+        'DESKTOP="${XDG_CURRENT_DESKTOP:-} ${DESKTOP_SESSION:-}"; ' +
+        'BACKEND=""; ' +
+        'case "$DESKTOP" in ' +
+        '  *[Gg][Nn][Oo][Mm][Ee]*) BACKEND="gnome-software-plugin-flatpak" ;; ' +
+        '  *[Kk][Dd][Ee]*|*[Pp][Ll][Aa][Ss][Mm][Aa]*) BACKEND="plasma-discover-backend-flatpak" ;; ' +
+        'esac; ' +
+        'echo "🖥️ Desktop detectado: $DESKTOP"; ' +
+        'if [ -n "$BACKEND" ]; then ' +
+        '  echo "📦 Instalando flatpak + $BACKEND..."; ' +
+        '  sudo apt install -y flatpak "$BACKEND"; ' +
+        'else ' +
+        '  echo "📦 Instalando flatpak (sem loja nativa detectada)..."; ' +
+        '  sudo apt install -y flatpak; ' +
+        'fi; ' +
+        'echo ""; ' +
+        'echo "🌐 Adicionando repositório Flathub..."; ' +
+        'flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo; ' +
+        'echo ""; ' +
+        'echo "✅ Flatpak + Flathub configurados."';
+
+    await executarComandoGenerico(idComando, comando,
+        _t('sessoes.primeiros-passos.btn_flatpak_install', '📦 Instalar Flatpak + Flathub'));
+}
+
+// ============================================================
+// BLOCO 5 — HABILITAR BACKPORTS
+// ============================================================
+
+async function executarBackportsEnable() {
+    var idComando = 'backports-enable';
+
+    var comando =
+        'CODENAME=$(grep "^VERSION_CODENAME=" /etc/os-release | cut -d= -f2 | tr -d \'"\'); ' +
+        'if [ -z "$CODENAME" ]; then ' +
+        '  echo "❌ Não foi possível detectar o codename do Debian."; ' +
+        '  exit 1; ' +
+        'fi; ' +
+        'ARQUIVO="/etc/apt/sources.list.d/debian-backports.sources"; ' +
+        'if [ -f "$ARQUIVO" ]; then ' +
+        '  echo "✅ Backports já estão habilitados ($CODENAME-backports)."; ' +
+        'else ' +
+        '  echo "📦 Habilitando backports ($CODENAME-backports)..."; ' +
+        '  sudo tee "$ARQUIVO" > /dev/null <<EOF\n' +
+        'Types: deb\n' +
+        'URIs: http://deb.debian.org/debian\n' +
+        'Suites: ${CODENAME}-backports\n' +
+        'Components: main contrib non-free non-free-firmware\n' +
+        'Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg\n' +
+        'Enabled: yes\n' +
+        'EOF\n' +
+        '  sudo apt update; ' +
+        '  echo ""; ' +
+        '  echo "✅ Backports habilitados."; ' +
+        'fi';
+
+    await executarComandoGenerico(idComando, comando,
+        _t('sessoes.primeiros-passos.btn_backports_enable', '📦 Habilitar backports'));
+}
+
+// ============================================================
+// BLOCO 6 — KERNEL MAIS RECENTE VIA BACKPORTS
+// ============================================================
+//
+// Após sucesso, mostra o botão "Reiniciar agora".
+
+async function executarKernelBackports() {
+    var idComando = 'kernel-backports';
+
+    var comando =
+        'CODENAME=$(grep "^VERSION_CODENAME=" /etc/os-release | cut -d= -f2 | tr -d \'"\'); ' +
+        'ARQ=$(dpkg --print-architecture); ' +
+        'if [ "$ARQ" = "amd64" ]; then IMG="linux-image-amd64"; HDR="linux-headers-amd64"; ' +
+        'elif [ "$ARQ" = "arm64" ]; then IMG="linux-image-arm64"; HDR="linux-headers-arm64"; ' +
+        'else IMG="linux-image-${ARQ}"; HDR="linux-headers-${ARQ}"; fi; ' +
+        'echo "📦 Instalando kernel de backports ($IMG, $HDR)..."; ' +
+        'sudo apt install -y -t ${CODENAME}-backports "$IMG" "$HDR" && ' +
+        'sudo update-grub && ' +
+        'echo "" && ' +
+        'echo "✅ Kernel de backports instalado." && ' +
+        'echo "   Kernel atual: $(uname -r)" && ' +
+        'echo "   Reinicie para usar o novo kernel."';
+
+    await executarComandoGenerico(idComando, comando,
+        _t('sessoes.primeiros-passos.btn_kernel_backports', '🐧 Instalar kernel de backports'),
+        function() {
+            // Mostra o botão "Reiniciar agora" após sucesso.
+            var grupo = document.getElementById('grupo-reboot-kernel');
+            if (grupo) grupo.style.display = 'flex';
+        });
+}
+
+// ------------------------------------------------------------
+// REINICIAR AGORA
+// ------------------------------------------------------------
+//
+// Não usa whitelist de comando: `systemctl reboot` exige autenticação
+// via sudo. O server.js usa a cadeia de autenticação padrão.
+
+async function reiniciarSistema() {
+    if (!confirm(_t('sessoes.primeiros-passos.confirmar_reboot',
+        '🔄 Reiniciar o computador agora?\n\nSalve todo o trabalho em aberto antes de continuar.'))) return;
+
+    var idComando = 'reboot-now';
+    var comando = 'sudo systemctl reboot';
+
+    try {
+        await fetch(API_URL + '/executar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ comando: comando, idComando: idComando })
+        });
+    } catch (e) {
+        console.error('[reboot] Erro ao disparar reboot:', e);
+    }
+}
+
+// ============================================================
+// BLOCO 7 — MESA + FIRMWARE COMPLETO VIA BACKPORTS
+// ============================================================
+
+async function executarMesaBackports() {
+    var idComando = 'mesa-backports';
+
+    var comando =
+        'CODENAME=$(grep "^VERSION_CODENAME=" /etc/os-release | cut -d= -f2 | tr -d \'"\'); ' +
+        'echo "🎮 Atualizando Mesa via backports ($CODENAME-backports)..."; ' +
+        'PACOTES_MESA=$(dpkg -l | awk \'/^ii  mesa-/ {print $2}\' | tr \'\\n\' \' \'); ' +
+        'if [ -n "$PACOTES_MESA" ]; then ' +
+        '  sudo apt install -y -t ${CODENAME}-backports $PACOTES_MESA; ' +
+        'else ' +
+        '  echo "ℹ️ Nenhum pacote mesa-* instalado. Pulando Mesa."; ' +
+        'fi; ' +
+        'echo ""; ' +
+        'echo "📦 Instalando firmware-linux completo de backports..."; ' +
+        'sudo apt install -y -t ${CODENAME}-backports firmware-linux firmware-linux-nonfree firmware-misc-nonfree 2>/dev/null || ' +
+        'sudo apt install -y -t ${CODENAME}-backports firmware-linux; ' +
+        'echo ""; ' +
+        'echo "✅ Mesa + firmware de backports instalados."';
+
+    await executarComandoGenerico(idComando, comando,
+        _t('sessoes.primeiros-passos.btn_mesa_backports', '🎮 Atualizar Mesa + firmware'));
+}
+
+// ============================================================
+// BLOCO 8 — EXTREPO
+// ============================================================
+
+async function executarExtrepoInstall() {
+    var idComando = 'extrepo-install';
+
+    var comando =
+        'sudo apt install -y extrepo && ' +
+        'if [ -f /etc/extrepo/config.yaml ]; then ' +
+        '  sudo sed -i "s/^# *\\(contrib:.*\\)$/\\1/" /etc/extrepo/config.yaml; ' +
+        '  sudo sed -i "s/^# *\\(non-free:.*\\)$/\\1/" /etc/extrepo/config.yaml; ' +
+        'fi && ' +
+        'sudo extrepo update && ' +
+        'echo "" && ' +
+        'echo "✅ extrepo instalado." && ' +
+        'echo "   Use \'sudo extrepo enable <repo>\' quando quiser habilitar um repositório de terceiros."';
+
+    await executarComandoGenerico(idComando, comando,
+        _t('sessoes.primeiros-passos.btn_extrepo_install', '🌐 Instalar extrepo'));
+}
+
+// ============================================================
+// BLOCO 9 — LOCALIZAÇÃO PT-BR
+// ============================================================
+
+async function executarLocalePacks() {
+    var idComando = 'locale-ptbr-packs';
+    var comando = 'sudo apt install -y locales task-portuguese task-portuguese-desktop';
+    await executarComandoGenerico(idComando, comando,
+        _t('sessoes.primeiros-passos.btn_locale_packs', '1. Instalar tradução'));
+}
+
+async function executarLocaleHunspell() {
+    var idComando = 'locale-ptbr-hunspell';
+    var comando = 'sudo apt install -y hunspell-pt-br myspell-pt-br';
+    await executarComandoGenerico(idComando, comando,
+        _t('sessoes.primeiros-passos.btn_locale_hunspell', '2. Corretor ortográfico'));
+}
+
+async function executarLocaleSet() {
+    var idComando = 'locale-ptbr-set';
+
+    var comando =
+        'sudo sed -i "s/^# *\\(pt_BR.UTF-8 UTF-8\\)$/\\1/" /etc/locale.gen && ' +
+        'sudo locale-gen && ' +
+        'sudo update-locale LANG=pt_BR.UTF-8 && ' +
+        'echo "" && ' +
+        'echo "✅ Localidade PT-BR configurada." && ' +
+        'echo "   Reinicie a sessão para aplicar em todos os apps."';
+
+    await executarComandoGenerico(idComando, comando,
+        _t('sessoes.primeiros-passos.btn_locale_set', '3. Localidade PT-BR'));
+}
+
+// ============================================================
+// BLOCO 10 — ARQUITETURA i386
+// ============================================================
+
+async function executarI386Enable() {
+    var idComando = 'i386-enable';
+
+    var comando =
+        'if dpkg --print-foreign-architectures | grep -q "^i386$"; then ' +
+        '  echo "✅ Arquitetura i386 já está habilitada."; ' +
+        'else ' +
+        '  echo "🎮 Habilitando arquitetura i386..."; ' +
+        '  sudo dpkg --add-architecture i386; ' +
+        '  sudo apt update; ' +
+        '  echo ""; ' +
+        '  echo "✅ Arquitetura i386 habilitada."; ' +
+        '  echo "   Necessária para Steam, Wine e alguns programas antigos."; ' +
+        'fi';
+
+    await executarComandoGenerico(idComando, comando,
+        _t('sessoes.primeiros-passos.btn_i386_enable', '🎮 Habilitar arquitetura i386'));
+}
+
+// ============================================================
+// RESTAURAR ESTADO DA SESSÃO
+// ============================================================
+
+function restaurarEstadoSessao() {
+    // One-shot: todos os blocos exceto `apt-update`
+    [
+        'apt-upgrade',
+        'deb822-converter',
+        'non-free-enable',
+        'flatpak-install',
+        'backports-enable',
+        'kernel-backports',
+        'mesa-backports',
+        'extrepo-install',
+        'locale-ptbr-packs',
+        'locale-ptbr-hunspell',
+        'locale-ptbr-set',
+        'i386-enable'
+    ].forEach(function(id) {
+        if (isExecutado(id)) {
+            var btn = document.getElementById('btn-' + id);
+            if (btn) {
+                btn.textContent = getTextoAposExecucao(id);
+                btn.style.backgroundColor = '#4b5563';
+                btn.style.cursor = 'default';
+                btn.disabled = true;
+                btn.style.opacity = '1';
+            }
+        }
+    });
+
+    // Sempre clicável: apt-update
+    var btnUpdate = document.getElementById('btn-apt-update');
+    if (btnUpdate) {
+        btnUpdate.disabled = false;
+        btnUpdate.textContent = _t('sessoes.primeiros-passos.btn_apt_update', '🔄 Atualizar índices');
+        btnUpdate.style.backgroundColor = '';
+        btnUpdate.style.opacity = '1';
+        btnUpdate.style.cursor = 'pointer';
+    }
+
+    // Botão "Reiniciar agora": aparece se o kernel de backports foi instalado
+    if (isExecutado('kernel-backports')) {
+        var grupo = document.getElementById('grupo-reboot-kernel');
+        if (grupo) grupo.style.display = 'flex';
+    }
+}
+
+// ============================================================
+// INICIALIZAÇÃO
+// ============================================================
+
+(function() {
+    document.querySelectorAll('.btn-executar').forEach(function(btn) {
+        if (!btn.hasAttribute('data-texto-original')) {
+            btn.setAttribute('data-texto-original', btn.textContent);
+        }
+    });
+
+    restaurarEstadoSessao();
+
+    console.log('📦 Componente primeiros-passos carregado!');
+})();
+</script>
+</body>
+</html>

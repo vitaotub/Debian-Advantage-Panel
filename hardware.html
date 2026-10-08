@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DAP - Hardware</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="sessao-container" id="sessao-hardware">
+<div class="sessao-titulo">
+<span class="sessao-label">Sessão</span>
+<span data-i18n="sessoes.hardware.titulo">🖥️ Hardware</span>
+</div>
+
+<!-- Acórdeão principal — descrição da sessão -->
+<div class="acordeao-principal">
+<span data-i18n-html="sessoes.hardware.descricao">Configurações específicas do seu hardware. Escolha abaixo o tipo de GPU (AMD, NVIDIA ou Intel) para ver os drivers e ferramentas correspondentes. Cada acordeão detecta o hardware do seu computador e avisa se os drivers recomendados já estão em uso.</span>
+</div>
+
+<!-- ============================================================
+AMD
+============================================================ -->
+<details class="acordeao">
+<summary data-i18n="sessoes.hardware.amd_titulo">🟥 Hardware AMD</summary>
+<div class="acordeao-conteudo">
+
+<!-- Painel de detecção AMD -->
+<div class="bloco-comando destaque">
+<div class="comando-info">
+<h3 data-i18n="sessoes.hardware.amd_detection_titulo">🔍 Detecção de hardware AMD</h3>
+<p data-i18n="sessoes.hardware.amd_detection_desc">Verifica se o sistema tem uma GPU ou APU AMD e informa se o driver recomendado (amdgpu) já está em uso.</p>
+
+<div id="amd-detection-panel" class="bloco-info">
+<span style="color: var(--text-muted);">⏳ Detectando hardware...</span>
+</div>
+
+<div class="grupo-botoes" style="margin-top: 1rem;">
+<button class="btn-executar"
+onclick="executarAmdDetection()"
+data-comando="amd-detection"
+data-logbox="log-sessao-hardware"
+id="btn-amd-detection"
+data-i18n="sessoes.hardware.btn_amd_detection">
+🔍 Verificar hardware AMD
+</button>
+</div>
+</div>
+</div>
+
+<!-- Vulkan / Mesa -->
+<div class="bloco-comando">
+<div class="comando-info">
+<h3 data-i18n="sessoes.hardware.vulkan_titulo">Vulkan, Mesa 3D e RADV</h3>
+<p data-i18n="sessoes.hardware.vulkan_desc">Instala as bibliotecas Vulkan (versões de 32 e 64 bits), o Mesa 3D com o driver RADV (driver Vulkan open-source da AMD), ferramentas de diagnóstico e drivers de compatibilidade. Essencial para Steam, Proton e jogos nativos.</p>
+<div class="grupo-botoes">
+<button class="btn-executar"
+onclick="executarVulkan()"
+data-comando="vulkan-amd"
+data-logbox="log-sessao-hardware"
+id="btn-vulkan-amd"
+data-i18n="sessoes.hardware.btn_vulkan">
+🚀 Instalar Vulkan e Mesa 3D
+</button>
+</div>
+</div>
+<div class="progress-container" id="progress-vulkan-amd">
+<div class="progress-bar"><div class="progress-fill" id="progress-fill-vulkan-amd"></div></div>
+<div class="progress-text"><span class="status" id="progress-status-vulkan-amd">⏳ Iniciando...</span><span class="percentage" id="progress-percent-vulkan-amd">0%</span></div>
+</div>
+</div>
+
+<!-- VA-API / VDPAU -->
+<div class="bloco-comando">
+<div class="comando-info">
+<h3 data-i18n="sessoes.hardware.vaapi_titulo">VA-API e VDPAU (Aceleração de Vídeo)</h3>
+<p data-i18n="sessoes.hardware.vaapi_desc">Drivers de aceleração de vídeo por hardware para reprodução fluida e encoding. No Debian, o pacote mesa-va-drivers já traz suporte AMD completo — não é preciso repositório extra.</p>
+<div class="grupo-botoes">
+<button class="btn-executar"
+onclick="executarVaapi()
+"
+data-comando="vaapi-amd"
+data-logbox="log-sessao-hardware"
+id="btn-vaapi-amd"
+data-i18n="sessoes.hardware.btn_vaapi">
+🚀 Instalar VA-API e VDPAU
+</button>
+</div>
+</div>
+<div class="progress-container" id="progress-vaapi-amd">
+<div class="progress-bar"><div class="progress-fill" id="progress-fill-vaapi-amd"></div></div>
+<div class="progress-text"><span class="status" id="progress-status-vaapi-amd">⏳ Iniciando...</span><span class="percentage" id="progress-percent-vaapi-amd">0%</span></div>
+</div>
+</div>
+
+<!-- CoreCtrl -->
+<div class="bloco-comando">
+<div class="comando-info">
+<h3 data-i18n="sessoes.hardware.corectrl_titulo">CoreCtrl</h3>
+<p data-i18n="sessoes.hardware.corectrl_desc">Interface gráfica para controle de fans, clock e voltagem de GPUs AMD.</p>
+<div class="grupo-botoes">
+<button class="btn-executar"
+onclick="executarCoreCtrl()"
+data-comando="corectrl-install"
+data-logbox="log-sessao-hardware"
+id="btn-corectrl-install"
+data-i18n="sessoes.hardware.btn_corectrl">
+📦 Instalar CoreCtrl
+</button>
+</div>
+</div>
+<div class="progress-container" id="progress-corectrl-install">
+<div class="progress-bar"><div class="progress-fill" id="progress-fill-corectrl-install"></div></div>
+<div class="progress-text"><span class="status" id="progress-status-corectrl-install">⏳ Iniciando...</span><span class="percentage" id="progress-percent-corectrl-install">0%</span></div>
+</div>
+</div>
+
+<!-- LACT -->
+<div class="bloco-comando">
+<div class="comando-info">
+<h3 data-i18n="sessoes.hardware.lact_titulo">LACT (Linux AMDGPU Controller)</h3>
+<p data-i18n="sessoes.hardware.lact_desc">Alternativa moderna ao CoreCtrl para controle de fans, clock e voltagem de GPUs AMD.</p>
+<div class="grupo-botoes">
+<button class="btn-executar"
+onclick="executarLACT()"
+data-comando="lact-install"
+data-logbox="log-sessao-hardware"
+id="btn-lact-install"
+data-i18n="sessoes.hardware.btn_lact">
+📦 Instalar LACT
+</button>
+</div>
+</div>
+<div class="progress-container" id="progress-lact-install">
+<div class="progress-bar"><div class="progress-fill" id="progress-fill-lact-install"></div></div>
+<div class="progress-text"><span class="status" id="progress-status-lact-install">⏳ Iniciando...</span><span class="percentage" id="progress-percent-lact-install">0%</span></div>
+</div>
+</div>
+
+<!-- Overclock AMD -->
+<div class="bloco-comando">
+<div class="comando-info">
+<h3 data-i18n="sessoes.hardware.overclock_titulo">Desbloquear Overclock/Undervolt (AMD)</h3>
+<p data-i18n="sessoes.hardware.overclock_desc">Habilita o parâmetro <code>amdgpu.ppfeaturemask</code> no kernel, liberando ajustes avançados de clock e voltagem no CoreCtrl e no LACT.</p>
+<div class="aviso-caixa" data-i18n="sessoes.hardware.overclock_aviso">
+⚠️ Requer reinicialização. Só ative se você sabe o que está fazendo — overclock mal configurado pode causar instabilidade.
+</div>
+<div class="botoes-flex">
+<button class="btn-executar"
+onclick="executarOverclockAMD()"
+data-comando="amdgpu-overclock"
+data-logbox="log-sessao-hardware"
+id="btn-amdgpu-overclock"
+data-i18n="sessoes.hardware.btn_overclock_on">
+⚙️ Ativar Overclock
+</button>
+<button class="btn-executar vermelho"
+onclick="executarOverclockRemoveAMD()"
+data-comando="amdgpu-overclock-remove"
+data-logbox="log-sessao-hardware"
+id="btn-amdgpu-overclock-remove"
+data-i18n="sessoes.hardware.btn_overclock_off">
+↩️ Desativar
+</button>
+</div>
+</div>
+<div class="progress-container" id="progress-amdgpu-overclock">
+<div class="progress-bar"><div class="progress-fill" id="progress-fill-amdgpu-overclock"></div></div>
+<div class="progress-text"><span class="status" id="progress-status-amdgpu-overclock">⏳ Iniciando...</span><span class="percentage" id="progress-percent-amdgpu-overclock">0%</span></div>
+</div>
+<div class="progress-container" id="progress-amdgpu-overclock-remove">
+<div class="progress-bar"><div class="progress-fill" id="progress-fill-amdgpu-overclock-remove"></div></div>
+<div class="progress-text"><span class="status" id="progress-status-amdgpu-overclock-remove">⏳ Iniciando...</span><span class="percentage" id="progress-percent-amdgpu-overclock-remove">0%</span></div>
+</div>
+</div>
+
+</div>
+</details>
+
+<!-- ============================================================
+NVIDIA
+============================================================ -->
+<details class="acordeao">
+<summary data-i18n="sessoes.hardware.nvidia_titulo">🟩 Hardware NVIDIA</summary>
+<div class="acordeao-conteudo">
+
+<div class="aviso-caixa" data-i18n="sessoes.hardware.nvidia_aviso">
+⚠️ Sem o nvidia-drm.modeset=1, o Wayland fica instável com placas NVIDIA. O repositório non-free (Sessão 1) é pré-requisito. Após instalar qualquer coisa aqui, reinicie o computador.
+</div>
+
+<!-- Painel de detecção NVIDIA -->
+<div class="bloco-comando destaque">
+<div class="comando-info">
+<h3 data-i18n="sessoes.hardware.nvidia_detection_titulo">🔍 Detecção de hardware NVIDIA</h3>
+<p data-i18n="sessoes.hardware.nvidia_detection_desc">Verifica se o sistema tem uma GPU NVIDIA, identifica a geração e informa qual driver é recomendado pelo Debian.</p>
+
+<div id="nvidia-detection-panel" class="bloco-info">
+<span style="color: var(--text-muted);">⏳ Detectando hardware...</span>
+</div>
+
+<div class="grupo-botoes" style="margin-top: 1rem;">
+<button class="btn-executar"
+onclick="executarNvidiaDetection()"
+data-comando="nvidia-detection"
+data-logbox="log-sessao-hardware"
+id="btn-nvidia-detection"
+data-i18n="sessoes.hardware.btn_nvidia_detection">
+🔍 Verificar hardware NVIDIA
+</button>
+</div>
+</div>
+</div>
+
+<div class="bloco-comando">
+<div class="comando-info">
+<h3 data-i18n="sessoes.hardware.nvidia_driver_titulo">Driver Proprietário Completo (CUDA + NVENC/NVDEC)</h3>
+<p data-i18n-html="sessoes.hardware.nvidia_driver_desc">
+Detecta a geração da sua GPU NVIDIA e instala automaticamente a série correta — <code>nvidia-open-kernel-dkms</code> para Turing (RTX 20xx, GTX 16xx) ou mais recentes, <code>nvidia-kernel-dkms</code> para Maxwell, Pascal, Volta e anteriores. Inclui o firmware necessário e o pacote <code>nvidia-driver</code> com suporte ao X11 e Wayland.
+</p>
+<div class="info-extra" data-i18n-html="sessoes.hardware.nvidia_driver_info">
+ℹ️ <strong>Sobre a detecção:</strong> o DAP usa <code>nvidia-detect</code> (pacote oficial do Debian) para identificar a geração exata. Se o pacote não estiver instalado, ele cai num fallback via <code>lspci</code> com heurística por modelo. Instalar a série errada (por exemplo, <code>nvidia-open-kernel-dkms</code> numa GTX 750 Ti) resulta em tela preta após o reboot — esta detecção evita esse problema.
+</div>
+
+<div class="botoes-flex">
+<button class="btn-executar"
+onclick="executarNvidiaDriver()"
+data-comando="nvidia-driver-install"
+data-logbox="log-sessao-hardware"
+id="btn-nvidia-driver-install"
+data-i18n="sessoes.hardware.btn_nvidia_driver">
+📦 Instalar Driver NVIDIA
+</button>
+<button class="btn-executar vermelho"
+onclick="executarNvidiaDriverRemove()"
+data-comando="nvidia-driver-remove"
+data-logbox="log-sessao-hardware"
+id="btn-nvidia-driver-remove"
+data-i18n="sessoes.hardware.btn_nvidia_reverter">
+↩️ Reverter pro nouveau
+</button>
+</div>
+</div>
+<div class="progress-container" id="progress-nvidia-driver-install">
+<div class="progress-bar"><div class="progress-fill" id="progress-fill-nvidia-driver-install"></div></div>
+<div class="progress-text"><span class="status" id="progress-status-nvidia-driver-install">⏳ Iniciando...</span><span class="percentage" id="progress-percent-nvidia-driver-install">0%</span></div>
+</div>
+<div class="progress-container" id="progress-nvidia-driver-remove">
+<div class="progress-bar"><div class="progress-fill" id="progress-fill-nvidia-driver-remove"></div></div>
+<div class="progress-text"><span class="status" id="progress-status-nvidia-driver-remove">⏳ Iniciando...</span><span class="percentage" id="progress-percent-nvidia-driver-remove">0%</span></div>
+</div>
+</div>
+
+<div class="bloco-comando">
+<div class="comando-info">
+<h3 data-i18n="sessoes.hardware.nvidia_cuda_titulo">CUDA + NVENC/NVDEC</h3>
+<p data-i18n="sessoes.hardware.nvidia_cuda_desc">Instala as bibliotecas CUDA e de encoding por hardware (NVENC/NVDEC) para OBS, Kdenlive, FFmpeg e outros programas usarem a GPU para codificação de vídeo.</p>
+<div class="grupo-botoes">
+<button class="btn-executar"
+onclick="executarNvidiaCuda()"
+data-comando="nvidia-cuda-install"
+data-logbox="log-sessao-hardware"
+id="btn-nvidia-cuda-install"
+data-i18n="sessoes.hardware.btn_nvidia_cuda">
+📦 Instalar CUDA + NVENC
+</button>
+</div>
+</div>
+<div class="progress-container" id="progress-nvidia-cuda-install">
+<div class="progress-bar"><div class="progress-fill" id="progress-fill-nvidia-cuda-install"></div></div>
+<div class="progress-text"><span class="status" id="progress-status-nvidia-cuda-install">⏳ Iniciando...</span><span class="percentage" id="progress-percent-nvidia-cuda-install">0%</span></div>
+</div>
+</div>
+
+<div class="bloco-comando">
+<div class="comando-info">
+<h3 data-i18n="sessoes.hardware.nvidia_modeset_titulo">NVIDIA Modesetting (Wayland)</h3>
+<p data-i18n="sessoes.hardware.nvidia_modeset_desc">Ativa o parâmetro <code>nvidia-drm.modeset=1</code> no kernel, necessário para Wayland funcionar corretamente com placas NVIDIA.</p>
+<div class="botoes-flex">
+<button class="btn-executar"
+onclick="executarNvidiaModeset()"
+data-comando="nvidia-modeset-on"
+data-logbox="log-sessao-hardware"
+id="btn-nvidia-modeset-on"
+data-i18n="sessoes.hardware.btn_modeset_on">
+⚙️ Ativar modesetting
+</button>
+<button class="btn-executar vermelho"
+onclick="executarNvidiaModesetRemove()"
+data-comando="nvidia-modeset-off"
+data-logbox="log-sessao-hardware"
+id="btn-nvidia-modeset-off"
+data-i18n="sessoes.hardware.btn_modeset_off">
+↩️ Desativar modesetting
+</button>
+</div>
+</div>
+<div class="progress-container" id="progress-nvidia-modeset-on">
+<div class="progress-bar"><div class="progress-fill" id="progress-fill-nvidia-modeset-on"></div></div>
+<div class="progress-text"><span class="status" id="progress-status-nvidia-modeset-on">⏳ Iniciando...</span><span class="percentage" id="progress-percent-nvidia-modeset-on">0%</span></div>
+</div>
+<div class="progress-container" id="progress-nvidia-modeset-off">
+<div class="progress-bar"><div class="progress-fill" id="progress-fill-nvidia-modeset-off"></div></div>
+<div class="progress-text"><span class="status" id="progress-status-nvidia-modeset-off">⏳ Iniciando...</span><span class="percentage" id="progress-percent-nvidia-modeset-off">0%</span></div>
+</div>
+</div>
+
+</div>
+</details>
+
+<!-- ============================================================
+INTEL
+============================================================ -->
+<details class="acordeao">
+<summary data-i18n="sessoes.hardware.intel_titulo">🟦 Hardware Intel</summary>
+<div class="acordeao-conteudo">
+
+<div class="aviso-caixa" data-i18n="sessoes.hardware.intel_aviso">
+⚠️ Estes pacotes são para iGPUs Intel (gráficos integrados). Se você tem GPU dedicada AMD ou NVIDIA, o driver da placa dedicada cuida da maior parte da aceleração — os drivers Intel ainda podem ser úteis se você usa a iGPU em conjunto, mas não são obrigatórios.
+</div>
+
+<!-- Painel de detecção Intel -->
+<div class="bloco-comando destaque">
+<div class="comando-info">
+<h3 data-i18n="sessoes.hardware.intel_detection_titulo">🔍 Detecção de hardware Intel</h3>
+<p data-i18n="sessoes.hardware.intel_detection_desc">Verifica se o sistema tem uma iGPU Intel e informa se o driver recomendado (i915 ou xe) já está em uso.</p>
+
+<div id="intel-detection-panel" class="bloco-info">
+<span style="color: var(--text-muted);">⏳ Detectando hardware...</span>
+</div>
+
+<div class="grupo-botoes" style="margin-top: 1rem;">
+<button class="btn-executar"
+onclick="executarIntelDetection()"
+data-comando="intel-detection"
+data-logbox="log-sessao-hardware"
+id="btn-intel-detection"
+data-i18n="sessoes.hardware.btn_intel_detection">
+🔍 Verificar hardware Intel
+</button>
+</div>
+</div>
+</div>
+
+<div class="bloco-comando">
+<div class="comando-info">
+<h3 data-i18n="sessoes.hardware.intel_media_titulo">Aceleração de Vídeo Intel (VA-API)</h3>
+<p data-i18n="sessoes.hardware.intel_media_desc">Os pacotes <code>intel-media-va-driver</code> e <code>intel-media-va-driver-non-free</code> habilitam aceleração de vídeo por hardware em iGPUs Intel Skylake (6ª geração) ou mais recentes. Isso reduz o uso de CPU ao assistir vídeos em 4K, ao usar o navegador e ao editar vídeo. Chips mais antigos (Haswell ou anteriores) usam o driver i965, que já vem no Debian.</p>
+<div class="grupo-botoes">
+<button class="btn-executar"
+onclick="executarIntelMedia()"
+data-comando="intel-media-install"
+data-logbox="log-sessao-hardware"
+id="btn-intel-media-install"
+data-i18n="sessoes.hardware.btn_intel_media_instalar">
+🎬 Instalar Intel Media Driver
+</button>
+</div>
+</div>
+<div class="progress-container" id="progress-intel-media-install">
+<div class="progress-bar"><div class="progress-fill" id="progress-fill-intel-media-install"></div></div>
+<div class="progress-text"><span class="status" id="progress-status-intel-media-install">⏳ Iniciando...</span><span class="percentage" id="progress-percent-intel-media-install">0%</span></div>
+</div>
+</div>
+
+</div>
+</details>
+
+<div class="terminal-log sessao-compartilhado" id="log-sessao-hardware"></div>
+</div>
+
+<script>
+// ============================================================
+// SESSÃO 3: HARDWARE
+// ============================================================
+
+function _t(chave, fallback) {
+    return (typeof tOr === 'function') ? tOr(chave, fallback) : fallback;
+}
+
+function _tVars(chave, fallback, vars) {
+    return (typeof tOr === 'function') ? tOr(chave, fallback, vars) : fallback;
+}
+
+function _escapeHTML(s) {
+    if (s == null) return '';
+    return String(s).replace(/[&<>"']/g, function(c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+}
+
+// ============================================================
+// REGISTRO DE APPS REMOVÍVEIS (ícone de lixeira unificado)
+// ============================================================
+
+registrarAppRemovivel('vulkan-amd', {
+    tipo: 'dnf',
+    pacotes: ['mesa-vulkan-drivers', 'vulkan-tools', 'vulkan-loader'],
+    nome: 'Vulkan e Mesa 3D'
+});
+
+registrarAppRemovivel('vaapi-amd', {
+    tipo: 'dnf',
+    pacotes: ['libva2', 'libva-drm2', 'libva-utils', 'mesa-va-drivers', 'mesa-vdpau-drivers', 'vainfo'],
+    nome: 'VA-API AMD'
+});
+
+registrarAppRemovivel('corectrl-install', {
+    tipo: 'dnf',
+    pacotes: ['corectrl'],
+    nome: 'CoreCtrl'
+});
+
+registrarAppRemovivel('lact-install', {
+    tipo: 'dnf',
+    pacotes: ['lact'],
+    nome: 'LACT'
+});
+
+registrarAppRemovivel('nvidia-driver-install', {
+    tipo: 'dnf',
+    pacotes: ['nvidia-open-kernel-dkms', 'nvidia-kernel-dkms', 'nvidia-driver', 'nvidia-settings', 'firmware-misc-nonfree'],
+    nome: 'Driver NVIDIA'
+});
+
+registrarAppRemovivel('nvidia-cuda-install', {
+    tipo: 'dnf',
+    pacotes: ['nvidia-cuda-toolkit', 'libnvcuvid1', 'libnvidia-encode1'],
+    nome: 'CUDA + NVENC'
+});
+
+registrarAppRemovivel('intel-media-install', {
+    tipo: 'dnf',
+    pacotes: ['intel-media-va-driver', 'intel-media-va-driver-non-free'],
+    nome: 'Intel Media Driver'
+});
+
+// ============================================================
+// DETECÇÃO DE HARDWARE (usa o endpoint /hardware-scan)
+// ============================================================
+
+async function _fetchHardwareScan() {
+    try {
+        var r = await fetch(API_URL + '/hardware-scan', { cache: 'no-store' });
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return await r.json();
+    } catch (e) {
+        console.warn('[hardware] Erro ao consultar /hardware-scan:', e.message);
+        return null;
+    }
+}
+
+// ------------------------------------------------------------
+// AMD
+// ------------------------------------------------------------
+
+async function executarAmdDetection() {
+    var idComando = 'amd-detection';
+    var logBox = _getLogBox(idComando);
+    var panel = document.getElementById('amd-detection-panel');
+    var btn = document.getElementById('btn-' + idComando);
+
+    if (btn) {
+        btn.disabled = true;
+        btn.textContent = '⏳ Detectando...';
+        btn.style.opacity = '0.6';
+    }
+
+    if (panel) {
+        panel.className = 'bloco-info';
+        panel.innerHTML = '<span style="color: var(--text-muted);">⏳ Detectando hardware AMD...</span>';
+    }
+
+    var data = await _fetchHardwareScan();
+
+    if (btn) {
+        btn.disabled = false;
+        btn.textContent = _t('sessoes.hardware.btn_amd_detection', '🔍 Verificar hardware AMD');
+        btn.style.opacity = '1';
+    }
+
+    if (!data || !data.devices) {
+        if (panel) {
+            panel.className = 'aviso-caixa';
+            panel.innerHTML = '❌ Não foi possível consultar o servidor de hardware.';
+        }
+        return;
+    }
+
+    // Filtra GPUs AMD (vendor 1002 = AMD/ATI, 1022 = AMD APU)
+    var amdGpus = data.devices.filter(function(d) {
+        return d.device_id && (d.device_id.indexOf('1002:') === 0 || d.device_id.indexOf('1022:') === 0);
+    });
+
+    if (amdGpus.length === 0) {
+        if (panel) {
+            panel.className = 'bloco-info';
+            panel.innerHTML =
+                '<strong>ℹ️ Nenhuma GPU AMD detectada neste sistema.</strong>' +
+                '<p style="margin-top: 0.5rem; color: var(--text-muted);">' +
+                'Se você tem uma GPU AMD mas ela não aparece aqui, verifique se está bem encaixada e se o BIOS/UEFI está configurado corretamente.' +
+                '</p>';
+        }
+        return;
+    }
+
+    // Renderiza cada GPU AMD encontrada
+    var html = '';
+    amdGpus.forEach(function(gpu) {
+        var driverAtual = gpu.driver_in_use || '(desconhecido)';
+        var recomendadoOk = gpu.driver_recommended_in_use === true;
+
+        var corStatus = recomendadoOk ? '#059669' : '#d97706';
+        var iconeStatus = recomendadoOk ? '✅' : '⚠️';
+        var textoStatus = recomendadoOk
+            ? 'Usando o driver recomendado (<code>amdgpu</code>)'
+            : 'Driver atual: <code>' + _escapeHTML(driverAtual) + '</code> — o recomendado é <code>amdgpu</code>';
+
+        html += '<div style="margin-bottom: 0.75rem;">';
+        html += '<strong>🎮 ' + _escapeHTML(gpu.name) + '</strong>';
+        html += '<ul class="lista-info" style="margin-top: 0.5rem;">';
+        html += '<li><span class="label">Endereço PCI</span><span class="valor">' + _escapeHTML(gpu.pci_address || '-') + '</span></li>';
+        html += '<li><span class="label">Driver em uso</span><span class="valor"><code>' + _escapeHTML(driverAtual) + '</code></span></li>';
+        html += '<li><span class="label">Status</span><span class="valor" style="color: ' + corStatus + ';">' + iconeStatus + ' ' + textoStatus + '</span></li>';
+        html += '</ul>';
+        html += '</div>';
+    });
+
+    if (panel) {
+        panel.className = 'bloco-info';
+        panel.innerHTML = html;
+    }
+}
+
+// ------------------------------------------------------------
+// NVIDIA
+// ------------------------------------------------------------
+
+async function executarNvidiaDetection() {
+    var idComando = 'nvidia-detection';
+    var logBox = _getLogBox(idComando);
+    var panel = document.getElementById('nvidia-detection-panel');
+    var btn = document.getElementById('btn-' + idComando);
+
+    if (btn) {
+        btn.disabled = true;
+        btn.textContent = '⏳ Detectando...';
+        btn.style.opacity = '0.6';
+    }
+
+    if (panel) {
+        panel.className = 'bloco-info';
+        panel.innerHTML = '<span style="color: var(--text-muted);">⏳ Detectando hardware NVIDIA...</span>';
+    }
+
+    var data = await _fetchHardwareScan();
+
+    if (btn) {
+        btn.disabled = false;
+        btn.textContent = _t('sessoes.hardware.btn_nvidia_detection', '🔍 Verificar hardware NVIDIA');
+        btn.style.opacity = '1';
+    }
+
+    if (!data || !data.devices) {
+        if (panel) {
+            panel.className = 'aviso-caixa';
+            panel.innerHTML = '❌ Não foi possível consultar o servidor de hardware.';
+        }
+        return;
+    }
+
+    // Filtra GPUs NVIDIA (vendor 10de)
+    var nvidiaGpus = data.devices.filter(function(d) {
+        return d.device_id && d.device_id.indexOf('10de:') === 0;
+    });
+
+    if (nvidiaGpus.length === 0) {
+        if (panel) {
+            panel.className = 'aviso-caixa';
+            panel.innerHTML =
+                '<strong>⚠️ Nenhuma GPU NVIDIA detectada neste sistema.</strong>' +
+                '<p style="margin-top: 0.5rem;">' +
+                'O driver proprietário NVIDIA só se aplica a GPUs físicas NVIDIA. Se você acha que tem uma, verifique se está bem encaixada.' +
+                '</p>';
+        }
+        return;
+    }
+
+    var html = '';
+    nvidiaGpus.forEach(function(gpu) {
+        var driverAtual = gpu.driver_in_use || '(desconhecido)';
+        var recomendadoOk = gpu.driver_recommended_in_use === true;
+        var info = gpu.nvidia_info || {};
+        var pkgRecomendado = (gpu.packages && gpu.packages[0]) || 'nvidia-open-kernel-dkms';
+
+        var flavourLabel = '';
+        if (info.flavour === 'open') flavourLabel = 'Turing+ (open kernel)';
+        else if (info.flavour === 'legacy-mid') flavourLabel = 'Maxwell / Pascal / Volta (proprietário)';
+        else if (info.flavour === 'legacy-old') flavourLabel = 'Kepler ou anterior (proprietário)';
+        else if (info.flavour === 'legacy-470') flavourLabel = '470xx legacy';
+        else if (info.flavour === 'legacy-390') flavourLabel = '390xx legacy';
+        else flavourLabel = 'genérico';
+
+        var fonteLabel = info.source === 'nvidia-detect'
+            ? 'nvidia-detect (pacote oficial do Debian)'
+            : 'heurística via lspci';
+
+        var corStatus = recomendadoOk ? '#059669' : '#d97706';
+        var iconeStatus = recomendadoOk ? '✅' : '⚠️';
+        var textoStatus = recomendadoOk
+            ? 'Usando o driver proprietário NVIDIA'
+            : 'Driver atual: <code>' + _escapeHTML(driverAtual) + '</code> — recomendado instalar <code>' + _escapeHTML(pkgRecomendado) + '</code>';
+
+        html += '<div style="margin-bottom: 0.75rem;">';
+        html += '<strong>🎮 ' + _escapeHTML(gpu.name) + '</strong>';
+        html += '<ul class="lista-info" style="margin-top: 0.5rem;">';
+        html += '<li><span class="label">Endereço PCI</span><span class="valor">' + _escapeHTML(gpu.pci_address || '-') + '</span></li>';
+        html += '<li><span class="label">Driver em uso</span><span class="valor"><code>' + _escapeHTML(driverAtual) + '</code></span></li>';
+        html += '<li><span class="label">Geração</span><span class="valor">' + _escapeHTML(flavourLabel) + '</span></li>';
+        html += '<li><span class="label">Driver recomendado</span><span class="valor"><code>' + _escapeHTML(pkgRecomendado) + '</code></span></li>';
+        html += '<li><span class="label">Fonte da detecção</span><span class="valor">' + _escapeHTML(fonteLabel) + '</span></li>';
+        html += '<li><span class="label">Status</span><span class="valor" style="color: ' + corStatus + ';">' + iconeStatus + ' ' + textoStatus + '</span></li>';
+        html += '</ul>';
+        html += '</div>';
+    });
+
+    // Aviso sobre Secure Boot
+    if (data.secure_boot === 'enabled') {
+        html += '<div class="aviso-caixa" style="margin-top: 0.75rem;">' +
+            '⚠️ <strong>Secure Boot está ativo.</strong> Ao instalar o driver NVIDIA, você precisará registrar a chave MOK durante o processo ou desativar o Secure Boot. Sem isso, o driver não carrega.' +
+            '</div>';
+    }
+
+    if (panel) {
+        panel.className = 'bloco-info';
+        panel.innerHTML = html;
+    }
+}
+
+// ------------------------------------------------------------
+// Intel
+// ------------------------------------------------------------
+
+async function executarIntelDetection() {
+    var idComando = 'intel-detection';
+    var logBox = _getLogBox(idComando);
+    var panel = document.getElementById('intel-detection-panel');
+    var btn = document.getElementById('btn-' + idComando);
+
+    if (btn) {
+        btn.disabled = true;
+        btn.textContent = '⏳ Detectando...';
+        btn.style.opacity = '0.6';
+    }
+
+    if (panel) {
+        panel.className = 'bloco-info';
+        panel.innerHTML = '<span style="color: var(--text-muted);">⏳ Detectando hardware Intel...</span>';
+    }
+
+    var data = await _fetchHardwareScan();
+
+    if (btn) {
+        btn.disabled = false;
+        btn.textContent = _t('sessoes.hardware.btn_intel_detection', '🔍 Verificar hardware Intel');
+        btn.style.opacity = '1';
+    }
+
+    if (!data || !data.devices) {
+        if (panel) {
+            panel.className = 'aviso-caixa';
+            panel.innerHTML = '❌ Não foi possível consultar o servidor de hardware.';
+        }
+        return;
+    }
+
+    // Filtra GPUs Intel (vendor 8086) — mas só as de vídeo
+    var intelGpus = data.devices.filter(function(d) {
+        return d.device_id && d.device_id.indexOf('8086:') === 0 && d.category === 'gpu';
+    });
+
+    if (intelGpus.length === 0) {
+        if (panel) {
+            panel.className = 'bloco-info';
+            panel.innerHTML =
+                '<strong>ℹ️ Nenhuma iGPU Intel detectada neste sistema.</strong>' +
+                '<p style="margin-top: 0.5rem; color: var(--text-muted);">' +
+                'Se você tem uma CPU Intel com gráficos integrados, verifique se a iGPU está habilitada no BIOS/UEFI.' +
+                '</p>';
+        }
+        return;
+    }
+
+    var html = '';
+    intelGpus.forEach(function(gpu) {
+        var driverAtual = gpu.driver_in_use || '(desconhecido)';
+        var recomendadoOk = gpu.driver_recommended_in_use === true;
+        var driverEsperado = (driverAtual === 'xe') ? 'xe' : 'i915';
+
+        var corStatus = recomendadoOk ? '#059669' : '#d97706';
+        var iconeStatus = recomendadoOk ? '✅' : '⚠️';
+        var textoStatus = recomendadoOk
+            ? 'Usando o driver recomendado (<code>' + driverEsperado + '</code>)'
+            : 'Driver atual: <code>' + _escapeHTML(driverAtual) + '</code> — o recomendado é <code>i915</code> ou <code>xe</code>';
+
+        html += '<div style="margin-bottom: 0.75rem;">';
+        html += '<strong>🎮 ' + _escapeHTML(gpu.name) + '</strong>';
+        html += '<ul class="lista-info" style="margin-top: 0.5rem;">';
+        html += '<li><span class="label">Endereço PCI</span><span class="valor">' + _escapeHTML(gpu.pci_address || '-') + '</span></li>';
+        html += '<li><span class="label">Driver em uso</span><span class="valor"><code>' + _escapeHTML(driverAtual) + '</code></span></li>';
+        html += '<li><span class="label">Status</span><span class="valor" style="color: ' + corStatus + ';">' + iconeStatus + ' ' + textoStatus + '</span></li>';
+        html += '</ul>';
+        html += '</div>';
+    });
+
+    if (panel) {
+        panel.className = 'bloco-info';
+        panel.innerHTML = html;
+    }
+}
+
+// ============================================================
+// AMD — VULKAN / VA-API
+// ============================================================
+
+async function executarVulkan() {
+    var idComando = 'vulkan-amd';
+    var comando =
+        'sudo apt install -y ' +
+        'mesa-vulkan-drivers mesa-vulkan-drivers:i386 ' +
+        'vulkan-tools vulkan-loader ' +
+        'mesa-dri-drivers libgl1-mesa-dri libgl1-mesa-dri:i386';
+    await executarComandoGenerico(idComando, comando,
+        _t('sessoes.hardware.btn_vulkan', '🚀 Instalar Vulkan e Mesa 3D'),
+        function() { aplicarEstadoInstalavel('vulkan-amd', null); });
+}
+
+async function executarVaapi() {
+    var idComando = 'vaapi-amd';
+    var comando =
+        'sudo apt install -y ' +
+        'libva2 libva-drm2 libva-utils vainfo ' +
+        'mesa-va-drivers mesa-vdpau-drivers';
+    await executarComandoGenerico(idComando, comando,
+        _t('sessoes.hardware.btn_vaapi', '🚀 Instalar VA-API e VDPAU'),
+        function() { aplicarEstadoInstalavel('vaapi-amd', null); });
+}
+
+// ============================================================
+// AMD — CORECTRL / LACT
+// ============================================================
+
+async function executarCoreCtrl() {
+    var idComando = 'corectrl-install';
+    var comando = 'sudo apt install -y corectrl';
+    await executarComandoGenerico(idComando, comando,
+        _t('sessoes.hardware.btn_corectrl', '📦 Instalar CoreCtrl'),
+        function() { aplicarEstadoInstalavel('corectrl-install', null); });
+}
+
+async function executarLACT() {
+    var idComando = 'lact-install';
+    var comando = 'sudo apt install -y lact && sudo systemctl enable --now lactd';
+    await executarComandoGenerico(idComando, comando,
+        _t('sessoes.hardware.btn_lact', '📦 Instalar LACT'),
+        function() { aplicarEstadoInstalavel('lact-install', null); });
+}
+
+// ============================================================
+// AMD — OVERCLOCK (toggle)
+// ============================================================
+//
+// No Debian não existe `grubby`. O parâmetro é adicionado em
+// /etc/default/grub (GRUB_CMDLINE_LINUX_DEFAULT) e aplicado com
+// `update-grub`. Idempotente: verifica se o parâmetro já existe
+// antes de adicionar.
+
+async function executarOverclockAMD() {
+    var idComando = 'amdgpu-overclock';
+    var comando =
+        'if grep -q "amdgpu.ppfeaturemask" /etc/default/grub; then ' +
+        '  echo "✅ Parâmetro amdgpu.ppfeaturemask já está configurado."; ' +
+        'else ' +
+        '  echo "⚙️ Adicionando amdgpu.ppfeaturemask=0xffffffff ao kernel..."; ' +
+        '  sudo sed -i \'s/^GRUB_CMDLINE_LINUX_DEFAULT="\\(.*\\)"/GRUB_CMDLINE_LINUX_DEFAULT="\\1 amdgpu.ppfeaturemask=0xffffffff"/\' /etc/default/grub; ' +
+        '  sudo update-grub; ' +
+        '  echo ""; ' +
+        '  echo "✅ Overclock desbloqueado. Reinicie para aplicar."; ' +
+        'fi';
+    await executarComandoGenerico(idComando, comando,
+        _t('sessoes.hardware.btn_overclock_on', '⚙️ Ativar Overclock'),
+        function() {
+            aplicarEstadoToggle('amdgpu-overclock', 'amdgpu-overclock-remove');
+        });
+}
+
+async function executarOverclockRemoveAMD() {
+    var idComando = 'amdgpu-overclock-remove';
+    var comando =
+        'if grep -q "amdgpu.ppfeaturemask" /etc/default/grub; then ' +
+        '  echo "↩️ Removendo amdgpu.ppfeaturemask do kernel..."; ' +
+        '  sudo sed -i \'s/ *amdgpu.ppfeaturemask=0xffffffff//g\' /etc/default/grub; ' +
+        '  sudo update-grub; ' +
+        '  echo ""; ' +
+        '  echo "✅ Overclock desativado. Reinicie para aplicar."; ' +
+        'else ' +
+        '  echo "ℹ️ Parâmetro amdgpu.ppfeaturemask não está configurado."; ' +
+        'fi';
+    await executarComandoGenerico(idComando, comando,
+        _t('sessoes.hardware.btn_overclock_off', '↩️ Desativar'),
+        function() {
+            desmarcarComoExecutado('amdgpu-overclock').then(function() {
+                aplicarEstadoToggle('amdgpu-overclock', 'amdgpu-overclock-remove');
+            }).catch(function(e) {
+                console.warn('[toggle] Erro ao limpar estado do install:', e);
+                aplicarEstadoToggle('amdgpu-overclock', 'amdgpu-overclock-remove');
+            });
+        });
+}
+
+// ============================================================
+// NVIDIA — INSTALAÇÃO DO DRIVER
+// ============================================================
+//
+// O comando shell detecta a GPU e escolhe o pacote correto. A
+// heurística bate com a do `hardware-service.js`, mas executa de
+// novo no shell para garantir consistência caso o usuário tenha
+// trocado a GPU desde o último scan.
+
+async function executarNvidiaDriver() {
+    var idComando = 'nvidia-driver-install';
+
+    var comando =
+        // Verifica se há GPU NVIDIA física
+        'GPU_MODEL=$(lspci 2>/dev/null | grep -iE "nvidia.*(vga|3d|display)" | head -1); ' +
+        'if [ -z "$GPU_MODEL" ]; then ' +
+        '  echo "❌ Nenhuma GPU NVIDIA detectada. Abortando."; ' +
+        '  exit 1; ' +
+        'fi; ' +
+        'echo "🔍 GPU NVIDIA detectada: $GPU_MODEL"; ' +
+
+        // Verifica se non-free está ativo
+        'if ! grep -rq "non-free" /etc/apt/sources.list /etc/apt/sources.list.d/ 2>/dev/null; then ' +
+        '  echo "❌ Repositório non-free não está ativo."; ' +
+        '  echo "   Ative na sessão Primeiros Passos antes de instalar o driver."; ' +
+        '  exit 1; ' +
+        'fi; ' +
+
+        // Instala nvidia-detect se não estiver presente (ajuda na detecção)
+        'if ! command -v nvidia-detect > /dev/null 2>&1; then ' +
+        '  echo "📦 Instalando nvidia-detect (recomendado)..."; ' +
+        '  sudo apt install -y nvidia-detect || true; ' +
+        'fi; ' +
+
+        // Escolhe o pacote correto por geração
+        'if echo "$GPU_MODEL" | grep -qiE "RTX\\s+(20|30|40|50)[0-9]{2}|GTX\\s+16[0-9]{2}|T4|A100|H100|A30|L4|L40"; then ' +
+        '  GPU_PKG="nvidia-open-kernel-dkms"; FLAVOUR="Turing+ (open kernel)"; ' +
+        'elif echo "$GPU_MODEL" | grep -qiE "GTX\\s+(75|9|10)[0-9]{2}|Titan (V|X)|Quadro P[0-9]"; then ' +
+        '  GPU_PKG="nvidia-kernel-dkms"; FLAVOUR="Maxwell/Pascal/Volta (proprietário)"; ' +
+        'elif echo "$GPU_MODEL" | grep -qiE "GTX\\s+[67][0-9]{2}|GT\\s+[4-7][0-9]{2}"; then ' +
+        '  GPU_PKG="nvidia-kernel-dkms"; FLAVOUR="Kepler ou anterior (proprietário)"; ' +
+        'else ' +
+        '  GPU_PKG="nvidia-open-kernel-dkms"; FLAVOUR="padrão (open kernel)"; ' +
+        'fi; ' +
+
+        'echo "📦 Série de driver selecionada: $FLAVOUR ($GPU_PKG)"; ' +
+        'echo ""; ' +
+
+        // Instala driver + firmware + utilitário gráfico
+        'echo "📥 Instalando driver NVIDIA..."; ' +
+        'sudo apt install -y "$GPU_PKG" nvidia-driver nvidia-settings firmware-misc-nonfree; ' +
+        'echo ""; ' +
+        'echo "✅ Driver NVIDIA instalado. Reinicie o computador para carregar o módulo."';
+
+    await executarComandoGenerico(idComando, comando,
+        _t('sessoes.hardware.btn_nvidia_driver', '📦 Instalar Driver NVIDIA'),
+        function() {
+            aplicarEstadoToggle('nvidia-driver-install', 'nvidia-driver-remove');
+        });
+}
+
+async function executarNvidiaDriverRemove() {
+    if (!isExecutado('nvidia-driver-install')) {
+        alert(_t('comum.nao_instalado', 'O driver NVIDIA não está instalado.'));
+        return;
+    }
+
+    var confirmado = confirm(_t('sessoes.hardware.nvidia_confirmar_reverter',
+        '⚠️ Reverter o driver NVIDIA?\n\n' +
+        'O sistema voltará a usar o driver nouveau (código aberto, incluído no Debian por padrão).\n\n' +
+        'O desempenho em jogos e aplicações 3D será reduzido até você reinstalar o driver proprietário.\n\n' +
+        'Continuar?'));
+    if (!confirmado) return;
+
+    var idComando = 'nvidia-driver-remove';
+    var comando =
+        'sudo apt purge -y nvidia-open-kernel-dkms nvidia-kernel-dkms nvidia-driver nvidia-settings ' +
+        'nvidia-cuda-toolkit libnvcuvid1 libnvidia-encode1 2>/dev/null; ' +
+        'sudo apt autoremove -y';
+
+    await executarComandoGenerico(idComando, comando,
+        _t('sessoes.hardware.btn_nvidia_reverter', '↩️ Reverter pro nouveau'),
+        function() {
+            desmarcarComoExecutado('nvidia-driver-install').then(function() {
+                aplicarEstadoToggle('nvidia-driver-install', 'nvidia-driver-remove');
+            }).catch(function(e) {
+                console.warn('[toggle] Erro ao limpar estado do install:', e);
+                aplicarEstadoToggle('nvidia-driver-install', 'nvidia-driver-remove');
+            });
+        });
+}
+
+async function executarNvidiaCuda() {
+    var idComando = 'nvidia-cuda-install';
+    var comando =
+        'sudo apt install -y nvidia-cuda-toolkit libnvcuvid1 libnvidia-encode1';
+    await executarComandoGenerico(idComando, comando,
+        _t('sessoes.hardware.btn_nvidia_cuda', '📦 Instalar CUDA + NVENC'),
+        function() { aplicarEstadoInstalavel('nvidia-cuda-install', null); });
+}
+
+async function executarNvidiaModeset() {
+    var idComando = 'nvidia-modeset-on';
+    var comando =
+        'if grep -q "nvidia-drm.modeset=1" /etc/default/grub; then ' +
+        '  echo "✅ nvidia-drm.modeset=1 já está configurado."; ' +
+        'else ' +
+        '  echo "⚙️ Adicionando nvidia-drm.modeset=1 ao kernel..."; ' +
+        '  sudo sed -i \'s/^GRUB_CMDLINE_LINUX_DEFAULT="\\(.*\\)"/GRUB_CMDLINE_LINUX_DEFAULT="\\1 nvidia-drm.modeset=1"/\' /etc/default/grub; ' +
+        '  sudo update-grub; ' +
+        '  echo ""; ' +
+        '  echo "✅ Modesetting ativado. Reinicie para aplicar."; ' +
+        'fi';
+    await executarComandoGenerico(idComando, comando,
+        _t('sessoes.hardware.btn_modeset_on', '⚙️ Ativar modesetting'));
+}
+
+async function executarNvidiaModesetRemove() {
+    var idComando = 'nvidia-modeset-off';
+    var comando =
+        'if grep -q "nvidia-drm.modeset=1" /etc/default/grub; then ' +
+        '  echo "↩️ Removendo nvidia-drm.modeset=1 do kernel..."; ' +
+        '  sudo sed -i \'s/ *nvidia-drm.modeset=1//g\' /etc/default/grub; ' +
+        '  sudo update-grub; ' +
+        '  echo ""; ' +
+        '  echo "✅ Modesetting desativado. Reinicie para aplicar."; ' +
+        'else ' +
+        '  echo "ℹ️ nvidia-drm.modeset=1 não está configurado."; ' +
+        'fi';
+    await executarComandoGenerico(idComando, comando,
+        _t('sessoes.hardware.btn_modeset_off', '↩️ Desativar modesetting'));
+}
+
+// ============================================================
+// INTEL
+// ============================================================
+
+async function executarIntelMedia() {
+    var idComando = 'intel-media-install';
+    var comando =
+        'sudo apt install -y intel-media-va-driver intel-media-va-driver-non-free vainfo';
+    await executarComandoGenerico(idComando, comando,
+        _t('sessoes.hardware.btn_intel_media_instalar', '🎬 Instalar Intel Media Driver'),
+        function() { aplicarEstadoInstalavel('intel-media-install', null); });
+}
+
+// ============================================================
+// RESTAURAR ESTADO DA SESSÃO
+// ============================================================
+
+async function restaurarEstadoSessao() {
+    // Blocos one-shot com lixeira (Estado 3)
+    aplicarEstadoInstalavel('vulkan-amd', null);
+    aplicarEstadoInstalavel('vaapi-amd', null);
+    aplicarEstadoInstalavel('corectrl-install', null);
+    aplicarEstadoInstalavel('lact-install', null);
+    aplicarEstadoInstalavel('nvidia-cuda-install', null);
+    aplicarEstadoInstalavel('intel-media-install', null);
+
+    // NVIDIA driver: par install/revert
+    aplicarEstadoToggle('nvidia-driver-install', 'nvidia-driver-remove');
+
+    // Overclock AMD: par install/revert
+    aplicarEstadoToggle('amdgpu-overclock', 'amdgpu-overclock-remove');
+
+    // Modo "sempre clicável" para detecção
+    ['amd-detection', 'nvidia-detection', 'intel-detection'].forEach(function(id) {
+        var btn = document.getElementById('btn-' + id);
+        if (btn) {
+            btn.disabled = false;
+            btn.style.opacity = '1';
+            btn.style.cursor = 'pointer';
+        }
+    });
+
+    // Auto-detecta as 3 GPUs ao entrar na sessão
+    setTimeout(function() {
+        executarAmdDetection();
+        executarNvidiaDetection();
+        executarIntelDetection();
+    }, 300);
+}
+
+// ============================================================
+// INICIALIZAÇÃO
+// ============================================================
+
+(function() {
+    document.querySelectorAll('.btn-executar').forEach(function(btn) {
+        if (!btn.hasAttribute('data-texto-original')) {
+            btn.setAttribute('data-texto-original', btn.textContent);
+        }
+    });
+
+    restaurarEstadoSessao();
+
+    console.log('📦 Componente hardware carregado!');
+})();
+</script>
+</body>
+</html>

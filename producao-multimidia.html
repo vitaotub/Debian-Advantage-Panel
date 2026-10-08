@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DAP - Produção Multimídia</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="sessao-container" id="sessao-producao-multimidia">
+<div class="sessao-titulo">
+<span class="sessao-label">Sessão</span>
+<span data-i18n="sessoes.producao-multimidia.titulo">🎬 Produção Multimídia</span>
+</div>
+
+<!-- Acórdeão principal — descrição da sessão -->
+<div class="acordeao-principal">
+<span data-i18n="sessoes.producao-multimidia.descricao">Ferramentas para gravar, editar, transmitir e produzir conteúdo de áudio e vídeo no Debian.</span>
+</div>
+
+<!-- Acórdeão único: Gravação, transmissão e áudio -->
+<details class="acordeao" open>
+<summary data-i18n="sessoes.producao-multimidia.acordeao_titulo">🎬 Gravação, transmissão e áudio</summary>
+<div class="acordeao-conteudo">
+
+<!-- OBS Studio -->
+<div class="bloco-comando destaque">
+<div class="comando-info">
+<h3 data-i18n="sessoes.producao-multimidia.obs_titulo">🎬 OBS Studio — Instalação e Câmera Virtual</h3>
+
+<div class="aviso-caixa" style="margin-top: 0.5rem; font-size: 0.85rem;" data-i18n="sessoes.producao-multimidia.obs_aviso">
+⚠️ A câmera virtual exige que o Secure Boot esteja configurado corretamente ou desativado.
+</div>
+
+<p data-i18n="sessoes.producao-multimidia.obs_desc">Instale o OBS Studio para gravação/streaming e ative a câmera virtual para chamadas de vídeo.</p>
+
+<div class="botoes-flex">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar"
+onclick="executarOBSStudio()"
+data-comando="instalar-obs-studio"
+data-logbox="log-sessao-producao-multimidia"
+id="btn-instalar-obs-studio"
+data-i18n="sessoes.producao-multimidia.btn_instalar_obs">
+📹 Instalar OBS Studio
+</button>
+</div>
+
+<button class="btn-executar verde"
+style="display: none;"
+onclick="abrirOBSStudio()"
+data-comando="abrir-obs-studio"
+data-logbox="log-sessao-producao-multimidia"
+id="btn-abrir-obs-studio"
+data-i18n="sessoes.producao-multimidia.btn_abrir_obs">
+🚀 Abrir OBS Studio
+</button>
+</div>
+
+<div class="botoes-flex" style="margin-top: 0.75rem;">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar"
+onclick="executarOBSCam()"
+data-comando="obs-cam"
+data-logbox="log-sessao-producao-multimidia"
+id="btn-obs-cam"
+data-i18n="sessoes.producao-multimidia.btn_ativar_cam">
+🎥 Ativar Câmera Virtual
+</button>
+</div>
+</div>
+</div>
+
+<div class="progress-container" id="progress-instalar-obs-studio">
+<div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-obs-studio"></div></div>
+<div class="progress-text"><span class="status" id="progress-status-instalar-obs-studio">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-obs-studio">0%</span></div>
+</div>
+
+<div class="progress-container" id="progress-obs-cam">
+<div class="progress-bar"><div class="progress-fill" id="progress-fill-obs-cam"></div></div>
+<div class="progress-text"><span class="status" id="progress-status-obs-cam">⏳ Iniciando...</span><span class="percentage" id="progress-percent-obs-cam">0%</span></div>
+</div>
+</div>
+
+<!-- EasyEffects -->
+<div class="bloco-comando">
+<div class="comando-info">
+<h3 data-i18n="sessoes.producao-multimidia.easyeffects_titulo">🎵 Melhoria de Áudio com EasyEffects</h3>
+<p data-i18n="sessoes.producao-multimidia.easyeffects_desc">Processador de efeitos de som para PipeWire para aplicar redução de ruídos e equalizações.</p>
+<div class="botoes-flex">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar"
+onclick="executarEasyEffects()"
+data-comando="instalar-easyeffects"
+data-logbox="log-sessao-producao-multimidia"
+id="btn-instalar-easyeffects"
+data-i18n="sessoes.producao-multimidia.btn_instalar_easyeffects">
+Instalar EasyEffects (Flatpak)
+</button>
+</div>
+<button class="btn-executar verde"
+style="display: none;"
+onclick="abrirEasyEffects()"
+data-comando="abrir-easyeffects"
+data-logbox="log-sessao-producao-multimidia"
+id="btn-abrir-easyeffects"
+data-i18n="sessoes.producao-multimidia.btn_abrir_easyeffects">
+🚀 Abrir EasyEffects
+</button>
+</div>
+</div>
+
+<div class="progress-container" id="progress-instalar-easyeffects">
+<div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-easyeffects"></div></div>
+<div class="progress-text"><span class="status" id="progress-status-instalar-easyeffects">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-easyeffects">0%</span></div>
+</div>
+</div>
+
+</div>
+</details>
+
+<!-- Log único da sessão -->
+<div class="terminal-log sessao-compartilhado" id="log-sessao-producao-multimidia"></div>
+</div>
+
+<script>
+// ============================================================
+// SESSÃO: PRODUÇÃO MULTIMÍDIA
+// ============================================================
+
+function _t(chave, fallback) {
+    return (typeof tOr === 'function') ? tOr(chave, fallback) : fallback;
+}
+
+var APPS_FLATPAK = {
+    'instalar-obs-studio': { appId: 'com.obsproject.Studio', fallback: '📹 Instalar OBS Studio' },
+    'instalar-easyeffects': { appId: 'com.github.wwmm.easyeffects', fallback: 'Instalar EasyEffects (Flatpak)' }
+};
+
+// ============================================================
+// REGISTRO DE APPS REMOVÍVEIS (não-Flatpak)
+// ============================================================
+//
+// A câmera virtual do OBS usa v4l2loopback-dkms (módulo de kernel
+// com DKMS). No Debian, o pacote se chama v4l2loopback-dkms e
+// v4l2loopback-utils.
+
+registrarAppRemovivel('obs-cam', {
+    tipo: 'dnf',
+    pacotes: ['v4l2loopback-dkms', 'v4l2loopback-utils'],
+    nome: 'Câmera Virtual do OBS'
+});
+
+// ============================================================
+// OBS STUDIO
+// ============================================================
+
+async function executarOBSStudio() {
+    var idComando = 'instalar-obs-studio';
+    var info = APPS_FLATPAK[idComando];
+    if (!info) return;
+    var comando = 'flatpak install flathub ' + info.appId + ' -y';
+    await executarComandoGenerico(idComando, comando,
+        _t('sessoes.producao-multimidia.btn_instalar_obs', '📹 Instalar OBS Studio'),
+        function() {
+            aplicarEstadoInstalavel('instalar-obs-studio', 'abrir-obs-studio');
+        });
+}
+
+function abrirOBSStudio() {
+    abrirFerramentaExterna('gtk-launch com.obsproject.Studio', 'instalar-obs-studio', 'OBS Studio');
+}
+
+async function executarOBSCam() {
+    var idComando = 'obs-cam';
+    var comando = 'sudo apt install -y v4l2loopback-dkms v4l2loopback-utils';
+    await executarComandoGenerico(idComando, comando,
+        _t('sessoes.producao-multimidia.btn_ativar_cam', '🎥 Ativar Câmera Virtual'),
+        function() {
+            // Câmera virtual não tem botão de abrir (é um módulo de
+            // kernel, não um software). Estado 3 — botão cinza +
+            // lixeira.
+            aplicarEstadoInstalavel('obs-cam', null);
+        });
+}
+
+// ============================================================
+// EASY EFFECTS
+// ============================================================
+
+async function executarEasyEffects() {
+    var idComando = 'instalar-easyeffects';
+    var info = APPS_FLATPAK[idComando];
+    if (!info) return;
+    var comando = 'flatpak install flathub ' + info.appId + ' -y';
+    await executarComandoGenerico(idComando, comando,
+        _t('sessoes.producao-multimidia.btn_instalar_easyeffects', 'Instalar EasyEffects (Flatpak)'),
+        function() {
+            aplicarEstadoInstalavel('instalar-easyeffects', 'abrir-easyeffects');
+        });
+}
+
+function abrirEasyEffects() {
+    abrirFerramentaExterna('gtk-launch com.github.wwmm.easyeffects', 'instalar-easyeffects', 'EasyEffects');
+}
+
+// ============================================================
+// RESTAURAR ESTADO DA SESSÃO
+// ============================================================
+
+function restaurarEstadoSessao() {
+    aplicarEstadoInstalavel('instalar-obs-studio', 'abrir-obs-studio');
+    aplicarEstadoInstalavel('instalar-easyeffects', 'abrir-easyeffects');
+    aplicarEstadoInstalavel('obs-cam', null);
+}
+
+// ============================================================
+// INICIALIZAÇÃO
+// ============================================================
+
+(function() {
+    document.querySelectorAll('.btn-executar').forEach(function(btn) {
+        if (!btn.hasAttribute('data-texto-original')) {
+            btn.setAttribute('data-texto-original', btn.textContent);
+        }
+    });
+
+    restaurarEstadoSessao();
+
+    console.log('📦 Componente producao-multimidia carregado!');
+})();
+</script>
+</body>
+</html>

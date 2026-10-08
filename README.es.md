@@ -2,8 +2,8 @@
 
 **🌐 Idioma:** [Português (BR)](README.md) | [English](README.en.md) | Español
 
-![Versión](https://img.shields.io/badge/Versi%C3%B3n-v0.1--10072026-orange?style=flat-square)
-![Debian](https://img.shields.io/badge/Debian-12%2B-A81D33?style=flat-square&logo=debian)
+![Versión](https://img.shields.io/badge/Versi%C3%B3n-v0.1--10082026-orange?style=flat-square)
+![Debian](https://img.shields.io/badge/Debian-13%2B-A81D33?style=flat-square&logo=debian)
 ![Licencia](https://img.shields.io/badge/Licencia-GPL--3.0-green?style=flat-square)
 ![Idiomas](https://img.shields.io/badge/Idiomas-PT--BR%20%7C%20EN%20%7C%20ES-3c67e3?style=flat-square)
 
@@ -34,9 +34,9 @@ Panel de automatización visual para **Debian Stable**. Transforma una instalaci
 
 **Proyecto hermano del [Fedora Advantage Panel](https://github.com/vitaotub/Fedora-Advantage-Panel)** — comparte filosofía, estándares visuales y arquitectura, pero el contenido es específico para Debian.
 
-## ⚠️ Estado actual — v0.1 (Fase 1)
+## ⚠️ Estado actual — v0.1-10082026
 
-**Esta es una versión inicial de desarrollo.** Entrega **la base técnica completa**, pero **ninguna sesión de automatización está implementada todavía**.
+**Esta es una versión en desarrollo activo, con todas las sesiones del alcance implementadas.**
 
 ### Lo que ya funciona
 
@@ -50,28 +50,28 @@ Panel de automatización visual para **Debian Stable**. Transforma una instalaci
 - ✅ Log Matrix verde en tiempo real (SSE)
 - ✅ Cola de instalación de Flatpak
 - ✅ Bloqueo de sesión durante la ejecución
+- ✅ Detección de hardware en tiempo real (endpoint `/hardware-scan`)
 - ✅ Instalación, actualización y desinstalación vía `install.sh`
 
-### Lo que **no** está presente todavía
+### Sesiones implementadas
 
-- 🚧 Ninguna de las 8 sesiones de automatización
-- 🚧 Detección de hardware (`hardware-service.js` sigue siendo el del FAP — devuelve lista vacía en Debian)
-- 🚧 Parser de progreso real para `apt` (usa fallback del temporizador)
+**13 sesiones de automatización:**
 
-**`guiado.html` muestra un placeholder explícito diciendo "Fase 1 del desarrollo completada. Las sesiones se agregarán en la próxima fase."** Esto no es un bug — es el estado esperado para v0.1.
+1. 🚀 Primeros Pasos
+2. 📦 Aplicaciones Recomendadas
+3. 🔤 Códecs y Compatibilidad
+4. 🖥️ Hardware
+5. 🔌 Dispositivos y Periféricos
+6. 🎮 Gaming
+7. 🏠 Hogar y Oficina
+8. 📊 Diagnóstico
+9. 🎬 Producción Multimedia
+10. 💻 Virtualización
+11. 🛠️ Ajustes y Mantenimiento
+12. 🐧 Estado de Debian
+13. 📖 Acerca de DAP
 
-## ✨ Sesiones planeadas para la v1
-
-| # | Sesión | Qué hace |
-|---|---|---|
-| 1 | 🚀 Primeros Pasos | `apt update`/`upgrade`, activar non-free/contrib/non-free-firmware, Flatpak/Flathub, backports, locale PT-BR, hunspell, i386 (para Steam) |
-| 2 | 🔤 Códecs y Compatibilidad | `ttf-mscorefonts-installer`, `libdvdcss2`, firmwares adicionales |
-| 3 | 🖥️ Hardware | Controladores AMD, Intel y NVIDIA (vía non-free) |
-| 4 | 📦 Aplicaciones | ~45 Flatpaks + Suite ArtCraft + Herramientas de Acceso Remoto |
-| 5 | 🏠 Hogar y Oficina | CUPS, Samba, LocalSend, KeePassXC, Okular+Tesseract |
-| 6 | 🎮 Gaming | Steam (`steam-installer` + i386), Heroic, Lutris, GameMode, MangoHud, emuladores |
-| 7 | 📊 Diagnóstico | Panel del sistema, GSmartControl, CoolerControl, journal |
-| 8 | 📖 Acerca de DAP | Actualizar, desinstalar, changelog dinámico |
+**`guiado.html` está funcional** — navegación entre sesiones, sistema de progreso, i18n, tema claro/oscuro, cola de Flatpak, autenticación gráfica, detección de hardware.
 
 ## 🎨 Destaques
 
@@ -84,6 +84,9 @@ Panel de automatización visual para **Debian Stable**. Transforma una instalaci
 - **Bloqueo inteligente** — evita conflictos de lock en `dpkg` y bloquea la navegación entre sesiones durante la ejecución
 - **Autenticación gráfica robusta** — la cadena `kdesu → pkexec → sudo -A` cubre todos los DEs de Debian
 - **Contenedor WebKitGTK nativo** (sin navegador externo)
+- **Detección de hardware en tiempo real** — cada sesión de Hardware y Dispositivos verifica el driver en uso
+- **CoolerControl vía repositorio oficial** (no está en main de Debian)
+- **AppArmor en el panel de Estado de Debian** (reemplaza el SELinux de Fedora)
 
 ## 🖥️ Escritorios soportados
 
@@ -91,7 +94,7 @@ GNOME, KDE Plasma, XFCE, Cinnamon, MATE, LXQt, LXDE, Budgie, Sway, Hyprland, i3 
 
 ## 📋 Requisitos
 
-- **Debian 12 (Bookworm) o más nuevo** — Stable
+- **Debian 13 (Trixie) o más nuevo** — Stable
 - **No** soportado en derivados (MX, LMDE, Kali, Raspberry Pi OS) — puede funcionar, pero sin soporte
 - **No** soportado en Testing/Sid — puede funcionar, pero sin soporte
 - Instalación desde **Live ISO** (no netinst, no DVD) — para aprovechar al máximo las sesiones de "Primeros Pasos"

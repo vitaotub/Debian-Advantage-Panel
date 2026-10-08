@@ -1,6 +1,6 @@
 {
   "name": "debian-advantage-panel",
-  "version": "0.1-10072026",
+  "version": "0.1-10082026",
   "description": "Painel de automação visual para Debian Stable (Debian Advantage Panel) - Facilite a configuração do seu sistema após instalação via Live ISO",
   "main": "server.js",
   "scripts": {

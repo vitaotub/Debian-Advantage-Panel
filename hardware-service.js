@@ -1,12 +1,18 @@
 // ============================================================
-// FAP — Detecção de hardware e sugestão de drivers
+// DAP — Detecção de hardware e sugestão de drivers (Debian)
 // ============================================================
 //
 // Este módulo é usado pelo server.js para o endpoint /hardware-scan.
-// Não depende de bibliotecas externas — usa apenas child_process e fs
-// (ambos nativos). Roda os comandos lspci, lsusb e rpm para cruzar
-// com o hardware_map.json e devolver uma lista de dispositivos
-// detectados com sugestões de driver.
+// Não depende de bibliotecas externas — usa apenas child_process e
+// fs (ambos nativos). Roda os comandos lspci, lsusb, dpkg-query e
+// nvidia-detect, cruza com o hardware_map.json e devolve uma lista
+// de dispositivos detectados com estado de driver.
+//
+// Diferenças em relação ao FAP:
+//   - `rpm -q` → `dpkg-query -W -f='${Status}'`
+//   - Detecção NVIDIA via `nvidia-detect` (pacote oficial do Debian)
+//   - Não há conceito de "COPR" nem "akmod" no Debian
+//   - Verificação de repositório ativo via leitura dos sources
 
 const { exec } = require('child_process');
 const fs = require('fs');
@@ -38,10 +44,6 @@ function _exec(cmd, timeoutMs) {
 function _lerMapa() {
     try {
         var bruto = JSON.parse(fs.readFileSync(HARDWARE_MAP_PATH, 'utf8'));
-        // Normaliza para garantir que pci_vendors e usb_devices existam.
-        // Sem isso, um hardware_map.json válido mas sem uma das chaves
-        // causa TypeError em scanHardware() (mapa.pci_vendors[x] com
-        // mapa.pci_vendors === undefined).
         return {
             pci_vendors: bruto.pci_vendors || {},
             usb_devices: bruto.usb_devices || {}
@@ -52,25 +54,41 @@ function _lerMapa() {
     }
 }
 
+// ============================================================
+// VERIFICAÇÃO DE PACOTE INSTALADO (dpkg)
+// ============================================================
+//
+// dpkg-query -W -f='${Status}' devolve "install ok installed"
+// quando o pacote está instalado corretamente. Qualquer outro
+// valor significa: não instalado, meio instalado, ou removido.
+
 async function _pacoteInstalado(pkg) {
     if (!pkg) return false;
-    // Defensivo: os nomes vêm de hardware_map.json (constantes),
-    // mas quotar evita problemas caso o JSON seja editado.
     var pkgSeguro = String(pkg).replace(/'/g, "'\\''");
-    var r = await _exec("rpm -q '" + pkgSeguro + "' 2>/dev/null");
+    var r = await _exec("dpkg-query -W -f='${Status}' '" + pkgSeguro + "' 2>/dev/null");
     if (!r.ok) return false;
-    // rpm -q retorna exit 0 apenas se o pacote está instalado.
-    // Se não estiver, r.ok é false. Redundância de segurança:
-    var out = r.stdout.toLowerCase();
-    if (out.includes('não instalado') || out.includes('not installed')) return false;
-    return true;
+    return r.stdout === 'install ok installed';
 }
 
-async function _repositorioAtivo(repo) {
-    if (!repo) return false;
-    var r = await _exec('dnf repolist 2>/dev/null');
-    if (!r.ok) return false;
-    return r.stdout.includes(repo);
+// ============================================================
+// VERIFICAÇÃO DE REPOSITÓRIO ATIVO
+// ============================================================
+//
+// No Debian, o repo pode estar no formato deb822 (.sources) ou
+// no formato legado (.list). O DAP suporta os dois.
+
+async function _repositorioAtivo(nome) {
+    if (!nome) return true;  // 'main' sempre disponível
+
+    if (nome === 'main') return true;
+
+    // Lê tanto .sources quanto .list
+    var cmd =
+    'grep -rhE "^(Components:|deb )" /etc/apt/sources.list.d/*.sources /etc/apt/sources.list 2>/dev/null | ' +
+    'grep -iE "\\b' + nome + '\\b" | head -1';
+
+    var r = await _exec(cmd);
+    return r.stdout.length > 0;
 }
 
 async function _driverKernelEmUso(pciAddress) {
@@ -80,22 +98,72 @@ async function _driverKernelEmUso(pciAddress) {
     return match ? match[1] : null;
 }
 
-async function _nvidiaDetect() {
-    // nvidia-detect só existe se o RPM Fusion nonfree já estiver ativo.
-    // Retorna o nome do pacote sugerido ou null.
-    var r = await _exec('nvidia-detect 2>/dev/null');
-    if (!r.ok) return null;
-    var match = r.stdout.match(/akmod-nvidia[-\w]*/);
-    return match ? match[0] : null;
-}
+// ============================================================
+// DETECÇÃO NVIDIA (via nvidia-detect)
+// ============================================================
+//
+// `nvidia-detect` é um pacote oficial do Debian que identifica a
+// geração da GPU e sugere o pacote correto. Se não estiver
+// instalado, cai num fallback via lspci que diferencia Turing+
+// (open-kernel) de Maxwell/Pascal/Volta e anteriores (proprietário).
 
-async function _checkSecureBoot() {
-    var r = await _exec('mokutil --sb-state 2>/dev/null');
-    if (!r.ok) return 'unknown';
-    var out = r.stdout.toLowerCase();
-    if (out.includes('enabled')) return 'enabled';
-    if (out.includes('disabled')) return 'disabled';
-    return 'unknown';
+async function _nvidiaDetect() {
+    // Tenta nvidia-detect primeiro (fonte oficial de verdade)
+    var r = await _exec('nvidia-detect 2>/dev/null');
+    if (r.ok && r.stdout) {
+        // nvidia-detect devolve algo como:
+        //   "Detected NVIDIA GPUs:
+        //    ...
+        //    Your card is supported by the default drivers.
+        //    It is recommended to install the nvidia-driver package."
+        //
+        // Ou, para GPUs antigas:
+        //   "Your card is only supported up to the 470 legacy drivers series."
+        //
+        // Parseamos a recomendação e devolvemos o pacote.
+
+        if (/only supported up to the 470/i.test(r.stdout)) {
+            return { pkg: 'nvidia-kernel-dkms', flavour: 'legacy-470', source: 'nvidia-detect' };
+        }
+        if (/only supported up to the 390/i.test(r.stdout)) {
+            return { pkg: 'nvidia-kernel-dkms', flavour: 'legacy-390', source: 'nvidia-detect' };
+        }
+        if (/default drivers/i.test(r.stdout)) {
+            return { pkg: 'nvidia-open-kernel-dkms', flavour: 'open', source: 'nvidia-detect' };
+        }
+    }
+
+    // Fallback: heurística por modelo detectado via lspci
+    var pci = await _exec("lspci -nn | grep -iE 'nvidia.*(vga|3d|display)'");
+    if (!pci.ok || !pci.stdout) {
+        return null;
+    }
+
+    var modelo = pci.stdout;
+
+    // Turing+ → RTX 20xx / GTX 16xx / RTX 30xx / RTX 40xx / RTX 50xx
+    // Também cobre datacenter (T4, A100, H100) e workstation (Quadro RTX)
+    if (/RTX\s+(20|30|40|50)\d{2}/i.test(modelo) ||
+        /GTX\s+16\d{2}/i.test(modelo) ||
+        /T4|A100|H100|A30|L4|L40/i.test(modelo)) {
+        return { pkg: 'nvidia-open-kernel-dkms', flavour: 'open', source: 'lspci-heuristic' };
+        }
+
+        // Maxwell / Pascal / Volta → GTX 750/9xx/10xx, Titan (V/X), Quadro P
+        if (/GTX\s+(75|9|10)\d{2}/i.test(modelo) ||
+            /Titan\s+(V|X)/i.test(modelo) ||
+            /Quadro\s+P\d/i.test(modelo)) {
+            return { pkg: 'nvidia-kernel-dkms', flavour: 'legacy-mid', source: 'lspci-heuristic' };
+            }
+
+            // Kepler e anteriores → GTX 6xx/7xx, Fermi, etc.
+            if (/GTX\s+[67]\d{2}/i.test(modelo) ||
+                /GT\s+[4-7]\d{2}/i.test(modelo)) {
+                return { pkg: 'nvidia-kernel-dkms', flavour: 'legacy-old', source: 'lspci-heuristic' };
+                }
+
+                // Fallback genérico: instala open-kernel (padrão do Debian 13)
+                return { pkg: 'nvidia-open-kernel-dkms', flavour: 'default', source: 'lspci-heuristic' };
 }
 
 // ============================================================
@@ -116,8 +184,6 @@ function _parseLinhaPci(linha) {
     };
 }
 
-// Parse de linha do lsusb:
-// "Bus 001 Device 005: ID 0bda:c811 Realtek Semiconductor Corp. 802.11ac NIC"
 function _parseLinhaUsb(linha) {
     var match = linha.match(/ID\s+([0-9a-f]{4}):([0-9a-f]{4})\s+(.+)/i);
     if (!match) return null;
@@ -132,17 +198,14 @@ function _parseLinhaUsb(linha) {
 // DETECÇÃO PRINCIPAL
 // ============================================================
 
-/**
- * Escaneia os barramentos PCI e USB, cruza com o mapa e devolve
- * uma lista de dispositivos detectados com estado de driver.
- */
 async function scanHardware() {
     var mapa = _lerMapa();
     var devices = [];
 
-    // Estado dos repositórios (para o frontend mostrar banner de RPM Fusion)
-    var rpmfusionFree = await _repositorioAtivo('rpmfusion-free');
-    var rpmfusionNonfree = await _repositorioAtivo('rpmfusion-nonfree');
+    // Estado dos repositórios (para o frontend mostrar banner)
+    var nonFreeAtivo = await _repositorioAtivo('non-free');
+    var nonFreeFirmwareAtivo = await _repositorioAtivo('non-free-firmware');
+    var backportsAtivo = await _repositorioAtivo('backports');
     var secureBoot = await _checkSecureBoot();
 
     // ---------- PCI ----------
@@ -150,9 +213,6 @@ async function scanHardware() {
     if (pci.ok) {
         var linhasPci = pci.stdout.split('\n').filter(Boolean);
 
-        // Fase 1: filtra as linhas PCI relevantes de forma síncrona.
-        // Nada aqui toca em disco ou subprocessos — é só parsing em
-        // memória, então não há vantagem em paralelizar.
         var candidatosPci = [];
         for (var i = 0; i < linhasPci.length; i++) {
             var parsed = _parseLinhaPci(linhasPci[i]);
@@ -168,10 +228,6 @@ async function scanHardware() {
             candidatosPci.push({ parsed: parsed, vendor: vendor });
         }
 
-        // Fase 2: resolve cada candidato em paralelo. Antes era um
-        // loop sequencial com 1-2 `exec` por dispositivo (~50ms cada
-        // por fork do shell) — em uma máquina com 3 GPUs + 2 NICs,
-        // somava 1-2 segundos de latência desnecessária.
         var resultadosPci = await Promise.all(candidatosPci.map(async function(c) {
             var parsed = c.parsed;
             var vendor = c.vendor;
@@ -182,18 +238,45 @@ async function scanHardware() {
             var driverPadraoOk = !!driverEmUso && conflict.indexOf(driverEmUso) !== -1;
 
             var pacotesSugeridos = (vendor.packages || []).slice();
+            var nvidiaInfo = null;
 
-            if (parsed.vendor_id === '10de' && rpmfusionNonfree) {
-                var sugerido = await _nvidiaDetect();
-                if (sugerido) pacotesSugeridos = [sugerido];
+            // NVIDIA tem lógica especial
+            if (parsed.vendor_id === '10de') {
+                nvidiaInfo = await _nvidiaDetect();
+                if (nvidiaInfo) {
+                    if (nvidiaInfo.pkg === 'nvidia-open-kernel-dkms') {
+                        pacotesSugeridos = ['nvidia-open-kernel-dkms', 'nvidia-driver', 'firmware-misc-nonfree'];
+                    } else {
+                        pacotesSugeridos = ['nvidia-kernel-dkms', 'nvidia-driver', 'firmware-misc-nonfree'];
+                    }
+                } else {
+                    pacotesSugeridos = ['nvidia-open-kernel-dkms', 'nvidia-driver', 'firmware-misc-nonfree'];
+                }
             }
 
+            // Checa se algum pacote sugerido está instalado
             var instalado = false;
             for (var j = 0; j < pacotesSugeridos.length; j++) {
                 if (await _pacoteInstalado(pacotesSugeridos[j])) {
                     instalado = true;
                     break;
                 }
+            }
+
+            // Driver recomendado já está em uso?
+            var usandoDriverRecomendado = false;
+            if (parsed.vendor_id === '10de') {
+                // NVIDIA: considera "recomendado em uso" se o kernel
+                // module carregado for nvidia/nvidia_drm
+                usandoDriverRecomendado = driverEmUso === 'nvidia' || driverEmUso === 'nvidia_drm';
+            } else if (parsed.vendor_id === '1002' || parsed.vendor_id === '1022') {
+                // AMD: driver amdgpu é o recomendado
+                usandoDriverRecomendado = driverEmUso === 'amdgpu';
+            } else if (parsed.vendor_id === '8086') {
+                // Intel: driver i915 é o recomendado
+                usandoDriverRecomendado = driverEmUso === 'i915' || driverEmUso === 'xe';
+            } else {
+                usandoDriverRecomendado = true; // outros vendors, sem recomendação
             }
 
             return {
@@ -205,10 +288,11 @@ async function scanHardware() {
                 device_id: parsed.vendor_id + ':' + parsed.device_id,
                 driver_in_use: driverEmUso,
                 driver_default_working: driverPadraoOk,
+                driver_recommended_in_use: usandoDriverRecomendado,
                 installed: instalado,
                 packages: pacotesSugeridos,
                 repo_required: vendor.repo_required || null,
-                copr: null,
+                nvidia_info: nvidiaInfo,
                 notes: vendor.notes || null,
                 notes_key: vendor.notesKey || null,
                 needs_secure_boot_disabled: parsed.vendor_id === '10de'
@@ -248,15 +332,16 @@ async function scanHardware() {
             return {
                 type: 'USB',
                 category: dev.category,
-                vendor: 'Realtek',
+                vendor: 'USB device',
                 name: dev.name,
                 device_id: parsedUsb.vendor_id + ':' + parsedUsb.product_id,
                 driver_in_use: null,
                 driver_default_working: false,
+                driver_recommended_in_use: false,
                 installed: instaladoUsb,
                 packages: dev.package ? [dev.package] : [],
                 repo_required: null,
-                copr: dev.copr || null,
+                nvidia_info: null,
                 notes: dev.notes || null,
                 notes_key: dev.notesKey || null,
                 needs_secure_boot_disabled: false
@@ -271,17 +356,23 @@ async function scanHardware() {
     return {
         devices: devices,
         repos: {
-            rpmfusion_free: rpmfusionFree,
-            rpmfusion_nonfree: rpmfusionNonfree
+            non_free: nonFreeAtivo,
+            non_free_firmware: nonFreeFirmwareAtivo,
+            backports: backportsAtivo
         },
         secure_boot: secureBoot
     };
 }
 
-/**
- * Checa se um pacote específico está instalado (usado pelo frontend
- * quando precisa revalidar o estado de um driver após uma ação).
- */
+async function _checkSecureBoot() {
+    var r = await _exec('mokutil --sb-state 2>/dev/null');
+    if (!r.ok) return 'unknown';
+    var out = r.stdout.toLowerCase();
+    if (out.includes('enabled')) return 'enabled';
+    if (out.includes('disabled')) return 'disabled';
+    return 'unknown';
+}
+
 async function checkPackageInstalled(pkg) {
     return _pacoteInstalado(pkg);
 }

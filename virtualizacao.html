@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DAP - Virtualização</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="sessao-container" id="sessao-virtualizacao">
+<div class="sessao-titulo">
+<span class="sessao-label">Sessão</span>
+<span data-i18n="sessoes.virtualizacao.titulo">🖥️ Virtualização</span>
+</div>
+
+<!-- Acórdeão principal — descrição da sessão -->
+<div class="acordeao-principal">
+<span data-i18n="sessoes.virtualizacao.descricao">Ferramentas para executar máquinas virtuais no Debian. QEMU/KVM é a stack nativa (mais performática) e o GNOME Boxes simplifica a experiência para iniciantes.</span>
+</div>
+
+<!-- Acórdeão único — Máquinas Virtuais -->
+<details class="acordeao" open>
+<summary data-i18n="sessoes.virtualizacao.acordeao_titulo">🖥️ Máquinas Virtuais</summary>
+<div class="acordeao-conteudo">
+
+<!-- QEMU/KVM + virt-manager -->
+<div class="bloco-comando destaque">
+<div class="comando-info">
+<h3 data-i18n="sessoes.virtualizacao.qemu_titulo">QEMU/KVM + virt-manager</h3>
+<p data-i18n-html="sessoes.virtualizacao.qemu_desc">
+Stack de virtualização nativa do Linux. Roda máquinas virtuais com aceleração por hardware via KVM — é a opção mais performática. Instala o QEMU, o daemon <code>libvirt</code>, o <code>virt-manager</code> (interface gráfica) e configura a rede padrão.
+</p>
+<div class="info-extra" data-i18n-html="sessoes.virtualizacao.qemu_info">
+ℹ️ <strong>Sobre permissões:</strong> seu usuário é adicionado ao grupo <code>libvirt</code> para gerenciar VMs sem precisar de senha em cada ação. O grupo só entra em vigor após <strong>logout/login</strong> — até lá, o virt-manager vai pedir a senha de administrador ao abrir.
+</div>
+<div class="info-extra" data-i18n-html="sessoes.virtualizacao.qemu_info_network">
+ℹ️ <strong>Sobre a rede padrão:</strong> no Debian, a rede virtual padrão do libvirt precisa ser iniciada e marcada para autostart (no Fedora isso é automático). O DAP faz isso por você.
+</div>
+<div class="botoes-flex">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar"
+onclick="executarQemuKvm()"
+data-comando="qemu-kvm-install"
+data-logbox="log-sessao-virtualizacao"
+id="btn-qemu-kvm-install"
+data-i18n="sessoes.virtualizacao.btn_qemu">
+📦 Instalar QEMU/KVM
+</button>
+</div>
+<button class="btn-executar verde"
+style="display: none;"
+onclick="abrirVirtManager()"
+data-comando="abrir-virt-manager"
+data-logbox="log-sessao-virtualizacao"
+id="btn-abrir-virt-manager"
+data-i18n="sessoes.virtualizacao.btn_abrir_virt_manager">
+🚀 Abrir virt-manager
+</button>
+</div>
+</div>
+<div class="progress-container" id="progress-qemu-kvm-install">
+<div class="progress-bar"><div class="progress-fill" id="progress-fill-qemu-kvm-install"></div></div>
+<div class="progress-text"><span class="status" id="progress-status-qemu-kvm-install">⏳ Iniciando...</span><span class="percentage" id="progress-percent-qemu-kvm-install">0%</span></div>
+</div>
+</div>
+
+<!-- GNOME Boxes -->
+<div class="bloco-comando">
+<div class="comando-info">
+<h3 data-i18n="sessoes.virtualizacao.boxes_titulo">GNOME Boxes</h3>
+<p data-i18n-html="sessoes.virtualizacao.boxes_desc">
+Interface gráfica simplificada para criar e gerenciar máquinas virtuais. Usa QEMU/KVM por baixo, então é performático como o virt-manager — a diferença está na experiência: em vez de configurar CPU, RAM e disco separadamente, você aponta para um arquivo <code>.iso</code> e ele cuida do resto.
+</p>
+<div class="info-extra" data-i18n-html="sessoes.virtualizacao.boxes_info">
+ℹ️ <strong>Recomendado para:</strong> quem está começando com virtualização e quer testar uma distribuição Linux ou o Windows sem configurar nada manualmente. Se você já tem experiência, prefira o virt-manager — oferece mais controle sobre a VM.
+</div>
+<div class="botoes-flex">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar"
+onclick="executarGnomeBoxes()"
+data-comando="gnome-boxes-install"
+data-logbox="log-sessao-virtualizacao"
+id="btn-gnome-boxes-install"
+data-i18n="sessoes.virtualizacao.btn_boxes">
+📦 Instalar GNOME Boxes
+</button>
+</div>
+<button class="btn-executar verde"
+style="display: none;"
+onclick="abrirGnomeBoxes()"
+data-comando="abrir-gnome-boxes"
+data-logbox="log-sessao-virtualizacao"
+id="btn-abrir-gnome-boxes"
+data-i18n="sessoes.virtualizacao.btn_abrir_boxes">
+🚀 Abrir GNOME Boxes
+</button>
+</div>
+</div>
+<div class="progress-container" id="progress-gnome-boxes-install">
+<div class="progress-bar"><div class="progress-fill" id="progress-fill-gnome-boxes-install"></div></div>
+<div class="progress-text"><span class="status" id="progress-status-gnome-boxes-install">⏳ Iniciando...</span><span class="percentage" id="progress-percent-gnome-boxes-install">0%</span></div>
+</div>
+</div>
+
+</div>
+</details>
+
+<!-- Log único da sessão -->
+<div class="terminal-log sessao-compartilhado" id="log-sessao-virtualizacao"></div>
+</div>
+
+<script>
+// ============================================================
+// SESSÃO: VIRTUALIZAÇÃO
+// ============================================================
+
+function _t(chave, fallback) {
+    return (typeof tOr === 'function') ? tOr(chave, fallback) : fallback;
+}
+
+// ------------------------------------------------------------
+// Registro de apps removíveis (lixeira)
+// ------------------------------------------------------------
+//
+// QEMU/KVM e GNOME Boxes usam a lixeira global
+// (helper registrarAppRemovivel + atualizarIconeRemover).
+//
+// As VMs em /var/lib/libvirt/images e ~/.local/share/gnome-boxes
+// NÃO são tocadas pela remoção — são dados do usuário.
+
+registrarAppRemovivel('qemu-kvm-install', {
+    tipo: 'dnf',
+    pacotes: ['qemu-system-x86', 'libvirt-daemon-system', 'libvirt-clients', 'virt-manager', 'virtinst', 'bridge-utils'],
+    nome: 'QEMU/KVM',
+    confirmMsg: '⚠️ Tem certeza que deseja remover QEMU/KVM?\n\n' +
+                'As máquinas virtuais que você criou NÃO serão apagadas — apenas o software será removido do sistema.\n\n' +
+                'Continuar?'
+});
+
+registrarAppRemovivel('gnome-boxes-install', {
+    tipo: 'dnf',
+    pacotes: ['gnome-boxes'],
+    nome: 'GNOME Boxes',
+    confirmMsg: '⚠️ Tem certeza que deseja remover GNOME Boxes?\n\n' +
+                'As máquinas virtuais que você criou NÃO serão apagadas — apenas o software será removido do sistema.\n\n' +
+                'Continuar?'
+});
+
+// ------------------------------------------------------------
+// INSTALADORES
+// ------------------------------------------------------------
+
+async function executarQemuKvm() {
+    var idComando = 'qemu-kvm-install';
+    var comando =
+        'sudo apt install -y qemu-system-x86 libvirt-daemon-system libvirt-clients virt-manager virtinst bridge-utils && ' +
+        'sudo systemctl enable --now libvirtd && ' +
+        'sudo usermod -aG libvirt $USER && ' +
+        'sudo virsh net-start default 2>/dev/null || true && ' +
+        'sudo virsh net-autostart default 2>/dev/null || true && ' +
+        'echo "" && ' +
+        'echo "✅ QEMU/KVM instalado e configurado." && ' +
+        'echo "   Faça logout/login para o grupo libvirt entrar em vigor."';
+    await executarComandoGenerico(idComando, comando,
+        _t('sessoes.virtualizacao.btn_qemu', '📦 Instalar QEMU/KVM'),
+        function() { aplicarEstadoInstalavel(idComando, 'abrir-virt-manager'); });
+}
+
+async function executarGnomeBoxes() {
+    var idComando = 'gnome-boxes-install';
+    var comando = 'sudo apt install -y gnome-boxes';
+    await executarComandoGenerico(idComando, comando,
+        _t('sessoes.virtualizacao.btn_boxes', '📦 Instalar GNOME Boxes'),
+        function() { aplicarEstadoInstalavel(idComando, 'abrir-gnome-boxes'); });
+}
+
+// ------------------------------------------------------------
+// ABRIR APPS
+// ------------------------------------------------------------
+
+function abrirVirtManager() {
+    abrirFerramentaExterna('gtk-launch virt-manager', 'qemu-kvm-install', 'virt-manager');
+}
+
+function abrirGnomeBoxes() {
+    abrirFerramentaExterna('gtk-launch org.gnome.Boxes', 'gnome-boxes-install', 'GNOME Boxes');
+}
+
+// ------------------------------------------------------------
+// RESTAURAR ESTADO DA SESSÃO
+// ------------------------------------------------------------
+
+function restaurarEstadoSessao() {
+    // Todos os dois são apps com GUI — Estado 2 (verde + lixeira).
+    aplicarEstadoInstalavel('qemu-kvm-install', 'abrir-virt-manager');
+    aplicarEstadoInstalavel('gnome-boxes-install', 'abrir-gnome-boxes');
+}
+
+// ------------------------------------------------------------
+// INICIALIZAÇÃO
+// ------------------------------------------------------------
+
+(function() {
+    document.querySelectorAll('.btn-executar').forEach(function(btn) {
+        if (!btn.hasAttribute('data-texto-original')) {
+            btn.setAttribute('data-texto-original', btn.textContent);
+        }
+    });
+
+    restaurarEstadoSessao();
+
+    console.log('📦 Componente virtualizacao carregado!');
+})();
+</script>
+</body>
+</html>

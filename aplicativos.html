@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DAP - Aplicativos Recomendados</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="sessao-container" id="sessao-aplicativos">
+<div class="sessao-titulo">
+<span class="sessao-label">Sessão</span>
+<span data-i18n="sessoes.aplicativos.titulo">📦 Aplicativos Recomendados</span>
+</div>
+
+<!-- Acórdeão principal — descrição da sessão -->
+<div class="acordeao-principal">
+<span data-i18n="sessoes.aplicativos.descricao">Softwares recomendados para uso no dia-a-dia. Todos instalados via Flatpak (Flathub), exceto a Suíte ArtCraft e as Ferramentas de Acesso Remoto baseadas em RPM.</span>
+</div>
+
+<!-- ============================================================
+BLOCO 1 — PRODUTIVIDADE E ESCRITÓRIO
+============================================================ -->
+<details class="acordeao">
+<summary data-i18n="sessoes.aplicativos.bloco1_titulo">📄 Produtividade e Escritório</summary>
+<div class="acordeao-conteudo">
+
+<p data-i18n="sessoes.aplicativos.bloco1_desc">Ferramentas para trabalhar com documentos, anotações, e-mails e e-books.</p>
+
+<div class="grid-launchers">
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="instalarFlatpak('instalar-onlyoffice')" data-comando="instalar-onlyoffice" data-logbox="log-sessao-aplicativos" id="btn-instalar-onlyoffice" data-i18n="sessoes.aplicativos.btn_onlyoffice">📝 OnlyOffice</button>
+</div>
+</div>
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="instalarFlatpak('instalar-libreoffice')" data-comando="instalar-libreoffice" data-logbox="log-sessao-aplicativos" id="btn-instalar-libreoffice" data-i18n="sessoes.aplicativos.btn_libreoffice">📄 LibreOffice</button>
+</div>
+</div>
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="instalarFlatpak('instalar-obsidian')" data-comando="instalar-obsidian" data-logbox="log-sessao-aplicativos" id="btn-instalar-obsidian" data-i18n="sessoes.aplicativos.btn_obsidian">💎 Obsidian</button>
+</div>
+</div>
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="instalarFlatpak('instalar-thunderbird')" data-comando="instalar-thunderbird" data-logbox="log-sessao-aplicativos" id="btn-instalar-thunderbird" data-i18n="sessoes.aplicativos.btn_thunderbird">📧 Thunderbird</button>
+</div>
+</div>
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="instalarFlatpak('instalar-okular')" data-comando="instalar-okular" data-logbox="log-sessao-aplicativos" id="btn-instalar-okular" data-i18n="sessoes.aplicativos.btn_okular">📚 Okular</button>
+</div>
+</div>
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="instalarFlatpak('instalar-joplin')" data-comando="instalar-joplin" data-logbox="log-sessao-aplicativos" id="btn-instalar-joplin" data-i18n="sessoes.aplicativos.btn_joplin">📝 Joplin</button>
+</div>
+</div>
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="instalarFlatpak('instalar-foliate')" data-comando="instalar-foliate" data-logbox="log-sessao-aplicativos" id="btn-instalar-foliate" data-i18n="sessoes.aplicativos.btn_foliate">📖 Foliate</button>
+</div>
+</div>
+</div>
+
+<div class="progress-container" id="progress-instalar-onlyoffice"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-onlyoffice"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-onlyoffice">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-onlyoffice">0%</span></div></div>
+<div class="progress-container" id="progress-instalar-libreoffice"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-libreoffice"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-libreoffice">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-libreoffice">0%</span></div></div>
+<div class="progress-container" id="progress-instalar-obsidian"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-obsidian"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-obsidian">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-obsidian">0%</span></div></div>
+<div class="progress-container" id="progress-instalar-thunderbird"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-thunderbird"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-thunderbird">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-thunderbird">0%</span></div></div>
+<div class="progress-container" id="progress-instalar-okular"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-okular"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-okular">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-okular">0%</span></div></div>
+<div class="progress-container" id="progress-instalar-joplin"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-joplin"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-joplin">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-joplin">0%</span></div></div>
+<div class="progress-container" id="progress-instalar-foliate"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-foliate"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-foliate">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-foliate">0%</span></div></div>
+
+</div>
+</details>
+
+<!-- ============================================================
+BLOCO 2 — ENTRETENIMENTO E MULTIMÍDIA
+============================================================ -->
+<details class="acordeao">
+<summary data-i18n="sessoes.aplicativos.bloco2_titulo">🎬 Entretenimento e Multimídia</summary>
+<div class="acordeao-conteudo">
+
+<p data-i18n="sessoes.aplicativos.bloco2_desc">Players de vídeo, música e streaming para consumir conteúdo no dia-a-dia.</p>
+
+<div class="grid-launchers">
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="instalarFlatpak('instalar-haruna')" data-comando="instalar-haruna" data-logbox="log-sessao-aplicativos" id="btn-instalar-haruna" data-i18n="sessoes.aplicativos.btn_haruna">🎥 Haruna</button>
+</div>
+</div>
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="instalarFlatpak('instalar-vlc')" data-comando="instalar-vlc" data-logbox="log-sessao-aplicativos" id="btn-instalar-vlc" data-i18n="sessoes.aplicativos.btn_vlc">🎬 VLC Media Player</button>
+</div>
+</div>
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="instalarFlatpak('instalar-mpv')" data-comando="instalar-mpv" data-logbox="log-sessao-aplicativos" id="btn-instalar-mpv" data-i18n="sessoes.aplicativos.btn_mpv">🎥 MPV</button>
+</div>
+</div>
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="instalarFlatpak('instalar-spotify')" data-comando="instalar-spotify" data-logbox="log-sessao-aplicativos" id="btn-instalar-spotify" data-i18n="sessoes.aplicativos.btn_spotify">🎵 Spotify</button>
+</div>
+</div>
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="instalarFlatpak('instalar-plex')" data-comando="instalar-plex" data-logbox="log-sessao-aplicativos" id="btn-instalar-plex" data-i18n="sessoes.aplicativos.btn_plex">📺 Plex</button>
+</div>
+</div>
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="instalarFlatpak('instalar-stremio')" data-comando="instalar-stremio" data-logbox="log-sessao-aplicativos" id="btn-instalar-stremio" data-i18n="sessoes.aplicativos.btn_stremio">🎬 Stremio</button>
+</div>
+</div>
+</div>
+
+<div class="progress-container" id="progress-instalar-haruna"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-haruna"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-haruna">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-haruna">0%</span></div></div>
+<div class="progress-container" id="progress-instalar-vlc"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-vlc"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-vlc">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-vlc">0%</span></div></div>
+<div class="progress-container" id="progress-instalar-mpv"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-mpv"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-mpv">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-mpv">0%</span></div></div>
+<div class="progress-container" id="progress-instalar-spotify"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-spotify"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-spotify">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-spotify">0%</span></div></div>
+<div class="progress-container" id="progress-instalar-plex"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-plex"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-plex">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-plex">0%</span></div></div>
+<div class="progress-container" id="progress-instalar-stremio"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-stremio"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-stremio">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-stremio">0%</span></div></div>
+
+</div>
+</details>
+
+<!-- ============================================================
+BLOCO 3 — FERRAMENTAS GRÁFICAS
+============================================================ -->
+<details class="acordeao">
+<summary data-i18n="sessoes.aplicativos.bloco3_titulo">🎨 Ferramentas Gráficas</summary>
+<div class="acordeao-conteudo">
+
+<p data-i18n="sessoes.aplicativos.bloco3_desc">Edição de imagem, ilustração vetorial, modelagem 3D, CAD e impressão 3D.</p>
+
+<div class="grid-launchers">
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="instalarFlatpak('instalar-krita')" data-comando="instalar-krita" data-logbox="log-sessao-aplicativos" id="btn-instalar-krita" data-i18n="sessoes.aplicativos.btn_krita">🎨 Krita</button>
+</div>
+</div>
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="instalarFlatpak('instalar-inkscape')" data-comando="instalar-inkscape" data-logbox="log-sessao-aplicativos" id="btn-instalar-inkscape" data-i18n="sessoes.aplicativos.btn_inkscape">🎨 Inkscape</button>
+</div>
+</div>
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="instalarFlatpak('instalar-pinta')" data-comando="instalar-pinta" data-logbox="log-sessao-aplicativos" id="btn-instalar-pinta" data-i18n="sessoes.aplicativos.btn_pinta">🎨 Pinta</button>
+</div>
+</div>
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="instalarFlatpak('instalar-gimp')" data-comando="instalar-gimp" data-logbox="log-sessao-aplicativos" id="btn-instalar-gimp" data-i18n="sessoes.aplicativos.btn_gimp">🖼️ GIMP</button>
+</div>
+</div>
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="instalarFlatpak('instalar-darktable')" data-comando="instalar-darktable" data-logbox="log-sessao-aplicativos" id="btn-instalar-darktable" data-i18n="sessoes.aplicativos.btn_darktable">📷 Darktable</button>
+</div>
+</div>
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="instalarFlatpak('instalar-freecad')" data-comando="instalar-freecad" data-logbox="log-sessao-aplicativos" id="btn-instalar-freecad" data-i18n="sessoes.aplicativos.btn_freecad">⚙️ FreeCAD</button>
+</div>
+</div>
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="instalarFlatpak('instalar-librecad')" data-comando="instalar-librecad" data-logbox="log-sessao-aplicativos" id="btn-instalar-librecad" data-i18n="sessoes.aplicativos.btn_librecad">📐 LibreCAD</button>
+</div>
+</div>
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="instalarFlatpak('instalar-cura')" data-comando="instalar-cura" data-logbox="log-sessao-aplicativos" id="btn-instalar-cura" data-i18n="sessoes.aplicativos.btn_cura">🖨️ Cura</button>
+</div>
+</div>
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="instalarFlatpak('instalar-upscayl')" data-comando="instalar-upscayl" data-logbox="log-sessao-aplicativos" id="btn-instalar-upscayl" data-i18n="sessoes.aplicativos.btn_upscayl">🔍 Upscayl</button>
+</div>
+</div>
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="instalarFlatpak('instalar-xnviewmp')" data-comando="instalar-xnviewmp" data-logbox="log-sessao-aplicativos" id="btn-instalar-xnviewmp" data-i18n="sessoes.aplicativos.btn_xnviewmp">🖼️ XnView MP</button>
+</div>
+</div>
+</div>
+
+<div class="progress-container" id="progress-instalar-krita"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-krita"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-krita">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-krita">0%</span></div></div>
+<div class="progress-container" id="progress-instalar-inkscape"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-inkscape"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-inkscape">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-inkscape">0%</span></div></div>
+<div class="progress-container" id="progress-instalar-pinta"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-pinta"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-pinta">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-pinta">0%</span></div></div>
+<div class="progress-container" id="progress-instalar-gimp"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-gimp"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-gimp">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-gimp">0%</span></div></div>
+<div class="progress-container" id="progress-instalar-darktable"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-darktable"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-darktable">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-darktable">0%</span></div></div>
+<div class="progress-container" id="progress-instalar-freecad"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-freecad"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-freecad">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-freecad">0%</span></div></div>
+<div class="progress-container" id="progress-instalar-librecad"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-librecad"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-librecad">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-librecad">0%</span></div></div>
+<div class="progress-container" id="progress-instalar-cura"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-cura"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-cura">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-cura">0%</span></div></div>
+<div class="progress-container" id="progress-instalar-upscayl"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-upscayl"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-upscayl">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-upscayl">0%</span></div></div>
+<div class="progress-container" id="progress-instalar-xnviewmp"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-xnviewmp"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-xnviewmp">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-xnviewmp">0%</span></div></div>
+
+</div>
+</details>
+
+<!-- ============================================================
+SUÍTE AFFINITY
+============================================================ -->
+<details class="acordeao">
+<summary data-i18n="sessoes.aplicativos.affinity_titulo">🎨 Suíte Affinity (Photo, Designer, Publisher)</summary>
+<div class="acordeao-conteudo">
+
+<p data-i18n-html="sessoes.aplicativos.affinity_desc">
+A Affinity não tem versão nativa pra Linux. Este botão abre o instalador da
+<a href="https://github.com/ryzendew/Linux-Affinity-Installer">AffinityOnLinux</a>,
+um projeto da comunidade (não afiliado à Serif/Canva) que prepara um ambiente Wine
+já configurado pra rodar a Affinity.
+</p>
+
+<div class="aviso-caixa" data-i18n-html="sessoes.aplicativos.affinity_aviso">
+⚠️ Você precisa ter <strong>comprado e baixado o instalador <code>.exe</code> da Affinity</strong>
+pelo site oficial da Serif/Canva antes de usar isto — o DAP só prepara o ambiente Wine e
+abre o instalador da comunidade; ele é quem vai pedir o arquivo <code>.exe</code> na hora certa.
+É um projeto de terceiros: se algo não funcionar no seu hardware, consulte a
+<a href="https://github.com/ryzendew/Linux-Affinity-Installer/blob/main/docs/Known-issues.md">página de problemas conhecidos</a> deles.
+</div>
+
+<div class="aviso-caixa" style="border-color: #3c67e3; color: #60a5fa;" data-i18n-html="sessoes.aplicativos.affinity_prereq">
+📦 <strong>Pré-requisito:</strong> PyQt6 é necessário para a interface do instalador. O DAP verifica e instala automaticamente se necessário.
+</div>
+
+<div class="botoes-flex" style="margin-top: 1rem;">
+<button class="btn-executar"
+onclick="abrirInstaladorAffinity()"
+data-comando="instalar-affinity"
+data-logbox="log-sessao-aplicativos"
+id="btn-instalar-affinity"
+data-i18n="sessoes.aplicativos.btn_abrir_instalador">
+🎨 Abrir Instalador da Affinity
+</button>
+<button class="btn-executar" onclick="abrirGitHubAffinity()" data-i18n="sessoes.aplicativos.btn_github_projeto">
+🐙 GitHub do Projeto
+</button>
+</div>
+
+</div>
+</details>
+
+<!-- ============================================================
+BLOCO 4 — SUÍTE ARTCRAFT
+============================================================ -->
+<details class="acordeao">
+<summary data-i18n="sessoes.aplicativos.bloco_artcraft_titulo">🎨 Suíte ArtCraft (Adobe no Linux)</summary>
+<div class="acordeao-conteudo">
+
+<p data-i18n-html="sessoes.aplicativos.bloco_artcraft_desc">
+Estes softwares são desenvolvidos em <strong>Rust</strong>, são <strong>código livre</strong>
+e são alternativas recentes aos produtos da Adobe. Cada aplicativo tem sua própria
+especialidade (edição de fotos, vetores, vídeo, iluminação, impressão, efeitos e design).
+</p>
+
+<div class="aviso-caixa" data-i18n-html="sessoes.aplicativos.bloco_artcraft_aviso">
+ℹ️ <strong>Sobre suporte:</strong> estes são projetos independentes, mantidos por desenvolvedores
+da comunidade. Se algo não funcionar, reporte o bug diretamente no repositório GitHub do
+projeto afetado — o DAP apenas instala os pacotes oficiais publicados por eles.
+</div>
+
+<div class="grid-launchers">
+
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="executarArtCraft('photocraft')" data-comando="instalar-photocraft" data-logbox="log-sessao-aplicativos" id="btn-instalar-photocraft" data-i18n="sessoes.aplicativos.btn_photocraft">🖼️ PhotoCraft</button>
+</div>
+<button class="btn-executar verde" style="display: none;" onclick="abrirArtCraft('photocraft')" data-comando="abrir-photocraft" data-logbox="log-sessao-aplicativos" id="btn-abrir-photocraft" data-i18n="sessoes.aplicativos.btn_abrir_photocraft">🚀 Abrir PhotoCraft</button>
+</div>
+
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="executarArtCraft('vectorcraft')" data-comando="instalar-vectorcraft" data-logbox="log-sessao-aplicativos" id="btn-instalar-vectorcraft" data-i18n="sessoes.aplicativos.btn_vectorcraft">✏️ VectorCraft</button>
+</div>
+<button class="btn-executar verde" style="display: none;" onclick="abrirArtCraft('vectorcraft')" data-comando="abrir-vectorcraft" data-logbox="log-sessao-aplicativos" id="btn-abrir-vectorcraft" data-i18n="sessoes.aplicativos.btn_abrir_vectorcraft">🚀 Abrir VectorCraft</button>
+</div>
+
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="executarArtCraft('filmcraft')" data-comando="instalar-filmcraft" data-logbox="log-sessao-aplicativos" id="btn-instalar-filmcraft" data-i18n="sessoes.aplicativos.btn_filmcraft">🎬 FilmCraft</button>
+</div>
+<button class="btn-executar verde" style="display: none;" onclick="abrirArtCraft('filmcraft')" data-comando="abrir-filmcraft" data-logbox="log-sessao-aplicativos" id="btn-abrir-filmcraft" data-i18n="sessoes.aplicativos.btn_abrir_filmcraft">🚀 Abrir FilmCraft</button>
+</div>
+
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="executarArtCraft('lightcraft')" data-comando="instalar-lightcraft" data-logbox="log-sessao-aplicativos" id="btn-instalar-lightcraft" data-i18n="sessoes.aplicativos.btn_lightcraft">💡 LightCraft</button>
+</div>
+<button class="btn-executar verde" style="display: none;" onclick="abrirArtCraft('lightcraft')" data-comando="abrir-lightcraft" data-logbox="log-sessao-aplicativos" id="btn-abrir-lightcraft" data-i18n="sessoes.aplicativos.btn_abrir_lightcraft">🚀 Abrir LightCraft</button>
+</div>
+
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="executarArtCraft('printcraft')" data-comando="instalar-printcraft" data-logbox="log-sessao-aplicativos" id="btn-instalar-printcraft" data-i18n="sessoes.aplicativos.btn_printcraft">🖨️ PrintCraft</button>
+</div>
+<button class="btn-executar verde" style="display: none;" onclick="abrirArtCraft('printcraft')" data-comando="abrir-printcraft" data-logbox="log-sessao-aplicativos" id="btn-abrir-printcraft" data-i18n="sessoes.aplicativos.btn_abrir_printcraft">🚀 Abrir PrintCraft</button>
+</div>
+
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="executarArtCraft('effectcraft')" data-comando="instalar-effectcraft" data-logbox="log-sessao-aplicativos" id="btn-instalar-effectcraft" data-i18n="sessoes.aplicativos.btn_effectcraft">✨ EffectCraft</button>
+</div>
+<button class="btn-executar verde" style="display: none;" onclick="abrirArtCraft('effectcraft')" data-comando="abrir-effectcraft" data-logbox="log-sessao-aplicativos" id="btn-abrir-effectcraft" data-i18n="sessoes.aplicativos.btn_abrir_effectcraft">🚀 Abrir EffectCraft</button>
+</div>
+
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="executarArtCraft('designcraft')" data-comando="instalar-designcraft" data-logbox="log-sessao-aplicativos" id="btn-instalar-designcraft" data-i18n="sessoes.aplicativos.btn_designcraft">🎨 DesignCraft</button>
+</div>
+<button class="btn-executar verde" style="display: none;" onclick="abrirArtCraft('designcraft')" data-comando="abrir-designcraft" data-logbox="log-sessao-aplicativos" id="btn-abrir-designcraft" data-i18n="sessoes.aplicativos.btn_abrir_designcraft">🚀 Abrir DesignCraft</button>
+</div>
+
+</div>
+
+<div class="progress-container" id="progress-instalar-photocraft"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-photocraft"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-photocraft">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-photocraft">0%</span></div></div>
+<div class="progress-container" id="progress-instalar-vectorcraft"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-vectorcraft"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-vectorcraft">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-vectorcraft">0%</span></div></div>
+<div class="progress-container" id="progress-instalar-filmcraft"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-filmcraft"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-filmcraft">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-filmcraft">0%</span></div></div>
+<div class="progress-container" id="progress-instalar-lightcraft"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-lightcraft"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-lightcraft">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-lightcraft">0%</span></div></div>
+<div class="progress-container" id="progress-instalar-printcraft"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-printcraft"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-printcraft">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-printcraft">0%</span></div></div>
+<div class="progress-container" id="progress-instalar-effectcraft"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-effectcraft"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-effectcraft">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-effectcraft">0%</span></div></div>
+<div class="progress-container" id="progress-instalar-designcraft"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-designcraft"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-designcraft">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-designcraft">0%</span></div></div>
+
+</div>
+</details>
+
+<!-- ============================================================
+BLOCO 5 — INTERNET E COMUNICAÇÃO
+============================================================ -->
+<details class="acordeao">
+<summary data-i18n="sessoes.aplicativos.bloco4_titulo">🌐 Internet e Comunicação</summary>
+<div class="acordeao-conteudo">
+
+<p data-i18n="sessoes.aplicativos.bloco4_desc">Navegadores, apps de videochamada e mensageiros.</p>
+
+<div class="grid-launchers">
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="instalarFlatpak('instalar-opera')" data-comando="instalar-opera" data-logbox="log-sessao-aplicativos" id="btn-instalar-opera" data-i18n="sessoes.aplicativos.btn_opera">🌐 Opera</button>
+</div>
+</div>
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="instalarFlatpak('instalar-brave')" data-comando="instalar-brave" data-logbox="log-sessao-aplicativos" id="btn-instalar-brave" data-i18n="sessoes.aplicativos.btn_brave">🦁 Brave</button>
+</div>
+</div>
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="instalarFlatpak('instalar-zen')" data-comando="instalar-zen" data-logbox="log-sessao-aplicativos" id="btn-instalar-zen" data-i18n="sessoes.aplicativos.btn_zen">🧘 Zen Browser</button>
+</div>
+</div>
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="instalarFlatpak('instalar-edge')" data-comando="instalar-edge" data-logbox="log-sessao-aplicativos" id="btn-instalar-edge" data-i18n="sessoes.aplicativos.btn_edge">🌊 Microsoft Edge</button>
+</div>
+</div>
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="instalarFlatpak('instalar-chromium')" data-comando="instalar-chromium" data-logbox="log-sessao-aplicativos" id="btn-instalar-chromium" data-i18n="sessoes.aplicativos.btn_chromium">🌐 Chromium</button>
+</div>
+</div>
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="instalarFlatpak('instalar-zoom')" data-comando="instalar-zoom" data-logbox="log-sessao-aplicativos" id="btn-instalar-zoom" data-i18n="sessoes.aplicativos.btn_zoom">📹 Zoom</button>
+</div>
+</div>
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="instalarFlatpak('instalar-vivaldi')" data-comando="instalar-vivaldi" data-logbox="log-sessao-aplicativos" id="btn-instalar-vivaldi" data-i18n="sessoes.aplicativos.btn_vivaldi">🎨 Vivaldi</button>
+</div>
+</div>
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="instalarFlatpak('instalar-discord')" data-comando="instalar-discord" data-logbox="log-sessao-aplicativos" id="btn-instalar-discord" data-i18n="sessoes.aplicativos.btn_discord">💬 Discord</button>
+</div>
+</div>
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="instalarFlatpak('instalar-telegram')" data-comando="instalar-telegram" data-logbox="log-sessao-aplicativos" id="btn-instalar-telegram" data-i18n="sessoes.aplicativos.btn_telegram">✈️ Telegram</button>
+</div>
+</div>
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="instalarFlatpak('instalar-signal')" data-comando="instalar-signal" data-logbox="log-sessao-aplicativos" id="btn-instalar-signal" data-i18n="sessoes.aplicativos.btn_signal">🔒 Signal</button>
+</div>
+</div>
+</div>
+
+<div class="progress-container" id="progress-instalar-opera"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-opera"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-opera">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-opera">0%</span></div></div>
+<div class="progress-container" id="progress-instalar-brave"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-brave"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-brave">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-brave">0%</span></div></div>
+<div class="progress-container" id="progress-instalar-zen"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-zen"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-zen">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-zen">0%</span></div></div>
+<div class="progress-container" id="progress-instalar-edge"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-edge"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-edge">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-edge">0%</span></div></div>
+<div class="progress-container" id="progress-instalar-chromium"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-chromium"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-chromium">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-chromium">0%</span></div></div>
+<div class="progress-container" id="progress-instalar-zoom"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-zoom"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-zoom">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-zoom">0%</span></div></div>
+<div class="progress-container" id="progress-instalar-vivaldi"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-vivaldi"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-vivaldi">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-vivaldi">0%</span></div></div>
+<div class="progress-container" id="progress-instalar-discord"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-discord"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-discord">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-discord">0%</span></div></div>
+<div class="progress-container" id="progress-instalar-telegram"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-telegram"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-telegram">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-telegram">0%</span></div></div>
+<div class="progress-container" id="progress-instalar-signal"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-signal"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-signal">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-signal">0%</span></div></div>
+
+</div>
+</details>
+
+<!-- ============================================================
+BLOCO 6 — EDIÇÃO DE VÍDEO, ÁUDIO E MODELAGEM 3D
+============================================================ -->
+<details class="acordeao">
+<summary data-i18n="sessoes.aplicativos.bloco5_titulo">🎞️ Edição de Vídeo, Áudio e Modelagem 3D</summary>
+<div class="acordeao-conteudo">
+
+<p data-i18n="sessoes.aplicativos.bloco5_desc">Editores de vídeo, modelagem 3D, edição de áudio e produção musical.</p>
+
+<div class="aviso-caixa" data-i18n-html="sessoes.aplicativos.lightworks_aviso">
+⚠️ <strong>Atenção:</strong> o Lightworks não é instalado via Flatpak. O botão baixa o pacote RPM oficial da LWKS. Como não há pacote .deb, ele é convertido via <code>alien</code> ou instalado em sandbox. <strong>No Debian, recomendamos usar o DaVinci Resolve gratuito</strong> (não incluído no DAP — instale manualmente pelo site da Blackmagic).
+</div>
+
+<div class="grid-launchers">
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="instalarFlatpak('instalar-kdenlive')" data-comando="instalar-kdenlive" data-logbox="log-sessao-aplicativos" id="btn-instalar-kdenlive" data-i18n="sessoes.aplicativos.btn_kdenlive">🎬 Kdenlive</button>
+</div>
+</div>
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="instalarFlatpak('instalar-shotcut')" data-comando="instalar-shotcut" data-logbox="log-sessao-aplicativos" id="btn-instalar-shotcut" data-i18n="sessoes.aplicativos.btn_shotcut">✂️ Shotcut</button>
+</div>
+</div>
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="instalarFlatpak('instalar-pitivi')" data-comando="instalar-pitivi" data-logbox="log-sessao-aplicativos" id="btn-instalar-pitivi" data-i18n="sessoes.aplicativos.btn_pitivi">🎞️ Pitivi</button>
+</div>
+</div>
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="instalarFlatpak('instalar-openshot')" data-comando="instalar-openshot" data-logbox="log-sessao-aplicativos" id="btn-instalar-openshot" data-i18n="sessoes.aplicativos.btn_openshot">🎬 OpenShot</button>
+</div>
+</div>
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="instalarFlatpak('instalar-avidemux')" data-comando="instalar-avidemux" data-logbox="log-sessao-aplicativos" id="btn-instalar-avidemux" data-i18n="sessoes.aplicativos.btn_avidemux">✂️ Avidemux</button>
+</div>
+</div>
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="instalarFlatpak('instalar-drift')" data-comando="instalar-drift" data-logbox="log-sessao-aplicativos" id="btn-instalar-drift" data-i18n="sessoes.aplicativos.btn_drift">🎬 Drift</button>
+</div>
+</div>
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="instalarFlatpak('instalar-blender')" data-comando="instalar-blender" data-logbox="log-sessao-aplicativos" id="btn-instalar-blender" data-i18n="sessoes.aplicativos.btn_blender">🧊 Blender</button>
+</div>
+</div>
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="instalarFlatpak('instalar-ardour')" data-comando="instalar-ardour" data-logbox="log-sessao-aplicativos" id="btn-instalar-ardour" data-i18n="sessoes.aplicativos.btn_ardour">🎵 Ardour</button>
+</div>
+</div>
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="instalarFlatpak('instalar-lmms')" data-comando="instalar-lmms" data-logbox="log-sessao-aplicativos" id="btn-instalar-lmms" data-i18n="sessoes.aplicativos.btn_lmms">🎹 LMMS</button>
+</div>
+</div>
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="instalarFlatpak('instalar-audacity')" data-comando="instalar-audacity" data-logbox="log-sessao-aplicativos" id="btn-instalar-audacity" data-i18n="sessoes.aplicativos.btn_audacity">🎙️ Audacity</button>
+</div>
+</div>
+</div>
+
+<div class="progress-container" id="progress-instalar-kdenlive"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-kdenlive"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-kdenlive">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-kdenlive">0%</span></div></div>
+<div class="progress-container" id="progress-instalar-shotcut"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-shotcut"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-shotcut">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-shotcut">0%</span></div></div>
+<div class="progress-container" id="progress-instalar-pitivi"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-pitivi"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-pitivi">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-pitivi">0%</span></div></div>
+<div class="progress-container" id="progress-instalar-openshot"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-openshot"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-openshot">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-openshot">0%</span></div></div>
+<div class="progress-container" id="progress-instalar-avidemux"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-avidemux"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-avidemux">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-avidemux">0%</span></div></div>
+<div class="progress-container" id="progress-instalar-drift"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-drift"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-drift">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-drift">0%</span></div></div>
+<div class="progress-container" id="progress-instalar-blender"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-blender"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-blender">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-blender">0%</span></div></div>
+<div class="progress-container" id="progress-instalar-ardour"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-ardour"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-ardour">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-ardour">0%</span></div></div>
+<div class="progress-container" id="progress-instalar-lmms"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-lmms"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-lmms">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-lmms">0%</span></div></div>
+<div class="progress-container" id="progress-instalar-audacity"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-audacity"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-audacity">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-audacity">0%</span></div></div>
+
+</div>
+</details>
+
+<!-- ============================================================
+BLOCO 7 — SINCRONIZAÇÃO EM NUVEM
+============================================================ -->
+<details class="acordeao">
+<summary data-i18n="sessoes.aplicativos.bloco6_titulo">☁️ Sincronização em Nuvem</summary>
+<div class="acordeao-conteudo">
+
+<p data-i18n="sessoes.aplicativos.bloco6_desc">Ferramentas para sincronizar arquivos com Google Drive, OneDrive, Dropbox e outros serviços.</p>
+
+<div class="aviso-caixa" data-i18n-html="sessoes.aplicativos.rclone_aviso">
+ℹ️ <strong>Configuração das contas de nuvem:</strong> o Rclone Manager é uma interface gráfica para o Rclone. Ele permite configurar acesso a Google Drive, OneDrive, Dropbox, S3, e dezenas de outros serviços de armazenamento em nuvem. Após instalar, abra o Rclone Manager e siga o guia interno da própria interface para adicionar suas contas. <strong>Se você precisar do Rclone CLI, o próprio Rclone Manager oferece a opção de instalá-lo.</strong> A configuração das contas é feita por você, dentro do Rclone Manager.
+</div>
+
+<div class="botoes-flex">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar"
+onclick="instalarRcloneManager()"
+data-comando="instalar-rclone-manager"
+data-logbox="log-sessao-aplicativos"
+id="btn-instalar-rclone-manager"
+data-i18n="sessoes.aplicativos.btn_rclone_manager">
+🎛️ Instalar Rclone Manager
+</button>
+</div>
+<button class="btn-executar verde"
+style="display: none;"
+onclick="abrirRcloneManager()"
+data-comando="abrir-rclone-manager"
+data-logbox="log-sessao-aplicativos"
+id="btn-abrir-rclone-manager"
+data-i18n="sessoes.aplicativos.btn_abrir_rclone_manager">
+🚀 Abrir Rclone Manager
+</button>
+</div>
+
+<div class="aviso-caixa" style="margin-top: 1rem;" data-i18n-html="sessoes.aplicativos.rclone_uninstall_aviso">
+⚠️ <strong>Remover completamente o Rclone Manager?</strong> Este botão remove os pacotes <code>rclone-manager</code> e <code>rclone</code> do sistema, incluindo qualquer versão do Rclone que o próprio Rclone Manager tenha instalado. <strong>Suas contas de nuvem ficam salvas em <code>~/.config/rclone</code> e NÃO são apagadas</strong> — se reinstalar depois, suas contas continuam lá. Ação irreversível em relação aos pacotes.
+</div>
+
+<div class="botoes-flex">
+<button class="btn-executar destrutivo"
+onclick="desfazerRcloneManager()"
+data-comando="desfazer-rclone-manager"
+data-logbox="log-sessao-aplicativos"
+id="btn-desfazer-rclone-manager"
+data-i18n="sessoes.aplicativos.btn_desfazer_rclone_manager"
+disabled>
+🗑️ Remover completamente o Rclone Manager
+</button>
+</div>
+
+<div class="progress-container" id="progress-instalar-rclone-manager"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-rclone-manager"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-rclone-manager">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-rclone-manager">0%</span></div></div>
+<div class="progress-container" id="progress-desfazer-rclone-manager"><div class="progress-bar"><div class="progress-fill" id="progress-fill-desfazer-rclone-manager"></div></div><div class="progress-text"><span class="status" id="progress-status-desfazer-rclone-manager">⏳ Iniciando...</span><span class="percentage" id="progress-percent-desfazer-rclone-manager">0%</span></div></div>
+
+</div>
+</details>
+
+<!-- ============================================================
+BLOCO 8 — FERRAMENTAS DE ACESSO REMOTO
+============================================================ -->
+<details class="acordeao">
+<summary data-i18n="sessoes.aplicativos.bloco7_titulo">📡 Ferramentas de Acesso Remoto</summary>
+<div class="acordeao-conteudo">
+
+<p data-i18n="sessoes.aplicativos.bloco7_desc">Ferramentas para acessar e controlar outros computadores remotamente, ou para se conectar a servidores Windows e Linux via RDP, VNC e outros protocolos. Ideal para suporte técnico, acesso a máquinas do trabalho e administração de servidores.</p>
+
+<div class="aviso-caixa" data-i18n-html="sessoes.aplicativos.bloco7_aviso">
+⚠️ <strong>Nota sobre Wayland:</strong> o Debian 13 está migrando do X11 para o Wayland. Algumas ferramentas tradicionais de controle remoto (AnyDesk, TeamViewer) ainda apresentam problemas nesse ambiente — tela preta, cursor travado ou ausência de controle. As ferramentas listadas abaixo funcionam bem no Wayland.
+</div>
+
+<div class="grid-launchers">
+
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="executarRustDesk()" data-comando="instalar-rustdesk" data-logbox="log-sessao-aplicativos" id="btn-instalar-rustdesk" data-i18n="sessoes.aplicativos.btn_rustdesk">🖥️ RustDesk</button>
+</div>
+<button class="btn-executar verde" style="display: none;" onclick="abrirRustDesk()" data-comando="abrir-rustdesk" data-logbox="log-sessao-aplicativos" id="btn-abrir-rustdesk" data-i18n="sessoes.aplicativos.btn_abrir_rustdesk">🚀 Abrir RustDesk</button>
+</div>
+
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="executarRemmina()" data-comando="instalar-remmina" data-logbox="log-sessao-aplicativos" id="btn-instalar-remmina" data-i18n="sessoes.aplicativos.btn_remmina">🖥️ Remmina</button>
+</div>
+<button class="btn-executar verde" style="display: none;" onclick="abrirRemmina()" data-comando="abrir-remmina" data-logbox="log-sessao-aplicativos" id="btn-abrir-remmina" data-i18n="sessoes.aplicativos.btn_abrir_remmina">🚀 Abrir Remmina</button>
+</div>
+
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="executarGnomeConnections()" data-comando="instalar-gnome-connections" data-logbox="log-sessao-aplicativos" id="btn-instalar-gnome-connections" data-i18n="sessoes.aplicativos.btn_gnome_connections">🖥️ GNOME Connections</button>
+</div>
+<button class="btn-executar verde" style="display: none;" onclick="abrirGnomeConnections()" data-comando="abrir-gnome-connections" data-logbox="log-sessao-aplicativos" id="btn-abrir-gnome-connections" data-i18n="sessoes.aplicativos.btn_abrir_gnome_connections">🚀 Abrir GNOME Connections</button>
+</div>
+
+<div class="launcher-item">
+<div class="btn-flatpak-wrapper">
+<button class="btn-executar" onclick="executarKrdc()" data-comando="instalar-krdc" data-logbox="log-sessao-aplicativos" id="btn-instalar-krdc" data-i18n="sessoes.aplicativos.btn_krdc">🖥️ KRDC</button>
+</div>
+<button class="btn-executar verde" style="display: none;" onclick="abrirKrdc()" data-comando="abrir-krdc" data-logbox="log-sessao-aplicativos" id="btn-abrir-krdc" data-i18n="sessoes.aplicativos.btn_abrir_krdc">🚀 Abrir KRDC</button>
+</div>
+
+</div>
+
+<div class="progress-container" id="progress-instalar-rustdesk"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-rustdesk"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-rustdesk">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-rustdesk">0%</span></div></div>
+<div class="progress-container" id="progress-instalar-remmina"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-remmina"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-remmina">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-remmina">0%</span></div></div>
+<div class="progress-container" id="progress-instalar-gnome-connections"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-gnome-connections"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-gnome-connections">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-gnome-connections">0%</span></div></div>
+<div class="progress-container" id="progress-instalar-krdc"><div class="progress-bar"><div class="progress-fill" id="progress-fill-instalar-krdc"></div></div><div class="progress-text"><span class="status" id="progress-status-instalar-krdc">⏳ Iniciando...</span><span class="percentage" id="progress-percent-instalar-krdc">0%</span></div></div>
+
+</div>
+</details>
+
+<!-- Log único da sessão -->
+<div class="terminal-log sessao-compartilhado" id="log-sessao-aplicativos"></div>
+</div>
+
+<script>
+// ============================================================
+// SESSÃO: APLICATIVOS RECOMENDADOS
+// ============================================================
+
+function _t(chave, fallback) {
+    return (typeof tOr === 'function') ? tOr(chave, fallback) : fallback;
+}
+function _tVars(chave, fallback, vars) {
+    return (typeof tOr === 'function') ? tOr(chave, fallback, vars) : fallback;
+}
+
+var APPS_FLATPAK = {
+    'instalar-onlyoffice': { appId: 'org.onlyoffice.desktopeditors', fallback: '📝 OnlyOffice' },
+    'instalar-libreoffice': { appId: 'org.libreoffice.LibreOffice', fallback: '📄 LibreOffice' },
+    'instalar-obsidian': { appId: 'md.obsidian.Obsidian', fallback: '💎 Obsidian' },
+    'instalar-thunderbird': { appId: 'org.mozilla.thunderbird', fallback: '📧 Thunderbird' },
+    'instalar-okular': { appId: 'org.kde.okular', fallback: '📚 Okular' },
+    'instalar-joplin': { appId: 'net.cozic.joplin_desktop', fallback: '📝 Joplin' },
+    'instalar-foliate': { appId: 'com.github.johnfactotum.Foliate', fallback: '📖 Foliate' },
+    'instalar-haruna': { appId: 'org.kde.haruna', fallback: '🎥 Haruna' },
+    'instalar-vlc': { appId: 'org.videolan.VLC', fallback: '🎬 VLC Media Player' },
+    'instalar-mpv': { appId: 'io.mpv.Mpv', fallback: '🎥 MPV' },
+    'instalar-spotify': { appId: 'com.spotify.Client', fallback: '🎵 Spotify' },
+    'instalar-plex': { appId: 'tv.plex.PlexDesktop', fallback: '📺 Plex' },
+    'instalar-stremio': { appId: 'com.stremio.Stremio', fallback: '🎬 Stremio' },
+    'instalar-krita': { appId: 'org.kde.krita', fallback: '🎨 Krita' },
+    'instalar-inkscape': { appId: 'org.inkscape.Inkscape', fallback: '🎨 Inkscape' },
+    'instalar-pinta': { appId: 'com.github.PintaProject.Pinta', fallback: '🎨 Pinta' },
+    'instalar-gimp': { appId: 'org.gimp.GIMP', fallback: '🖼️ GIMP' },
+    'instalar-darktable': { appId: 'org.darktable.Darktable', fallback: '📷 Darktable' },
+    'instalar-freecad': { appId: 'org.freecad.FreeCAD', fallback: '⚙️ FreeCAD' },
+    'instalar-librecad': { appId: 'org.librecad.librecad', fallback: '📐 LibreCAD' },
+    'instalar-cura': { appId: 'com.ultimaker.cura', fallback: '🖨️ Cura' },
+    'instalar-upscayl': { appId: 'org.upscayl.Upscayl', fallback: '🔍 Upscayl' },
+    'instalar-xnviewmp': { appId: 'com.xnview.XnViewMP', fallback: '🖼️ XnView MP' },
+    'instalar-opera': { appId: 'com.opera.Opera', fallback: '🌐 Opera' },
+    'instalar-brave': { appId: 'com.brave.Browser', fallback: '🦁 Brave' },
+    'instalar-zen': { appId: 'app.zen_browser.zen', fallback: '🧘 Zen Browser' },
+    'instalar-edge': { appId: 'com.microsoft.Edge', fallback: '🌊 Microsoft Edge' },
+    'instalar-chromium': { appId: 'org.chromium.Chromium', fallback: '🌐 Chromium' },
+    'instalar-zoom': { appId: 'us.zoom.Zoom', fallback: '📹 Zoom' },
+    'instalar-vivaldi': { appId: 'com.vivaldi.Vivaldi', fallback: '🎨 Vivaldi' },
+    'instalar-discord': { appId: 'com.discordapp.Discord', fallback: '💬 Discord' },
+    'instalar-telegram': { appId: 'org.telegram.desktop', fallback: '✈️ Telegram' },
+    'instalar-signal': { appId: 'org.signal.Signal', fallback: '🔒 Signal' },
+    'instalar-kdenlive': { appId: 'org.kde.kdenlive', fallback: '🎬 Kdenlive' },
+    'instalar-shotcut': { appId: 'org.shotcut.Shotcut', fallback: '✂️ Shotcut' },
+    'instalar-pitivi': { appId: 'org.pitivi.Pitivi', fallback: '🎞️ Pitivi' },
+    'instalar-openshot': { appId: 'org.openshot.OpenShot', fallback: '🎬 OpenShot' },
+    'instalar-avidemux': { appId: 'org.avidemux.Avidemux', fallback: '✂️ Avidemux' },
+    'instalar-drift': { appId: 'org.cutwire.Drift', fallback: '🎬 Drift' },
+    'instalar-blender': { appId: 'org.blender.Blender', fallback: '🧊 Blender' },
+    'instalar-ardour': { appId: 'org.ardour.Ardour', fallback: '🎵 Ardour' },
+    'instalar-lmms': { appId: 'io.lmms.LMMS', fallback: '🎹 LMMS' },
+    'instalar-audacity': { appId: 'org.audacityteam.Audacity', fallback: '🎙️ Audacity' },
+    'instalar-rustdesk': { appId: 'com.rustdesk.RustDesk', fallback: '🖥️ RustDesk' }
+};
+
+// ============================================================
+// BOTÕES "ABRIR" DINÂMICOS
+// ============================================================
+//
+// Apps instalados FORA do DAP (via terminal, GNOME Software,
+// etc.) eram detectados corretamente pela lixeira, mas o botão
+// de instalar não era trocado pelo de abrir — porque não havia
+// `btn-abrir-<nome>` no DOM.
+//
+// Solução: criar os botões "Abrir X" dinamicamente a partir do
+// registry APPS_FLATPAK. Cobre todos os Flatpaks atuais e
+// futuros sem editar o HTML.
+
+function _criarBotoesAbrirFlatpak() {
+    Object.keys(APPS_FLATPAK).forEach(function(idInstall) {
+        var idAbrir = 'abrir-' + idInstall.replace(/^instalar-/, '');
+
+        if (document.getElementById('btn-' + idAbrir)) return;
+
+        var btnInstall = document.getElementById('btn-' + idInstall);
+        if (!btnInstall) return;
+
+        var wrapper = btnInstall.closest('.btn-flatpak-wrapper');
+        if (!wrapper) return;
+
+        var container = wrapper.parentElement;
+        if (!container) return;
+
+        var info = APPS_FLATPAK[idInstall];
+        var nomeAmigavel = (info.fallback || 'App').replace(/^[^\s]+\s*/, '');
+        var chaveI18n = 'sessoes.aplicativos.btn_abrir_' + idInstall.replace(/^instalar-/, '');
+        var textoFallback = '🚀 Abrir ' + nomeAmigavel;
+
+        var btnAbrir = document.createElement('button');
+        btnAbrir.className = 'btn-executar verde';
+        btnAbrir.style.display = 'none';
+        btnAbrir.id = 'btn-' + idAbrir;
+        btnAbrir.setAttribute('data-comando', idAbrir);
+        btnAbrir.setAttribute('data-logbox', 'log-sessao-aplicativos');
+        btnAbrir.setAttribute('data-i18n', chaveI18n);
+        btnAbrir.setAttribute('onclick', 'abrirFlatpakApp(\'' + idInstall + '\')');
+
+        var textoInicial = _t(chaveI18n, textoFallback);
+        btnAbrir.textContent = textoInicial;
+        btnAbrir.setAttribute('data-texto-original', textoFallback);
+
+        container.appendChild(btnAbrir);
+    });
+}
+
+function abrirFlatpakApp(idInstall) {
+    var info = APPS_FLATPAK[idInstall];
+    if (!info) return;
+
+    var nome = (info.fallback || 'App').replace(/^[^\s]+\s*/, '');
+    abrirFerramentaExterna('gtk-launch ' + info.appId, idInstall, nome);
+}
+
+_criarBotoesAbrirFlatpak();
+
+// ============================================================
+// REGISTRO DE APPS REMOVÍVEIS (não-Flatpak)
+// ============================================================
+
+registrarAppRemovivel('instalar-rclone-manager', {
+    modo: 'desfazerTudo',
+    idDesfazer: 'desfazer-rclone-manager',
+    comandoDesfazer:
+        'PKGS=$(dpkg-query -W -f=\'${Package}\\n\' 2>/dev/null | grep -i "^rclone"); ' +
+        'if [ -n "$PKGS" ]; then ' +
+        '  sudo apt purge -y $PKGS && sudo apt autoremove -y; ' +
+        'else ' +
+        '  echo "ℹ️ Nenhum pacote rclone* encontrado para remover."; ' +
+        'fi',
+    nome: 'Rclone Manager'
+});
+
+registrarAppRemovivel('instalar-remmina', {
+    tipo: 'dnf',
+    pacotes: ['remmina', 'remmina-plugin-rdp', 'remmina-plugin-vnc', 'remmina-plugin-secret'],
+    nome: 'Remmina'
+});
+
+registrarAppRemovivel('instalar-gnome-connections', {
+    tipo: 'dnf',
+    pacotes: ['gnome-connections'],
+    nome: 'GNOME Connections'
+});
+
+registrarAppRemovivel('instalar-krdc', {
+    tipo: 'dnf',
+    pacotes: ['krdc'],
+    nome: 'KRDC'
+});
+
+registrarAppRemovivel('instalar-photocraft', {
+    tipo: 'dnf', pacotes: ['photocraft'], nome: 'PhotoCraft'
+});
+registrarAppRemovivel('instalar-vectorcraft', {
+    tipo: 'dnf', pacotes: ['vectorcraft'], nome: 'VectorCraft'
+});
+registrarAppRemovivel('instalar-filmcraft', {
+    tipo: 'dnf', pacotes: ['filmcraft'], nome: 'FilmCraft'
+});
+registrarAppRemovivel('instalar-lightcraft', {
+    tipo: 'dnf', pacotes: ['lightcraft'], nome: 'LightCraft'
+});
+registrarAppRemovivel('instalar-printcraft', {
+    tipo: 'dnf', pacotes: ['printcraft'], nome: 'PrintCraft'
+});
+registrarAppRemovivel('instalar-effectcraft', {
+    tipo: 'dnf', pacotes: ['effectcraft'], nome: 'EffectCraft'
+});
+registrarAppRemovivel('instalar-designcraft', {
+    tipo: 'dnf', pacotes: ['designcraft'], nome: 'DesignCraft'
+});
+
+// ============================================================
+// FLATPAKS — INSTALAÇÃO VIA FILA
+// ============================================================
+
+async function instalarFlatpak(idComando) {
+    var info = APPS_FLATPAK[idComando];
+    if (!info) {
+        console.error('[aplicativos] App não mapeado:', idComando);
+        return;
+    }
+    var comando = 'flatpak install flathub ' + info.appId + ' -y';
+
+    var chaveI18n = 'sessoes.aplicativos.btn_' +
+        (idComando.indexOf('instalar-') === 0
+            ? idComando.substring('instalar-'.length)
+            : idComando);
+    var nomeAcao = _t(chaveI18n, info.fallback);
+
+    await executarComandoGenerico(idComando, comando, nomeAcao, function() {
+        _atualizarIconeDesinstalar(idComando);
+    });
+}
+
+// ============================================================
+// DESINSTALAÇÃO DE FLATPAKS
+// ============================================================
+
+async function desinstalarAppFlatpak(idComando, appId, nomeExibicao) {
+    if (!isExecutado(idComando)) {
+        alert(_tVars('comum.nao_instalado', nomeExibicao + ' não está instalado.', { nome: nomeExibicao }));
+        return;
+    }
+
+    if (!confirm(_tVars('comum.confirmar_desinstalar', 'Deseja desinstalar o ' + nomeExibicao + '?', { nome: nomeExibicao }))) return;
+
+    var logBox = _getLogBox(idComando);
+    var btn = document.getElementById('btn-' + idComando);
+    var idRevert = idComando + '-revert';
+
+    if (logBox) {
+        logBox.style.display = 'block';
+        _separadorLog(logBox, '🗑️ Desinstalar ' + nomeExibicao);
+        var infoLine = document.createElement('div');
+        infoLine.className = 'log-line info';
+        infoLine.textContent = '🗑️ Desinstalando ' + nomeExibicao + '...';
+        logBox.appendChild(infoLine);
+        logBox.scrollTop = logBox.scrollHeight;
+    }
+
+    conectarSSE(idRevert, logBox);
+
+    try {
+        await fetch(API_URL + '/executar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                comando: 'flatpak uninstall -y ' + appId,
+                idComando: idRevert
+            })
+        });
+
+        var sucesso = await aguardarConclusaoReal(idRevert, 180000);
+
+        if (!sucesso) {
+            if (logBox) {
+                var errorLine = document.createElement('div');
+                errorLine.className = 'log-line error';
+                errorLine.textContent = sucesso === null
+                    ? _t('comum.erro_timeout_desinstalar', '❌ Tempo esgotado esperando a desinstalação.')
+                    : _tVars('comum.erro_falha_desinstalar', '❌ Falha ao desinstalar ' + nomeExibicao + '.', { nome: nomeExibicao });
+                logBox.appendChild(errorLine);
+                logBox.scrollTop = logBox.scrollHeight;
+            }
+            return;
+        }
+
+        await desmarcarComoExecutado(idComando);
+
+        var idAbrir = _derivarIdAbrir(idComando);
+        aplicarEstadoInstalavel(idComando, idAbrir, idComando);
+
+        if (logBox) {
+            var successLine = document.createElement('div');
+            successLine.className = 'log-line success';
+            successLine.textContent = _tVars('comum.sucesso_desinstalar', '✅ ' + nomeExibicao + ' desinstalado com sucesso!', { nome: nomeExibicao });
+            logBox.appendChild(successLine);
+            logBox.scrollTop = logBox.scrollHeight;
+        }
+
+    } catch (e) {
+        if (logBox) {
+            var errorLine2 = document.createElement('div');
+            errorLine2.className = 'log-line error';
+            errorLine2.textContent = _tVars('comum.erro_desinstalar', '❌ Erro ao desinstalar: ' + e.message, { msg: e.message });
+            logBox.appendChild(errorLine2);
+            logBox.scrollTop = logBox.scrollHeight;
+        }
+    }
+}
+
+// ------------------------------------------------------------
+// ÍCONES DE DESINSTALAR — FLATPAK (local desta sessão)
+// ------------------------------------------------------------
+
+var _svgLixeira = '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>';
+
+function _atualizarIconeDesinstalar(idComando) {
+    var btn = document.getElementById('btn-' + idComando);
+    if (!btn) return;
+
+    var wrapper = btn.closest('.btn-flatpak-wrapper');
+    if (!wrapper) return;
+
+    var info = APPS_FLATPAK[idComando];
+    if (!info) return;
+
+    var nomeExibicao = (btn.textContent || '').replace(/^[✅\s]+/, '').trim() || info.fallback;
+
+    var icone = wrapper.querySelector('.btn-flatpak-uninstall');
+    if (!icone) {
+        icone = document.createElement('button');
+        icone.type = 'button';
+        icone.className = 'btn-flatpak-uninstall';
+        icone.setAttribute('data-comando-alvo', idComando);
+        icone.innerHTML = _svgLixeira;
+        icone.title = _tVars('comum.desinstalar_flatpak', 'Desinstalar ' + nomeExibicao, { nome: nomeExibicao });
+        icone.setAttribute('aria-label', icone.title);
+
+        icone.addEventListener('click', function(e) {
+            e.stopPropagation();
+            var alvo = this.getAttribute('data-comando-alvo');
+            var alvoInfo = APPS_FLATPAK[alvo];
+            if (!alvoInfo) return;
+            var alvoBtn = document.getElementById('btn-' + alvo);
+            var alvoNome = alvoBtn ? (alvoBtn.textContent || '').replace(/^[✅\s]+/, '').trim() : alvoInfo.fallback;
+            desinstalarAppFlatpak(alvo, alvoInfo.appId, alvoNome || alvoInfo.fallback);
+        });
+
+        wrapper.appendChild(icone);
+    }
+
+    icone.style.display = '';
+}
+
+function _esconderIconeDesinstalar(idComando) {
+    var btn = document.getElementById('btn-' + idComando);
+    if (!btn) return;
+    var wrapper = btn.closest('.btn-flatpak-wrapper');
+    if (!wrapper) return;
+    var icone = wrapper.querySelector('.btn-flatpak-uninstall');
+    if (icone) icone.style.display = 'none';
+}
+
+function _restaurarIconesFlatpak() {
+    Object.keys(APPS_FLATPAK).forEach(function(idComando) {
+        if (isExecutado(idComando)) {
+            _atualizarIconeDesinstalar(idComando);
+        }
+    });
+}
+
+// ============================================================
+// RCLONE MANAGER
+// ============================================================
+//
+// Rclone Manager baixa o RPM do GitHub. No Debian, não temos
+// .deb — então usamos um fallback: instala o binário direto via
+// o script oficial do projeto.
+
+async function instalarRcloneManager() {
+    var comando =
+        'set -e; ' +
+        'echo "📥 Baixando instalador do Rclone Manager..."; ' +
+        'INSTALLER=$(curl -s https://api.github.com/repos/Zarestia-Dev/rclone-manager/releases/latest ' +
+        '| grep -oP \'"browser_download_url":\\s*"\\K[^"]*\\.deb\' ' +
+        '| head -1); ' +
+        'if [ -z "$INSTALLER" ]; then ' +
+        '  echo "❌ Nenhum pacote .deb encontrado na release mais recente do rclone-manager"; ' +
+        '  echo "   Verifique manualmente: https://github.com/Zarestia-Dev/rclone-manager/releases/latest"; ' +
+        '  exit 1; ' +
+        'fi; ' +
+        'echo "URL do pacote: $INSTALLER"; ' +
+        'TMP=$(mktemp -d); ' +
+        'cd "$TMP"; ' +
+        'curl -sL "$INSTALLER" -o rclone-manager.deb; ' +
+        'sudo apt install -y ./rclone-manager.deb; ' +
+        'cd /; rm -rf "$TMP"; ' +
+        'echo ""; ' +
+        'echo "✅ Rclone Manager instalado."';
+
+    var nomeAcao = _t('sessoes.aplicativos.btn_rclone_manager', '🎛️ Instalar Rclone Manager');
+    await executarComandoGenerico('instalar-rclone-manager', comando, nomeAcao, function() {
+        atualizarBotaoAbrirRclone();
+        aplicarEstadoToggle('instalar-rclone-manager', 'desfazer-rclone-manager');
+    });
+}
+
+function desfazerRcloneManager() {
+    _executarDesfazerTudo('instalar-rclone-manager');
+}
+
+function abrirRcloneManager() {
+    abrirFerramentaExterna('rclone-manager', 'instalar-rclone-manager', 'Rclone Manager');
+}
+
+function atualizarBotaoAbrirRclone() {
+    var btn = document.getElementById('btn-abrir-rclone-manager');
+    if (!btn) return;
+    btn.style.display = isExecutado('instalar-rclone-manager') ? '' : 'none';
+}
+
+// ============================================================
+// AFFINITY
+// ============================================================
+
+function abrirGitHubAffinity() {
+    window.location.href = 'https://github.com/ryzendew/Linux-Affinity-Installer';
+}
+
+async function abrirInstaladorAffinity() {
+    const idComando = 'instalar-affinity';
+    const logBox = _getLogBox(idComando);
+    const btn = document.getElementById('btn-instalar-affinity');
+
+    if (btn) {
+        btn.disabled = true;
+        btn.textContent = _t('sessoes.aplicativos.log_preparando', '⏳ Preparando...');
+        btn.style.opacity = '0.6';
+    }
+
+    const comando =
+        'mkdir -p /tmp/dap-affinity && ' +
+        '{ dpkg -s python3-pyqt6 > /dev/null 2>&1 || sudo apt install -y python3-pyqt6; } && ' +
+        'curl -sSL https://raw.githubusercontent.com/ryzendew/Linux-Affinity-Installer/refs/heads/main/AffinityScripts/AffinityLinuxInstaller.py -o /tmp/dap-affinity/AffinityLinuxInstaller.py && ' +
+        'chmod +x /tmp/dap-affinity/AffinityLinuxInstaller.py && ' +
+        'chown -R $USER:$USER /tmp/dap-affinity && ' +
+        'nohup python3 /tmp/dap-affinity/AffinityLinuxInstaller.py > /tmp/dap-affinity/installer.log 2>&1 &';
+
+    try {
+        if (logBox) {
+            logBox.style.display = 'block';
+            _separadorLog(logBox, '🎨 Abrir Instalador da Affinity');
+        }
+
+        const response = await fetch(API_URL + '/executar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ comando: comando, idComando: idComando })
+        });
+
+        if (response.ok && logBox) {
+            const infoLine = document.createElement('div');
+            infoLine.className = 'log-line success';
+            infoLine.textContent = _t('sessoes.aplicativos.log_instalador_iniciado', '🚀 Instalador da Affinity iniciado!');
+            logBox.appendChild(infoLine);
+            const infoLine2 = document.createElement('div');
+            infoLine2.className = 'log-line info';
+            infoLine2.textContent = _t('sessoes.aplicativos.log_instalador_local', '📋 Log: /tmp/dap-affinity/installer.log');
+            logBox.appendChild(infoLine2);
+            logBox.scrollTop = logBox.scrollHeight;
+        }
+    } catch (e) {
+        if (logBox) {
+            const errorLine = document.createElement('div');
+            errorLine.className = 'log-line error';
+            errorLine.textContent = '❌ Erro: ' + e.message;
+            logBox.appendChild(errorLine);
+            logBox.scrollTop = logBox.scrollHeight;
+        }
+    } finally {
+        setTimeout(function() {
+            if (btn) {
+                btn.disabled = false;
+                btn.textContent = _t('sessoes.aplicativos.btn_abrir_instalador', '🎨 Abrir Instalador da Affinity');
+                btn.style.opacity = '1';
+            }
+        }, 3000);
+    }
+}
+
+// ============================================================
+// SUÍTE ARTCRAFT (apps Rust, .deb do GitHub oficial)
+// ============================================================
+
+var ARTCRAFT_REPOS = {
+    'photocraft':  { repo: 'storytold/photocraft',  bin: 'photocraft',  nome: 'PhotoCraft' },
+    'vectorcraft': { repo: 'storytold/vectorcraft', bin: 'vectorcraft', nome: 'VectorCraft' },
+    'filmcraft':   { repo: 'storytold/filmcraft',   bin: 'filmcraft',   nome: 'FilmCraft' },
+    'lightcraft':  { repo: 'storytold/lightcraft',  bin: 'lightcraft',  nome: 'LightCraft' },
+    'printcraft':  { repo: 'storytold/printcraft',  bin: 'printcraft',  nome: 'PrintCraft' },
+    'effectcraft': { repo: 'storytold/effectcraft', bin: 'effectcraft', nome: 'EffectCraft' },
+    'designcraft': { repo: 'storytold/designcraft', bin: 'designcraft', nome: 'DesignCraft' }
+};
+
+async function executarArtCraft(appId) {
+    var info = ARTCRAFT_REPOS[appId];
+    if (!info) {
+        console.error('[artcraft] App não mapeado:', appId);
+        return;
+    }
+    var idComando = 'instalar-' + appId;
+    var idAbrir = 'abrir-' + appId;
+    var chaveI18n = 'sessoes.aplicativos.btn_' + appId;
+    var nomeAcao = _t(chaveI18n, info.nome);
+
+    var comando =
+        'JSON=$(curl -sL --max-time 30 "https://api.github.com/repos/' + info.repo + '/releases/latest") && ' +
+        // 1. Rede fora / DNS falhou / timeout → JSON vazio.
+        'if [ -z "$JSON" ]; then ' +
+        '  echo "❌ Falha ao contatar a API do GitHub."; ' +
+        '  echo "   Verifique sua conexão de rede e tente novamente."; ' +
+        '  exit 1; ' +
+        'fi && ' +
+        // 2. API retornou erro (rate limit, 404, repositório movido).
+        'if echo "$JSON" | grep -q \'"message"\'; then ' +
+        '  echo "⚠️ API do GitHub respondeu com erro:"; ' +
+        '  echo "$JSON" | head -3; ' +
+        '  echo "   Tente novamente em alguns minutos."; ' +
+        '  echo "   Alternativa: https://github.com/' + info.repo + '/releases/latest"; ' +
+        '  exit 1; ' +
+        'fi && ' +
+        // 3. Extrai a URL do asset x86_64 via regex flexível.
+        //    No Debian, buscamos .deb; se só tiver .rpm, tentamos
+        //    converter. Se não houver nenhum, mensagem clara.
+        'URL=$(echo "$JSON" | node -e "' +
+        '  let d=\'\';' +
+        '  process.stdin.on(\'data\', c => d += c);' +
+        '  process.stdin.on(\'end\', () => {' +
+        '    try {' +
+        '      const j = JSON.parse(d);' +
+        '      const a = (j.assets || []).find(x => /x86[_-]64\\.deb$/i.test(x.name));' +
+        '      if (a) console.log(a.browser_download_url);' +
+        '    } catch (e) { process.exit(1); }' +
+        '  });' +
+        '") && ' +
+        '[ -n "$URL" ] || { ' +
+        '  echo "❌ Release encontrada, mas sem arquivo .x86_64.deb."; ' +
+        '  echo "   Consulte: https://github.com/' + info.repo + '/releases/latest"; ' +
+        '  exit 1; ' +
+        '} && ' +
+        'echo "📦 Baixando: $URL" && ' +
+        'TMP=$(mktemp -d); ' +
+        'cd "$TMP"; ' +
+        'curl -sL "$URL" -o app.deb && ' +
+        'sudo apt install -y ./app.deb; ' +
+        'cd /; rm -rf "$TMP"; ' +
+        'echo "✅ ' + info.nome + ' instalado."';
+
+    await executarComandoGenerico(idComando, comando, nomeAcao,
+        function() { aplicarEstadoInstalavel(idComando, idAbrir); });
+}
+
+function abrirArtCraft(appId) {
+    var info = ARTCRAFT_REPOS[appId];
+    if (!info) return;
+    abrirFerramentaExterna(info.bin, 'instalar-' + appId, info.nome);
+}
+
+// ============================================================
+// FERRAMENTAS DE ACESSO REMOTO
+// ============================================================
+
+async function executarRustDesk() {
+    var idComando = 'instalar-rustdesk';
+    var info = APPS_FLATPAK[idComando];
+    if (!info) return;
+    var comando = 'flatpak install flathub ' + info.appId + ' -y';
+    await executarComandoGenerico(idComando, comando,
+        _t('sessoes.aplicativos.btn_rustdesk', '🖥️ RustDesk'),
+        function() {
+            _atualizarIconeDesinstalar(idComando);
+            atualizarBotaoAbrirRustDesk();
+        });
+}
+
+function abrirRustDesk() {
+    abrirFerramentaExterna('gtk-launch com.rustdesk.RustDesk', 'instalar-rustdesk', 'RustDesk');
+}
+
+function atualizarBotaoAbrirRustDesk() {
+    var btn = document.getElementById('btn-abrir-rustdesk');
+    if (!btn) return;
+    btn.style.display = isExecutado('instalar-rustdesk') ? '' : 'none';
+}
+
+async function executarRemmina() {
+    var idComando = 'instalar-remmina';
+    var comando = 'sudo apt install -y remmina remmina-plugin-rdp remmina-plugin-vnc';
+    await executarComandoGenerico(idComando, comando,
+        _t('sessoes.aplicativos.btn_remmina', '🖥️ Remmina'),
+        function() {
+            atualizarIconeRemover(idComando);
+            atualizarBotaoAbrirRemmina();
+        });
+}
+
+function abrirRemmina() {
+    abrirFerramentaExterna('gtk-launch org.remmina.Remmina', 'instalar-remmina', 'Remmina');
+}
+
+function atualizarBotaoAbrirRemmina() {
+    var btn = document.getElementById('btn-abrir-remmina');
+    if (!btn) return;
+    btn.style.display = isExecutado('instalar-remmina') ? '' : 'none';
+}
+
+async function executarGnomeConnections() {
+    var idComando = 'instalar-gnome-connections';
+    var comando = 'sudo apt install -y gnome-connections';
+    await executarComandoGenerico(idComando, comando,
+        _t('sessoes.aplicativos.btn_gnome_connections', '🖥️ GNOME Connections'),
+        function() {
+            atualizarIconeRemover(idComando);
+            atualizarBotaoAbrirGnomeConnections();
+        });
+}
+
+function abrirGnomeConnections() {
+    abrirFerramentaExterna('gtk-launch org.gnome.Connections', 'instalar-gnome-connections', 'GNOME Connections');
+}
+
+function atualizarBotaoAbrirGnomeConnections() {
+    var btn = document.getElementById('btn-abrir-gnome-connections');
+    if (!btn) return;
+    btn.style.display = isExecutado('instalar-gnome-connections') ? '' : 'none';
+}
+
+async function executarKrdc() {
+    var idComando = 'instalar-krdc';
+    var comando = 'sudo apt install -y krdc';
+    await executarComandoGenerico(idComando, comando,
+        _t('sessoes.aplicativos.btn_krdc', '🖥️ KRDC'),
+        function() {
+            atualizarIconeRemover(idComando);
+            atualizarBotaoAbrirKrdc();
+        });
+}
+
+function abrirKrdc() {
+    abrirFerramentaExterna('gtk-launch org.kde.krdc', 'instalar-krdc', 'KRDC');
+}
+
+function atualizarBotaoAbrirKrdc() {
+    var btn = document.getElementById('btn-abrir-krdc');
+    if (!btn) return;
+    btn.style.display = isExecutado('instalar-krdc') ? '' : 'none';
+}
+
+// ============================================================
+// AJUSTE DE FERRAMENTAS POR DESKTOP
+// ============================================================
+
+async function _ajustarFerramentasPorDesktop() {
+    var desktop = 'UNKNOWN';
+    try {
+        desktop = await detectarDesktopReal();
+    } catch (e) {
+        console.warn('[aplicativos] Não foi possível detectar desktop:', e);
+    }
+
+    if (desktop === 'GNOME') {
+        await _esconderSePacoteInstalado('gnome-connections',
+                                          'instalar-gnome-connections',
+                                          'btn-abrir-gnome-connections');
+    } else if (desktop === 'KDE') {
+        await _esconderSePacoteInstalado('krdc',
+                                          'instalar-krdc',
+                                          'btn-abrir-krdc');
+    }
+}
+
+async function _esconderSePacoteInstalado(pkg, idComando, idBotaoAbrir) {
+    var instalado = false;
+    try {
+        var r = await fetch(API_URL + '/check-package?pkg=' + encodeURIComponent(pkg),
+                            { cache: 'no-store' });
+        if (r.ok) {
+            var data = await r.json();
+            instalado = !!data.installed;
+        }
+    } catch (e) {
+        console.warn('[aplicativos] Falha ao checar pacote ' + pkg + ':', e.message);
+        return;
+    }
+
+    if (!instalado) return;
+
+    var btnInstalar = document.getElementById('btn-' + idComando);
+    var btnAbrir = document.getElementById(idBotaoAbrir);
+
+    if (btnInstalar) {
+        var wrapper = btnInstalar.closest('.btn-flatpak-wrapper');
+        if (wrapper) {
+            wrapper.style.display = 'none';
+        } else {
+            btnInstalar.style.display = 'none';
+        }
+    }
+
+    if (btnAbrir) {
+        btnAbrir.style.display = '';
+    }
+}
+
+// ============================================================
+// RESTAURAR ESTADO DA SESSÃO
+// ============================================================
+
+async function restaurarEstadoSessao() {
+    Object.keys(APPS_FLATPAK).forEach(function(idComando) {
+        var idAbrir = _derivarIdAbrir(idComando);
+        aplicarEstadoInstalavel(idComando, idAbrir);
+    });
+
+    if (isExecutado('instalar-rclone-manager')) {
+        var btnRcloneMgr = document.getElementById('btn-instalar-rclone-manager');
+        if (btnRcloneMgr) {
+            btnRcloneMgr.textContent = getTextoAposExecucao('instalar-rclone-manager');
+            btnRcloneMgr.style.backgroundColor = '#4b5563';
+            btnRcloneMgr.style.cursor = 'default';
+            btnRcloneMgr.disabled = true;
+        }
+    }
+
+    ['instalar-remmina', 'instalar-gnome-connections', 'instalar-krdc'].forEach(function(id) {
+        aplicarEstadoInstalavel(id, _derivarIdAbrir(id));
+    });
+
+    Object.keys(ARTCRAFT_REPOS).forEach(function(appId) {
+        aplicarEstadoInstalavel('instalar-' + appId, 'abrir-' + appId);
+    });
+
+    atualizarBotaoAbrirRclone();
+    aplicarEstadoToggle('instalar-rclone-manager', 'desfazer-rclone-manager');
+
+    _restaurarIconesFlatpak();
+
+    await _ajustarFerramentasPorDesktop();
+}
+
+(function() {
+    document.querySelectorAll('.btn-executar').forEach(function(btn) {
+        if (!btn.hasAttribute('data-texto-original')) {
+            btn.setAttribute('data-texto-original', btn.textContent);
+        }
+    });
+
+    restaurarEstadoSessao();
+
+    console.log('📦 Componente aplicativos carregado!');
+})();
+</script>
+</body>
+</html>

@@ -496,37 +496,1096 @@ function _atualizarProgressoGlobal() {
 // para detectar remoções externas e restaurar o botão.
 //
 // ============================================================
-// FASE 1 — ARRAY VAZIO
+// FASE 6 — ONZE SESSÕES REGISTRADAS
 // ============================================================
 //
-// Nesta fase inicial, o array de sessões está vazio. A Fase 2 vai
-// preenchê-lo com as 8 sessões do escopo da v1:
+// Esta fase entrega as últimas quatro sessões do escopo:
 //
-//   1. primeiros-passos
-//   2. codecs
-//   3. hardware
-//   4. aplicativos
-//   5. casa-escritorio
-//   6. gaming
-//   7. diagnostico
-//   8. sobre-dap
+//    1. primeiros-passos      — configuração base do Debian
+//    2. codecs                — codecs, DVD comercial, fontes MS
+//    3. hardware              — drivers AMD, NVIDIA e Intel
+//    4. gaming                — launchers, Proton, emuladores
+//    5. casa-escritorio       — impressora, compartilhamento, senhas, OCR
+//    6. diagnostico           — painel do sistema, saúde, logs
+//    7. producao-multimidia   — OBS Studio, câmera virtual, EasyEffects
+//    8. virtualizacao         — QEMU/KVM, GNOME Boxes
+//    9. ajustes-manutencao    — tunings, APT, GRUB, kernels
+//   10. estado-debian         — versão, variante, AppArmor
+//   11. sobre-dap             — atualizar/desinstalar/changelog do DAP
 //
-// Cada sessão terá a mesma estrutura do FAP:
-//   {
-//     id: 'nome-semantico',
-//     nome: 'Nome em PT-BR',
-//     nomeKey: 'sessoes.<id>.nome',
-//     comandos: {
-//       'id-comando': {
-//         textoConcluido: '✅ ...',
-//         textoConcluidoKey: 'sessoes.<id>.texto_concluido_<x>',
-//         flatpakId: 'org.exemplo.App',      // opcional
-//         sempreClicavel: true                // opcional
-//       }
-//     }
-//   }
+// Ainda pendentes (fases posteriores):
+//
+//   - nenhuma — todas as sessões do escopo foram entregues.
+//     Sobram apenas refinamentos e a versão 1.0 estável.
 
-var SESSOES = [];
+var SESSOES = [
+    // ============================================================
+    // SESSÃO 1 — PRIMEIROS PASSOS
+    // ============================================================
+    //
+    // Configuração base do Debian recém-instalado via Live ISO.
+    // Cobre o que a Live ISO não traz por padrão: repositórios
+    // non-free/contrib/non-free-firmware, Flatpak + Flathub,
+    // backports (kernel/Mesa/firmware), locale PT-BR, hunspell,
+    // arquitetura i386 (para Steam).
+    //
+    // A ordem dos blocos dentro da sessão importa: `apt-update`
+    // deve ser o primeiro, senão o `apt install` de qualquer
+    // pacote pode falhar com índice desatualizado. Os outros
+    // blocos são independentes entre si (o usuário pode rodar na
+    // ordem que quiser).
+    //
+    // Todos os blocos são one-shot (marcados como concluídos após
+    // execução) exceto `apt-update`, que é `sempreClicavel` — o
+    // usuário precisa poder rodar `apt update` de novo dias depois.
+    {
+        id: 'primeiros-passos',
+        nome: 'Primeiros Passos',
+        nomeKey: 'sessoes.primeiros-passos.nome',
+        comandos: {
+            'apt-update': {
+                sempreClicavel: true
+            },
+            'apt-upgrade': {
+                textoConcluido: '✅ Sistema atualizado',
+                textoConcluidoKey: 'sessoes.primeiros-passos.texto_concluido_apt_upgrade'
+            },
+            'deb822-converter': {
+                textoConcluido: '✅ Formato deb822 em uso',
+                textoConcluidoKey: 'sessoes.primeiros-passos.texto_concluido_deb822'
+            },
+            'non-free-enable': {
+                textoConcluido: '✅ Repositórios non-free ativos',
+                textoConcluidoKey: 'sessoes.primeiros-passos.texto_concluido_non_free'
+            },
+            'flatpak-install': {
+                textoConcluido: '✅ Flatpak + Flathub ativos',
+                textoConcluidoKey: 'sessoes.primeiros-passos.texto_concluido_flatpak'
+            },
+            'backports-enable': {
+                textoConcluido: '✅ Backports habilitados',
+                textoConcluidoKey: 'sessoes.primeiros-passos.texto_concluido_backports'
+            },
+            'kernel-backports': {
+                textoConcluido: '✅ Kernel de backports instalado',
+                textoConcluidoKey: 'sessoes.primeiros-passos.texto_concluido_kernel'
+            },
+            'mesa-backports': {
+                textoConcluido: '✅ Mesa de backports instalado',
+                textoConcluidoKey: 'sessoes.primeiros-passos.texto_concluido_mesa'
+            },
+            'extrepo-install': {
+                textoConcluido: '✅ extrepo instalado',
+                textoConcluidoKey: 'sessoes.primeiros-passos.texto_concluido_extrepo'
+            },
+            'locale-ptbr-packs': {
+                textoConcluido: '✅ Tradução instalada',
+                textoConcluidoKey: 'sessoes.primeiros-passos.texto_concluido_locale_packs'
+            },
+            'locale-ptbr-hunspell': {
+                textoConcluido: '✅ Corretor ortográfico instalado',
+                textoConcluidoKey: 'sessoes.primeiros-passos.texto_concluido_locale_hunspell'
+            },
+            'locale-ptbr-set': {
+                textoConcluido: '✅ Localidade configurada',
+                textoConcluidoKey: 'sessoes.primeiros-passos.texto_concluido_locale_set'
+            },
+            'i386-enable': {
+                textoConcluido: '✅ Arquitetura i386 habilitada',
+                textoConcluidoKey: 'sessoes.primeiros-passos.texto_concluido_i386'
+            }
+        }
+    },
+
+// ============================================================
+// SESSÃO 2 — APLICATIVOS RECOMENDADOS
+// ============================================================
+//
+// ~45 apps Flatpak em 8 blocos temáticos + Suíte ArtCraft (7
+// apps Rust distribuídos como .deb no GitHub) + Ferramentas
+// de Acesso Remoto (RustDesk, Remmina, GNOME Connections,
+// KRDC). Todos os Flatpaks usam a fila de instalação.
+//
+// No Debian, o pacote de cada app muda: onde o FAP instalava
+// .rpm, o DAP instala .deb. O binário do Steam fica em
+// /usr/games/steam (não em /usr/bin/steam como no Fedora).
+{
+    id: 'aplicativos',
+    nome: 'Aplicativos Recomendados',
+    nomeKey: 'sessoes.aplicativos.nome',
+    comandos: {
+        'instalar-onlyoffice': { textoConcluido: '✅ OnlyOffice instalado', textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_onlyoffice', flatpakId: 'org.onlyoffice.desktopeditors' },
+        'instalar-libreoffice': { textoConcluido: '✅ LibreOffice instalado', textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_libreoffice', flatpakId: 'org.libreoffice.LibreOffice' },
+        'instalar-obsidian': { textoConcluido: '✅ Obsidian instalado', textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_obsidian', flatpakId: 'md.obsidian.Obsidian' },
+        'instalar-thunderbird': { textoConcluido: '✅ Thunderbird instalado', textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_thunderbird', flatpakId: 'org.mozilla.thunderbird' },
+        'instalar-okular': { textoConcluido: '✅ Okular instalado', textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_okular', flatpakId: 'org.kde.okular' },
+        'instalar-joplin': { textoConcluido: '✅ Joplin instalado', textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_joplin', flatpakId: 'net.cozic.joplin_desktop' },
+        'instalar-foliate': { textoConcluido: '✅ Foliate instalado', textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_foliate', flatpakId: 'com.github.johnfactotum.Foliate' },
+        'instalar-haruna': { textoConcluido: '✅ Haruna instalado', textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_haruna', flatpakId: 'org.kde.haruna' },
+        'instalar-vlc': { textoConcluido: '✅ VLC instalado', textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_vlc', flatpakId: 'org.videolan.VLC' },
+        'instalar-mpv': { textoConcluido: '✅ MPV instalado', textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_mpv', flatpakId: 'io.mpv.Mpv' },
+        'instalar-spotify': { textoConcluido: '✅ Spotify instalado', textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_spotify', flatpakId: 'com.spotify.Client' },
+        'instalar-plex': { textoConcluido: '✅ Plex instalado', textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_plex', flatpakId: 'tv.plex.PlexDesktop' },
+        'instalar-stremio': { textoConcluido: '✅ Stremio instalado', textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_stremio', flatpakId: 'com.stremio.Stremio' },
+        'instalar-krita': { textoConcluido: '✅ Krita instalado', textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_krita', flatpakId: 'org.kde.krita' },
+        'instalar-inkscape': { textoConcluido: '✅ Inkscape instalado', textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_inkscape', flatpakId: 'org.inkscape.Inkscape' },
+        'instalar-pinta': { textoConcluido: '✅ Pinta instalado', textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_pinta', flatpakId: 'com.github.PintaProject.Pinta' },
+        'instalar-gimp': { textoConcluido: '✅ GIMP instalado', textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_gimp', flatpakId: 'org.gimp.GIMP' },
+        'instalar-darktable': { textoConcluido: '✅ Darktable instalado', textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_darktable', flatpakId: 'org.darktable.Darktable' },
+        'instalar-freecad': { textoConcluido: '✅ FreeCAD instalado', textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_freecad', flatpakId: 'org.freecad.FreeCAD' },
+        'instalar-librecad': { textoConcluido: '✅ LibreCAD instalado', textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_librecad', flatpakId: 'org.librecad.librecad' },
+        'instalar-cura': { textoConcluido: '✅ Cura instalado', textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_cura', flatpakId: 'com.ultimaker.cura' },
+        'instalar-upscayl': { textoConcluido: '✅ Upscayl instalado', textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_upscayl', flatpakId: 'org.upscayl.Upscayl' },
+        'instalar-xnviewmp': { textoConcluido: '✅ XnView MP instalado', textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_xnviewmp', flatpakId: 'com.xnview.XnViewMP' },
+        'instalar-affinity': { sempreClicavel: true },
+        'instalar-opera': { textoConcluido: '✅ Opera instalado', textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_opera', flatpakId: 'com.opera.Opera' },
+        'instalar-brave': { textoConcluido: '✅ Brave instalado', textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_brave', flatpakId: 'com.brave.Browser' },
+        'instalar-zen': { textoConcluido: '✅ Zen Browser instalado', textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_zen', flatpakId: 'app.zen_browser.zen' },
+        'instalar-edge': { textoConcluido: '✅ Microsoft Edge instalado', textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_edge', flatpakId: 'com.microsoft.Edge' },
+        'instalar-chromium': { textoConcluido: '✅ Chromium instalado', textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_chromium', flatpakId: 'org.chromium.Chromium' },
+        'instalar-zoom': { textoConcluido: '✅ Zoom instalado', textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_zoom', flatpakId: 'us.zoom.Zoom' },
+        'instalar-vivaldi': { textoConcluido: '✅ Vivaldi instalado', textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_vivaldi', flatpakId: 'com.vivaldi.Vivaldi' },
+        'instalar-discord': { textoConcluido: '✅ Discord instalado', textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_discord', flatpakId: 'com.discordapp.Discord' },
+        'instalar-telegram': { textoConcluido: '✅ Telegram instalado', textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_telegram', flatpakId: 'org.telegram.desktop' },
+        'instalar-signal': { textoConcluido: '✅ Signal instalado', textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_signal', flatpakId: 'org.signal.Signal' },
+        'instalar-kdenlive': { textoConcluido: '✅ Kdenlive instalado', textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_kdenlive', flatpakId: 'org.kde.kdenlive' },
+        'instalar-shotcut': { textoConcluido: '✅ Shotcut instalado', textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_shotcut', flatpakId: 'org.shotcut.Shotcut' },
+        'instalar-pitivi': { textoConcluido: '✅ Pitivi instalado', textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_pitivi', flatpakId: 'org.pitivi.Pitivi' },
+        'instalar-openshot': { textoConcluido: '✅ OpenShot instalado', textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_openshot', flatpakId: 'org.openshot.OpenShot' },
+        'instalar-avidemux': { textoConcluido: '✅ Avidemux instalado', textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_avidemux', flatpakId: 'org.avidemux.Avidemux' },
+        'instalar-drift': { textoConcluido: '✅ Drift instalado', textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_drift', flatpakId: 'org.cutwire.Drift' },
+        'instalar-blender': { textoConcluido: '✅ Blender instalado', textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_blender', flatpakId: 'org.blender.Blender' },
+        'instalar-ardour': { textoConcluido: '✅ Ardour instalado', textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_ardour', flatpakId: 'org.ardour.Ardour' },
+        'instalar-lmms': { textoConcluido: '✅ LMMS instalado', textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_lmms', flatpakId: 'io.lmms.LMMS' },
+        'instalar-audacity': { textoConcluido: '✅ Audacity instalado', textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_audacity', flatpakId: 'org.audacityteam.Audacity' },
+        'instalar-rustdesk': { textoConcluido: '✅ RustDesk instalado', textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_rustdesk', flatpakId: 'com.rustdesk.RustDesk' },
+        'instalar-remmina': { textoConcluido: '✅ Remmina instalado', textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_remmina' },
+        'instalar-gnome-connections': { textoConcluido: '✅ GNOME Connections instalado', textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_gnome_connections' },
+        'instalar-krdc': { textoConcluido: '✅ KRDC instalado', textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_krdc' },
+        'instalar-photocraft':  { textoConcluido: '✅ PhotoCraft instalado',  textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_photocraft' },
+        'instalar-vectorcraft': { textoConcluido: '✅ VectorCraft instalado', textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_vectorcraft' },
+        'instalar-filmcraft':   { textoConcluido: '✅ FilmCraft instalado',   textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_filmcraft' },
+        'instalar-lightcraft':  { textoConcluido: '✅ LightCraft instalado',  textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_lightcraft' },
+        'instalar-printcraft':  { textoConcluido: '✅ PrintCraft instalado',  textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_printcraft' },
+        'instalar-effectcraft': { textoConcluido: '✅ EffectCraft instalado', textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_effectcraft' },
+        'instalar-designcraft': { textoConcluido: '✅ DesignCraft instalado', textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_designcraft' },
+        'instalar-rclone-manager': {
+            textoConcluido: '✅ Rclone Manager instalado',
+            textoConcluidoKey: 'sessoes.aplicativos.texto_concluido_rclone_manager'
+        },
+        'desfazer-rclone-manager': { sempreClicavel: true }
+    }
+},
+
+// ============================================================
+// SESSÃO 3 — CODECS E COMPATIBILIDADE
+// ============================================================
+//
+// Codecs multimídia essenciais, reprodução de DVDs comerciais
+// e fontes Microsoft (com substitutos métricos). O bloco de
+// fontconfig customizado (hinting, antialias, rgba) fica na
+// mesma sessão, como quarto bloco.
+//
+// Todos os blocos são one-shot. Nenhum tem botão "Abrir".
+// Requer o repositório non-free ativo (Sessão 1) para
+// libavcodec-extra e libdvdcss2.
+{
+    id: 'codecs',
+    nome: 'Codecs e Compatibilidade',
+    nomeKey: 'sessoes.codecs.nome',
+    comandos: {
+        'codecs-essenciais': {
+            textoConcluido: '✅ Codecs instalados',
+            textoConcluidoKey: 'sessoes.codecs.texto_concluido_codecs'
+        },
+        'extras-dvd': {
+            textoConcluido: '✅ Extras instalados',
+            textoConcluidoKey: 'sessoes.codecs.texto_concluido_extras'
+        },
+        'fontes-ms-all': {
+            textoConcluido: '✅ Fontes MS instaladas',
+            textoConcluidoKey: 'sessoes.codecs.texto_concluido_fontes'
+        },
+        'fontconfig-tweaks': {
+            textoConcluido: '✅ Perfil aplicado',
+            textoConcluidoKey: 'sessoes.codecs.texto_concluido_fontconfig'
+        }
+    }
+},
+
+// ============================================================
+// SESSÃO 3 — HARDWARE
+// ============================================================
+//
+// Drivers gráficos AMD, NVIDIA e Intel. Cada bloco tem um
+// botão de detecção que consulta o endpoint /hardware-scan e
+// informa se o driver recomendado já está em uso.
+//
+// Os IDs das detecções são "sempreClicavel" — o usuário pode
+// rodá-las quantas vezes quiser. Os botões de instalação e
+// ativação são one-shot (com lixeira ou par install/revert,
+// dependendo do caso).
+//
+// Requer o repositório non-free ativo (Sessão 1) para os
+// drivers NVIDIA e Intel non-free.
+{
+    id: 'hardware',
+    nome: 'Hardware',
+    nomeKey: 'sessoes.hardware.nome',
+    comandos: {
+        // --- Detecções (sempre clicáveis) ---
+        'amd-detection': { sempreClicavel: true },
+        'nvidia-detection': { sempreClicavel: true },
+        'intel-detection': { sempreClicavel: true },
+
+        // --- AMD ---
+        'vulkan-amd': {
+            textoConcluido: '✅ Vulkan instalado',
+            textoConcluidoKey: 'sessoes.hardware.texto_concluido_vulkan'
+        },
+        'vaapi-amd': {
+            textoConcluido: '✅ VA-API instalado',
+            textoConcluidoKey: 'sessoes.hardware.texto_concluido_vaapi'
+        },
+        'corectrl-install': {
+            textoConcluido: '✅ CoreCtrl instalado',
+            textoConcluidoKey: 'sessoes.hardware.texto_concluido_corectrl'
+        },
+        'lact-install': {
+            textoConcluido: '✅ LACT instalado',
+            textoConcluidoKey: 'sessoes.hardware.texto_concluido_lact'
+        },
+        'amdgpu-overclock': {
+            textoConcluido: '✅ Overclock ativado',
+            textoConcluidoKey: 'sessoes.hardware.texto_concluido_overclock'
+        },
+        'amdgpu-overclock-remove': {
+            sempreClicavel: true,
+            textoConcluido: '✅ Overclock desativado',
+            textoConcluidoKey: 'sessoes.hardware.texto_concluido_overclock_remove'
+        },
+
+        // --- NVIDIA ---
+        'nvidia-driver-install': {
+            textoConcluido: '✅ Driver NVIDIA instalado',
+            textoConcluidoKey: 'sessoes.hardware.texto_concluido_nvidia_driver'
+        },
+        'nvidia-driver-remove': {
+            sempreClicavel: true
+        },
+        'nvidia-cuda-install': {
+            textoConcluido: '✅ CUDA + NVENC instalado',
+            textoConcluidoKey: 'sessoes.hardware.texto_concluido_nvidia_cuda'
+        },
+        'nvidia-modeset-on': { sempreClicavel: true },
+        'nvidia-modeset-off': { sempreClicavel: true },
+
+        // --- Intel ---
+        'intel-media-install': {
+            textoConcluido: '🎬 Intel Media Driver instalado',
+            textoConcluidoKey: 'sessoes.hardware.texto_concluido_intel_media'
+        }
+    }
+},
+
+// ============================================================
+// SESSÃO 4 — GAMING
+// ============================================================
+//
+// Launchers, compatibilidade (Wine/Proton), desempenho,
+// ferramentas avançadas e emuladores. Steam é nativo (via
+// non-free, requer i386 habilitado na Sessão 1). O resto é
+// via Flatpak ou apt.
+//
+// NTSYNC NÃO está incluído: o Debian 13 (kernel 6.12) não
+// tem o módulo, e o Wine do repositório não o suporta.
+// Gamescope Session também fica para v1.5.
+{
+    id: 'gaming',
+    nome: 'Gaming',
+    nomeKey: 'sessoes.gaming.nome',
+    comandos: {
+        // --- Launchers ---
+        'steam-install': {
+            textoConcluido: '✅ Steam instalado',
+            textoConcluidoKey: 'sessoes.gaming.texto_concluido_steam'
+        },
+        'heroic-install': {
+            textoConcluido: '✅ Heroic instalado',
+            textoConcluidoKey: 'sessoes.gaming.texto_concluido_heroic',
+            flatpakId: 'com.heroicgameslauncher.hgl'
+        },
+        'lutris-install': {
+            textoConcluido: '✅ Lutris instalado',
+            textoConcluidoKey: 'sessoes.gaming.texto_concluido_lutris',
+            flatpakId: 'net.lutris.Lutris'
+        },
+
+        // --- Compatibilidade ---
+        'wine-install': {
+            textoConcluido: '✅ Wine instalado',
+            textoConcluidoKey: 'sessoes.gaming.texto_concluido_wine'
+        },
+        'winetricks-install': {
+            textoConcluido: '✅ Winetricks instalado',
+            textoConcluidoKey: 'sessoes.gaming.texto_concluido_winetricks'
+        },
+        'bottles-install': {
+            textoConcluido: '✅ Bottles instalado',
+            textoConcluidoKey: 'sessoes.gaming.texto_concluido_bottles',
+            flatpakId: 'com.usebottles.bottles'
+        },
+
+        // --- Performance ---
+        'gamemode-install': {
+            textoConcluido: '✅ GameMode ativado',
+            textoConcluidoKey: 'sessoes.gaming.texto_concluido_gamemode'
+        },
+        'mangohud-install': {
+            textoConcluido: '✅ MangoHud instalado',
+            textoConcluidoKey: 'sessoes.gaming.texto_concluido_mangohud'
+        },
+        'goverlay-install': {
+            textoConcluido: '✅ Goverlay instalado',
+            textoConcluidoKey: 'sessoes.gaming.texto_concluido_goverlay'
+        },
+        'gamescope-install': {
+            textoConcluido: '✅ Gamescope instalado',
+            textoConcluidoKey: 'sessoes.gaming.texto_concluido_gamescope'
+        },
+
+        // --- Gaming Avançado ---
+        'protonup-qt-install': {
+            textoConcluido: '✅ ProtonUp-Qt instalado',
+            textoConcluidoKey: 'sessoes.gaming.texto_concluido_protonup',
+            flatpakId: 'net.davidotek.pupgui2'
+        },
+        'vkbasalt-install': {
+            textoConcluido: '✅ vkBasalt instalado',
+            textoConcluidoKey: 'sessoes.gaming.texto_concluido_vkbasalt'
+        },
+        'gamemode-presets-apply': {
+            textoConcluido: '✅ Presets aplicados',
+            textoConcluidoKey: 'sessoes.gaming.texto_concluido_gamemode_presets'
+        },
+        'controller-test-install': {
+            textoConcluido: '✅ Ferramenta instalada',
+            textoConcluidoKey: 'sessoes.gaming.texto_concluido_controller_test'
+        },
+
+        // --- Emuladores ---
+        'retroarch-install': {
+            textoConcluido: '✅ RetroArch instalado',
+            textoConcluidoKey: 'sessoes.gaming.texto_concluido_retroarch',
+            flatpakId: 'org.libretro.RetroArch'
+        },
+        'dolphin-install': {
+            textoConcluido: '✅ Dolphin instalado',
+            textoConcluidoKey: 'sessoes.gaming.texto_concluido_dolphin',
+            flatpakId: 'org.DolphinEmu.dolphin-emu'
+        },
+        'pcsx2-install': {
+            textoConcluido: '✅ PCSX2 instalado',
+            textoConcluidoKey: 'sessoes.gaming.texto_concluido_pcsx2',
+            flatpakId: 'net.pcsx2.PCSX2'
+        },
+        'rpcs3-install': {
+            textoConcluido: '✅ RPCS3 instalado',
+            textoConcluidoKey: 'sessoes.gaming.texto_concluido_rpcs3',
+            flatpakId: 'net.rpcs3.RPCS3'
+        },
+        'duckstation-install': {
+            textoConcluido: '✅ Duckstation instalado',
+            textoConcluidoKey: 'sessoes.gaming.texto_concluido_duckstation',
+            flatpakId: 'org.duckstation.DuckStation'
+        }
+    }
+},
+
+// ============================================================
+// SESSÃO 5 — CASA E ESCRITÓRIO
+// ============================================================
+//
+// Impressora, compartilhamento de arquivos, gerenciador de
+// senhas e leitura de PDF com OCR. Blocos independentes.
+// Todos os apps com GUI (KeePassXC, Okular) têm botão "Abrir"
+// dinâmico. Firewall não faz parte do escopo.
+{
+    id: 'casa-escritorio',
+    nome: 'Casa e Escritório',
+    nomeKey: 'sessoes.casa-escritorio.nome',
+    comandos: {
+        'cups-install': {
+            textoConcluido: '✅ Impressora configurada',
+            textoConcluidoKey: 'sessoes.casa-escritorio.texto_concluido_cups'
+        },
+        'samba-install': {
+            textoConcluido: '✅ Samba instalado',
+            textoConcluidoKey: 'sessoes.casa-escritorio.texto_concluido_samba'
+        },
+        'localsend-install': {
+            textoConcluido: '✅ LocalSend instalado',
+            textoConcluidoKey: 'sessoes.casa-escritorio.texto_concluido_localsend',
+            flatpakId: 'org.localsend.localsend_app'
+        },
+        'warpinator-install': {
+            textoConcluido: '✅ Warpinator instalado',
+            textoConcluidoKey: 'sessoes.casa-escritorio.texto_concluido_warpinator',
+            flatpakId: 'org.x.Warpinator'
+        },
+        'keepassxc-install': {
+            textoConcluido: '✅ KeePassXC instalado',
+            textoConcluidoKey: 'sessoes.casa-escritorio.texto_concluido_keepassxc'
+        },
+        'okular-tesseract-install': {
+            textoConcluido: '✅ PDF+OCR instalado',
+            textoConcluidoKey: 'sessoes.casa-escritorio.texto_concluido_okular_tesseract'
+        }
+    }
+},
+
+// ============================================================
+// SESSÃO 6 — DIAGNÓSTICO
+// ============================================================
+//
+// Painel do sistema (leitura), lista de partições (leitura),
+// saúde do hardware (GSmartControl, CoolerControl) e logs do
+// journal agrupados por origem.
+//
+// Os dois únicos itens instaláveis são GSmartControl e
+// CoolerControl — ambos com GUI, ambos com botão "Abrir".
+// O CoolerControl não está no repo Debian; o DAP adiciona o
+// repositório oficial do projeto.
+{
+    id: 'diagnostico',
+    nome: 'Diagnóstico',
+    nomeKey: 'sessoes.diagnostico.nome',
+    comandos: {
+        'diag-refresh': { sempreClicavel: true },
+        'journal-errors-check': { sempreClicavel: true },
+        'gsmartcontrol-install': {
+            textoConcluido: '✅ GSmartControl instalado',
+            textoConcluidoKey: 'sessoes.diagnostico.texto_concluido_gsmartcontrol'
+        },
+        'coolercontrol-install': {
+            textoConcluido: '✅ CoolerControl instalado',
+            textoConcluidoKey: 'sessoes.diagnostico.texto_concluido_coolercontrol'
+        }
+    }
+},
+
+// ============================================================
+// SESSÃO 7 — PRODUÇÃO MULTIMÍDIA
+// ============================================================
+//
+// OBS Studio (Flatpak) + câmera virtual (via v4l2loopback-dkms
+// no Debian) + EasyEffects (Flatpak). Blocos independentes.
+// A câmera virtual é um módulo de kernel, não um software —
+// então não tem botão "Abrir".
+{
+    id: 'producao-multimidia',
+    nome: 'Produção Multimídia',
+    nomeKey: 'sessoes.producao-multimidia.nome',
+    comandos: {
+        'instalar-obs-studio': {
+            textoConcluido: '✅ OBS Studio instalado',
+            textoConcluidoKey: 'sessoes.producao-multimidia.texto_concluido_obs',
+            flatpakId: 'com.obsproject.Studio'
+        },
+        'obs-cam': {
+            textoConcluido: '✅ Câmera Virtual ativada',
+            textoConcluidoKey: 'sessoes.producao-multimidia.texto_concluido_cam'
+        },
+        'instalar-easyeffects': {
+            textoConcluido: '✅ EasyEffects instalado',
+            textoConcluidoKey: 'sessoes.producao-multimidia.texto_concluido_easyeffects',
+            flatpakId: 'com.github.wwmm.easyeffects'
+        }
+    }
+},
+
+// ============================================================
+// SESSÃO 8 — VIRTUALIZAÇÃO
+// ============================================================
+//
+// QEMU/KVM + virt-manager e GNOME Boxes. Ambos com botão
+// "Abrir" após instalação. O DAP configura a rede padrão do
+// libvirt automaticamente (no Debian é manual).
+//
+// VirtualBox NÃO faz parte do escopo: não está no repo Debian
+// e depender do repo da Oracle adiciona fragilidade.
+{
+    id: 'virtualizacao',
+    nome: 'Virtualização',
+    nomeKey: 'sessoes.virtualizacao.nome',
+    comandos: {
+        'qemu-kvm-install': {
+            textoConcluido: '✅ QEMU/KVM instalado',
+            textoConcluidoKey: 'sessoes.virtualizacao.texto_concluido_qemu'
+        },
+        'gnome-boxes-install': {
+            textoConcluido: '✅ GNOME Boxes instalado',
+            textoConcluidoKey: 'sessoes.virtualizacao.texto_concluido_boxes'
+        }
+    }
+},
+
+// ============================================================
+// SESSÃO 9 — AJUSTES E MANUTENÇÃO
+// ============================================================
+//
+// Tunings de performance (vm.max_map_count, vm.swappiness,
+// vfs_cache_pressure, TCP BBR), ajustes de áudio (realtime,
+// PipeWire quantum), configuração do APT, dual-boot, limpeza,
+// kernels e GRUB.
+//
+// Bloco de locale foi removido — já está em Primeiros Passos.
+{
+    id: 'ajustes-manutencao',
+    nome: 'Ajustes e Manutenção',
+    nomeKey: 'sessoes.ajustes-manutencao.nome',
+    comandos: {
+        // --- Ajustes de desempenho ---
+        'vm-max-map-count': { textoConcluido: '✅ Ajuste aplicado', textoConcluidoKey: 'sessoes.ajustes-manutencao.texto_concluido_vm_max_map_count' },
+        'vm-max-map-count-remove': { sempreClicavel: true, textoConcluido: '✅ Ajuste revertido', textoConcluidoKey: 'sessoes.ajustes-manutencao.texto_concluido_vm_max_map_count_remove' },
+        'vm-swappiness-cache': { textoConcluido: '✅ Ajuste aplicado', textoConcluidoKey: 'sessoes.ajustes-manutencao.texto_concluido_vm_swappiness_cache' },
+        'vm-swappiness-cache-remove': { sempreClicavel: true, textoConcluido: '✅ Ajuste revertido', textoConcluidoKey: 'sessoes.ajustes-manutencao.texto_concluido_vm_swappiness_cache_remove' },
+        'tcp-bbr': { textoConcluido: '✅ TCP BBR ativado', textoConcluidoKey: 'sessoes.ajustes-manutencao.texto_concluido_tcp_bbr' },
+        'tcp-bbr-remove': { sempreClicavel: true, textoConcluido: '✅ TCP BBR desativado', textoConcluidoKey: 'sessoes.ajustes-manutencao.texto_concluido_tcp_bbr_remove' },
+
+        // --- Ajustes de áudio ---
+        'realtime-setup': { textoConcluido: '✅ Grupo realtime configurado', textoConcluidoKey: 'sessoes.ajustes-manutencao.texto_concluido_realtime_setup' },
+        'realtime-setup-remove': { sempreClicavel: true, textoConcluido: '✅ Grupo realtime removido', textoConcluidoKey: 'sessoes.ajustes-manutencao.texto_concluido_realtime_setup_remove' },
+        'pipewire-quantum-low': { textoConcluido: '✅ Baixa latência ativada', textoConcluidoKey: 'sessoes.ajustes-manutencao.texto_concluido_pipewire_quantum' },
+        'pipewire-quantum-low-remove': { sempreClicavel: true, textoConcluido: '✅ Latência padrão restaurada', textoConcluidoKey: 'sessoes.ajustes-manutencao.texto_concluido_pipewire_quantum_remove' },
+
+        // --- APT / Dual-boot ---
+        'apt-speed': { sempreClicavel: true },
+        'dual-boot-time': { sempreClicavel: true },
+
+        // --- Manutenção do Debian ---
+        'limpeza-sistema': {
+            sempreClicavel: true,
+            textoConcluido: '✅ Limpeza concluída',
+            textoConcluidoKey: 'sessoes.ajustes-manutencao.texto_concluido_limpeza'
+        },
+        'listar-kernels': { sempreClicavel: true },
+        'remover-kernel': { sempreClicavel: true },
+        'grub-aplicar-recomendado': {
+            sempreClicavel: true,
+            textoConcluido: '✅ Configuração aplicada',
+            textoConcluidoKey: 'sessoes.ajustes-manutencao.texto_concluido_grub_aplicar'
+        },
+        'grub-restaurar-padrao': {
+            sempreClicavel: true,
+            textoConcluido: '✅ Padrão restaurado',
+            textoConcluidoKey: 'sessoes.ajustes-manutencao.texto_concluido_grub_restaurar'
+        }
+    }
+},
+
+// ============================================================
+// SESSÃO 10 — ESTADO DO DEBIAN
+// ============================================================
+//
+// Versão do Debian, detecção de variante (Stable/Testing/Sid/
+// derivados) e AppArmor (o sistema de controle de acesso
+// padrão do Debian, substituindo o SELinux do Fedora).
+//
+// Tudo é leitura — nenhum botão instala ou altera o sistema.
+{
+    id: 'estado-debian',
+    nome: 'Estado do Debian',
+    nomeKey: 'sessoes.estado-debian.nome',
+    comandos: {
+        'debian-version-check': { sempreClicavel: true },
+        'variante-check': { sempreClicavel: true },
+        'apparmor-status-check': { sempreClicavel: true },
+        'apparmor-profiles-list': { sempreClicavel: true }
+    }
+},
+
+// ============================================================
+// SESSÃO 11 — SOBRE O DAP
+// ============================================================
+//
+// Atualizar, desinstalar e ver o changelog. É a sessão mais
+// simples do DAP — não instala nada, não altera o sistema.
+// Serve como teste de integração do fluxo completo (botão →
+// comando → SSE → gravação de progresso).
+{
+    id: 'sobre-dap',
+    nome: 'Sobre o DAP',
+    nomeKey: 'sessoes.sobre-dap.nome',
+    comandos: {
+        'atualizar-dap': {
+            sempreClicavel: true,
+            textoConcluido: '✅ DAP atualizado',
+            textoConcluidoKey: 'sessoes.sobre-dap.texto_concluido_dap_atualizar'
+        },
+        'desinstalar-dap': {
+            textoConcluido: '✅ DAP desinstalado',
+            textoConcluidoKey: 'sessoes.sobre-dap.texto_concluido_dap_desinstalar'
+        }
+    }
+}
+];
+
+];var SESSOES = [
+    // ============================================================
+    // SESSÃO 1 — PRIMEIROS PASSOS
+    // ============================================================
+    //
+    // Configuração base do Debian recém-instalado via Live ISO.
+    // Cobre o que a Live ISO não traz por padrão: repositórios
+    // non-free/contrib/non-free-firmware, Flatpak + Flathub,
+    // backports (kernel/Mesa/firmware), locale PT-BR, hunspell,
+    // arquitetura i386 (para Steam).
+    //
+    // A ordem dos blocos dentro da sessão importa: `apt-update`
+    // deve ser o primeiro, senão o `apt install` de qualquer
+    // pacote pode falhar com índice desatualizado. Os outros
+    // blocos são independentes entre si (o usuário pode rodar na
+    // ordem que quiser).
+    //
+    // Todos os blocos são one-shot (marcados como concluídos após
+    // execução) exceto `apt-update`, que é `sempreClicavel` — o
+    // usuário precisa poder rodar `apt update` de novo dias depois.
+    {
+        id: 'primeiros-passos',
+        nome: 'Primeiros Passos',
+        nomeKey: 'sessoes.primeiros-passos.nome',
+        comandos: {
+            'apt-update': {
+                sempreClicavel: true
+            },
+            'apt-upgrade': {
+                textoConcluido: '✅ Sistema atualizado',
+                textoConcluidoKey: 'sessoes.primeiros-passos.texto_concluido_apt_upgrade'
+            },
+            'deb822-converter': {
+                textoConcluido: '✅ Formato deb822 em uso',
+                textoConcluidoKey: 'sessoes.primeiros-passos.texto_concluido_deb822'
+            },
+            'non-free-enable': {
+                textoConcluido: '✅ Repositórios non-free ativos',
+                textoConcluidoKey: 'sessoes.primeiros-passos.texto_concluido_non_free'
+            },
+            'flatpak-install': {
+                textoConcluido: '✅ Flatpak + Flathub ativos',
+                textoConcluidoKey: 'sessoes.primeiros-passos.texto_concluido_flatpak'
+            },
+            'backports-enable': {
+                textoConcluido: '✅ Backports habilitados',
+                textoConcluidoKey: 'sessoes.primeiros-passos.texto_concluido_backports'
+            },
+            'kernel-backports': {
+                textoConcluido: '✅ Kernel de backports instalado',
+                textoConcluidoKey: 'sessoes.primeiros-passos.texto_concluido_kernel'
+            },
+            'mesa-backports': {
+                textoConcluido: '✅ Mesa de backports instalado',
+                textoConcluidoKey: 'sessoes.primeiros-passos.texto_concluido_mesa'
+            },
+            'extrepo-install': {
+                textoConcluido: '✅ extrepo instalado',
+                textoConcluidoKey: 'sessoes.primeiros-passos.texto_concluido_extrepo'
+            },
+            'locale-ptbr-packs': {
+                textoConcluido: '✅ Tradução instalada',
+                textoConcluidoKey: 'sessoes.primeiros-passos.texto_concluido_locale_packs'
+            },
+            'locale-ptbr-hunspell': {
+                textoConcluido: '✅ Corretor ortográfico instalado',
+                textoConcluidoKey: 'sessoes.primeiros-passos.texto_concluido_locale_hunspell'
+            },
+            'locale-ptbr-set': {
+                textoConcluido: '✅ Localidade configurada',
+                textoConcluidoKey: 'sessoes.primeiros-passos.texto_concluido_locale_set'
+            },
+            'i386-enable': {
+                textoConcluido: '✅ Arquitetura i386 habilitada',
+                textoConcluidoKey: 'sessoes.primeiros-passos.texto_concluido_i386'
+            }
+        }
+    },
+
+// ============================================================
+// SESSÃO 2 — CODECS E COMPATIBILIDADE
+// ============================================================
+//
+// Codecs multimídia essenciais, reprodução de DVDs comerciais
+// e fontes Microsoft (com substitutos métricos). O bloco de
+// fontconfig customizado (hinting, antialias, rgba) fica na
+// mesma sessão, como quarto bloco.
+//
+// Todos os blocos são one-shot. Nenhum tem botão "Abrir".
+// Requer o repositório non-free ativo (Sessão 1) para
+// libavcodec-extra e libdvdcss2.
+{
+    id: 'codecs',
+    nome: 'Codecs e Compatibilidade',
+    nomeKey: 'sessoes.codecs.nome',
+    comandos: {
+        'codecs-essenciais': {
+            textoConcluido: '✅ Codecs instalados',
+            textoConcluidoKey: 'sessoes.codecs.texto_concluido_codecs'
+        },
+        'extras-dvd': {
+            textoConcluido: '✅ Extras instalados',
+            textoConcluidoKey: 'sessoes.codecs.texto_concluido_extras'
+        },
+        'fontes-ms-all': {
+            textoConcluido: '✅ Fontes MS instaladas',
+            textoConcluidoKey: 'sessoes.codecs.texto_concluido_fontes'
+        },
+        'fontconfig-tweaks': {
+            textoConcluido: '✅ Perfil aplicado',
+            textoConcluidoKey: 'sessoes.codecs.texto_concluido_fontconfig'
+        }
+    }
+},
+
+// ============================================================
+// SESSÃO 3 — HARDWARE
+// ============================================================
+//
+// Drivers gráficos AMD, NVIDIA e Intel. Cada bloco tem um
+// botão de detecção que consulta o endpoint /hardware-scan e
+// informa se o driver recomendado já está em uso.
+//
+// Os IDs das detecções são "sempreClicavel" — o usuário pode
+// rodá-las quantas vezes quiser. Os botões de instalação e
+// ativação são one-shot (com lixeira ou par install/revert,
+// dependendo do caso).
+//
+// Requer o repositório non-free ativo (Sessão 1) para os
+// drivers NVIDIA e Intel non-free.
+{
+    id: 'hardware',
+    nome: 'Hardware',
+    nomeKey: 'sessoes.hardware.nome',
+    comandos: {
+        // --- Detecções (sempre clicáveis) ---
+        'amd-detection': { sempreClicavel: true },
+        'nvidia-detection': { sempreClicavel: true },
+        'intel-detection': { sempreClicavel: true },
+
+        // --- AMD ---
+        'vulkan-amd': {
+            textoConcluido: '✅ Vulkan instalado',
+            textoConcluidoKey: 'sessoes.hardware.texto_concluido_vulkan'
+        },
+        'vaapi-amd': {
+            textoConcluido: '✅ VA-API instalado',
+            textoConcluidoKey: 'sessoes.hardware.texto_concluido_vaapi'
+        },
+        'corectrl-install': {
+            textoConcluido: '✅ CoreCtrl instalado',
+            textoConcluidoKey: 'sessoes.hardware.texto_concluido_corectrl'
+        },
+        'lact-install': {
+            textoConcluido: '✅ LACT instalado',
+            textoConcluidoKey: 'sessoes.hardware.texto_concluido_lact'
+        },
+        'amdgpu-overclock': {
+            textoConcluido: '✅ Overclock ativado',
+            textoConcluidoKey: 'sessoes.hardware.texto_concluido_overclock'
+        },
+        'amdgpu-overclock-remove': {
+            sempreClicavel: true,
+            textoConcluido: '✅ Overclock desativado',
+            textoConcluidoKey: 'sessoes.hardware.texto_concluido_overclock_remove'
+        },
+
+        // --- NVIDIA ---
+        'nvidia-driver-install': {
+            textoConcluido: '✅ Driver NVIDIA instalado',
+            textoConcluidoKey: 'sessoes.hardware.texto_concluido_nvidia_driver'
+        },
+        'nvidia-driver-remove': {
+            sempreClicavel: true
+        },
+        'nvidia-cuda-install': {
+            textoConcluido: '✅ CUDA + NVENC instalado',
+            textoConcluidoKey: 'sessoes.hardware.texto_concluido_nvidia_cuda'
+        },
+        'nvidia-modeset-on': { sempreClicavel: true },
+        'nvidia-modeset-off': { sempreClicavel: true },
+
+        // --- Intel ---
+        'intel-media-install': {
+            textoConcluido: '🎬 Intel Media Driver instalado',
+            textoConcluidoKey: 'sessoes.hardware.texto_concluido_intel_media'
+        }
+    }
+},
+
+// ============================================================
+// SESSÃO 4 — DISPOSITIVOS E PERIFÉRICOS
+// ============================================================
+//
+// Detecção de hardware (usa o endpoint /hardware-scan, que
+// consulta o hardware-service.js), suplementos de firmware,
+// driver Broadcom, grupo input e steam-devices.
+//
+// Todos os comandos são "sempreClicavel" quando fazem sentido
+// repetir, ou one-shot com lixeira/par install/revert.
+{
+    id: 'dispositivos-perifericos',
+    nome: 'Dispositivos e Periféricos',
+    nomeKey: 'sessoes.dispositivos-perifericos.nome',
+    comandos: {
+        'hw-scan': { sempreClicavel: true },
+
+        'firmware-vendor-install': {
+            textoConcluido: '✅ Firmwares adicionais instalados',
+            textoConcluidoKey: 'sessoes.dispositivos-perifericos.texto_concluido_firmware_vendor'
+        },
+        'firmware-vendor-remove': {
+            sempreClicavel: true,
+            textoConcluido: '✅ Firmwares revertidos',
+            textoConcluidoKey: 'sessoes.dispositivos-perifericos.texto_concluido_firmware_vendor_remove'
+        },
+
+        'driver-broadcom-wl-install': {
+            textoConcluido: '✅ Pacote instalado',
+            textoConcluidoKey: 'sessoes.dispositivos-perifericos.btn_pacote_instalado'
+        },
+        'driver-broadcom-wl-remove': {
+            sempreClicavel: true,
+            textoConcluido: '✅ Removido',
+            textoConcluidoKey: 'sessoes.dispositivos-perifericos.btn_revertido'
+        },
+
+        'input-group-add': {
+            textoConcluido: '✅ Adicionado ao grupo input',
+            textoConcluidoKey: 'sessoes.dispositivos-perifericos.texto_concluido_input_add'
+        },
+        'input-group-remove': {
+            sempreClicavel: true,
+            textoConcluido: '✅ Removido do grupo input',
+            textoConcluidoKey: 'sessoes.dispositivos-perifericos.texto_concluido_input_remove'
+        },
+        'steam-devices-install': {
+            textoConcluido: '✅ Steam Devices instalado',
+            textoConcluidoKey: 'sessoes.dispositivos-perifericos.texto_concluido_steam_devices'
+        },
+        'steam-devices-remove': { sempreClicavel: true }
+    }
+},
+
+// ============================================================
+// SESSÃO 5 — GAMING
+// ============================================================
+//
+// Launchers, compatibilidade (Wine/Proton), desempenho,
+// ferramentas avançadas e emuladores. Steam é nativo (via
+// non-free, requer i386 habilitado na Sessão 1). O resto é
+// via Flatpak ou apt.
+//
+// NTSYNC NÃO está incluído: o Debian 13 (kernel 6.12) não
+// tem o módulo, e o Wine do repositório não o suporta.
+// Gamescope Session também fica para v1.5.
+{
+    id: 'gaming',
+    nome: 'Gaming',
+    nomeKey: 'sessoes.gaming.nome',
+    comandos: {
+        // --- Launchers ---
+        'steam-install': {
+            textoConcluido: '✅ Steam instalado',
+            textoConcluidoKey: 'sessoes.gaming.texto_concluido_steam'
+        },
+        'heroic-install': {
+            textoConcluido: '✅ Heroic instalado',
+            textoConcluidoKey: 'sessoes.gaming.texto_concluido_heroic',
+            flatpakId: 'com.heroicgameslauncher.hgl'
+        },
+        'lutris-install': {
+            textoConcluido: '✅ Lutris instalado',
+            textoConcluidoKey: 'sessoes.gaming.texto_concluido_lutris',
+            flatpakId: 'net.lutris.Lutris'
+        },
+
+        // --- Compatibilidade ---
+        'wine-install': {
+            textoConcluido: '✅ Wine instalado',
+            textoConcluidoKey: 'sessoes.gaming.texto_concluido_wine'
+        },
+        'winetricks-install': {
+            textoConcluido: '✅ Winetricks instalado',
+            textoConcluidoKey: 'sessoes.gaming.texto_concluido_winetricks'
+        },
+        'bottles-install': {
+            textoConcluido: '✅ Bottles instalado',
+            textoConcluidoKey: 'sessoes.gaming.texto_concluido_bottles',
+            flatpakId: 'com.usebottles.bottles'
+        },
+
+        // --- Performance ---
+        'gamemode-install': {
+            textoConcluido: '✅ GameMode ativado',
+            textoConcluidoKey: 'sessoes.gaming.texto_concluido_gamemode'
+        },
+        'mangohud-install': {
+            textoConcluido: '✅ MangoHud instalado',
+            textoConcluidoKey: 'sessoes.gaming.texto_concluido_mangohud'
+        },
+        'goverlay-install': {
+            textoConcluido: '✅ Goverlay instalado',
+            textoConcluidoKey: 'sessoes.gaming.texto_concluido_goverlay'
+        },
+        'gamescope-install': {
+            textoConcluido: '✅ Gamescope instalado',
+            textoConcluidoKey: 'sessoes.gaming.texto_concluido_gamescope'
+        },
+
+        // --- Gaming Avançado ---
+        'protonup-qt-install': {
+            textoConcluido: '✅ ProtonUp-Qt instalado',
+            textoConcluidoKey: 'sessoes.gaming.texto_concluido_protonup',
+            flatpakId: 'net.davidotek.pupgui2'
+        },
+        'vkbasalt-install': {
+            textoConcluido: '✅ vkBasalt instalado',
+            textoConcluidoKey: 'sessoes.gaming.texto_concluido_vkbasalt'
+        },
+        'gamemode-presets-apply': {
+            textoConcluido: '✅ Presets aplicados',
+            textoConcluidoKey: 'sessoes.gaming.texto_concluido_gamemode_presets'
+        },
+        'controller-test-install': {
+            textoConcluido: '✅ Ferramenta instalada',
+            textoConcluidoKey: 'sessoes.gaming.texto_concluido_controller_test'
+        },
+
+        // --- Emuladores ---
+        'retroarch-install': {
+            textoConcluido: '✅ RetroArch instalado',
+            textoConcluidoKey: 'sessoes.gaming.texto_concluido_retroarch',
+            flatpakId: 'org.libretro.RetroArch'
+        },
+        'dolphin-install': {
+            textoConcluido: '✅ Dolphin instalado',
+            textoConcluidoKey: 'sessoes.gaming.texto_concluido_dolphin',
+            flatpakId: 'org.DolphinEmu.dolphin-emu'
+        },
+        'pcsx2-install': {
+            textoConcluido: '✅ PCSX2 instalado',
+            textoConcluidoKey: 'sessoes.gaming.texto_concluido_pcsx2',
+            flatpakId: 'net.pcsx2.PCSX2'
+        },
+        'rpcs3-install': {
+            textoConcluido: '✅ RPCS3 instalado',
+            textoConcluidoKey: 'sessoes.gaming.texto_concluido_rpcs3',
+            flatpakId: 'net.rpcs3.RPCS3'
+        },
+        'duckstation-install': {
+            textoConcluido: '✅ Duckstation instalado',
+            textoConcluidoKey: 'sessoes.gaming.texto_concluido_duckstation',
+            flatpakId: 'org.duckstation.DuckStation'
+        }
+    }
+},
+
+// ============================================================
+// SESSÃO 5 — CASA E ESCRITÓRIO
+// ============================================================
+//
+// Impressora, compartilhamento de arquivos, gerenciador de
+// senhas e leitura de PDF com OCR. Blocos independentes.
+// Todos os apps com GUI (KeePassXC, Okular) têm botão "Abrir"
+// dinâmico. Firewall não faz parte do escopo.
+{
+    id: 'casa-escritorio',
+    nome: 'Casa e Escritório',
+    nomeKey: 'sessoes.casa-escritorio.nome',
+    comandos: {
+        'cups-install': {
+            textoConcluido: '✅ Impressora configurada',
+            textoConcluidoKey: 'sessoes.casa-escritorio.texto_concluido_cups'
+        },
+        'samba-install': {
+            textoConcluido: '✅ Samba instalado',
+            textoConcluidoKey: 'sessoes.casa-escritorio.texto_concluido_samba'
+        },
+        'localsend-install': {
+            textoConcluido: '✅ LocalSend instalado',
+            textoConcluidoKey: 'sessoes.casa-escritorio.texto_concluido_localsend',
+            flatpakId: 'org.localsend.localsend_app'
+        },
+        'warpinator-install': {
+            textoConcluido: '✅ Warpinator instalado',
+            textoConcluidoKey: 'sessoes.casa-escritorio.texto_concluido_warpinator',
+            flatpakId: 'org.x.Warpinator'
+        },
+        'keepassxc-install': {
+            textoConcluido: '✅ KeePassXC instalado',
+            textoConcluidoKey: 'sessoes.casa-escritorio.texto_concluido_keepassxc'
+        },
+        'okular-tesseract-install': {
+            textoConcluido: '✅ PDF+OCR instalado',
+            textoConcluidoKey: 'sessoes.casa-escritorio.texto_concluido_okular_tesseract'
+        }
+    }
+},
+
+// ============================================================
+// SESSÃO 6 — DIAGNÓSTICO
+// ============================================================
+//
+// Painel do sistema (leitura), lista de partições (leitura),
+// saúde do hardware (GSmartControl, CoolerControl) e logs do
+// journal agrupados por origem.
+//
+// Os dois únicos itens instaláveis são GSmartControl e
+// CoolerControl — ambos com GUI, ambos com botão "Abrir".
+// O CoolerControl não está no repo Debian; o DAP adiciona o
+// repositório oficial do projeto.
+{
+    id: 'diagnostico',
+    nome: 'Diagnóstico',
+    nomeKey: 'sessoes.diagnostico.nome',
+    comandos: {
+        'diag-refresh': { sempreClicavel: true },
+        'journal-errors-check': { sempreClicavel: true },
+        'gsmartcontrol-install': {
+            textoConcluido: '✅ GSmartControl instalado',
+            textoConcluidoKey: 'sessoes.diagnostico.texto_concluido_gsmartcontrol'
+        },
+        'coolercontrol-install': {
+            textoConcluido: '✅ CoolerControl instalado',
+            textoConcluidoKey: 'sessoes.diagnostico.texto_concluido_coolercontrol'
+        }
+    }
+},
+
+// ============================================================
+// SESSÃO 7 — SOBRE O DAP
+// ============================================================
+//
+// Atualizar, desinstalar e ver o changelog. É a sessão mais
+// simples do DAP — não instala nada, não altera o sistema.
+// Serve como teste de integração do fluxo completo (botão →
+// comando → SSE → gravação de progresso).
+{
+    id: 'sobre-dap',
+    nome: 'Sobre o DAP',
+    nomeKey: 'sessoes.sobre-dap.nome',
+    comandos: {
+        'atualizar-dap': {
+            sempreClicavel: true,
+            textoConcluido: '✅ DAP atualizado',
+            textoConcluidoKey: 'sessoes.sobre-dap.texto_concluido_dap_atualizar'
+        },
+        'desinstalar-dap': {
+            textoConcluido: '✅ DAP desinstalado',
+            textoConcluidoKey: 'sessoes.sobre-dap.texto_concluido_dap_desinstalar'
+        }
+    }
+}
+];
 
 var SESSOES_PRINCIPAIS = SESSOES.map(function(s) { return s.id; });
 
@@ -808,36 +1867,6 @@ function _reaplicarBloqueioSeNecessario() {
 //
 // Também evita que o usuário perca o progresso visual de uma fila
 // em andamento (o log e a posição na fila ficariam órfãos ao sair).
-//
-// ESCOPO DO BLOQUEIO
-// ------------------
-// O bloqueio é POR SESSÃO, não global. Isso significa:
-//
-//   • Usuário clica em "Instalar VLC" na Sessão 6 (Aplicativos).
-//   • Chips do menu e botões Anterior/Próximo travam.
-//   • Usuário NÃO pode trocar de sessão enquanto o VLC instala.
-//   • Quando o VLC termina, os controles voltam a funcionar.
-//
-// A fonte de verdade para "há comando rodando na sessão atual" é
-// uma combinação de três checagens independentes, avaliadas em
-// ordem de custo (barato → caro):
-//
-//   1. `_comandoAptRodando` — comando apt/dpkg em execução.
-//   2. `_flatpakRodando` + `_filaFlatpaks` — flatpak em execução
-//      (mais os flatpaks enfileirados pertencentes à sessão atual).
-//   3. Barras de progresso visíveis e NÃO concluídas no DOM da
-//      sessão atual. Cobre fluxos que não passam pelo
-//      `executarComandoGenerico`.
-//
-// Se QUALQUER uma dessas três for verdadeira para a sessão atual,
-// a navegação fica bloqueada.
-//
-// Elementos bloqueados:
-// - Chips do menu do topo (.session-menu-item).
-// - Botões Anterior e Próximo.
-//
-// Elementos NÃO bloqueados:
-// - Tema, idioma, menu "voltar ao início", badge de atualização.
 
 var _navegacaoBloqueada = false;
 
@@ -1464,8 +2493,6 @@ function _corOriginalDoBotao(btn) {
  * - Se o comando de install NÃO está marcado:
  *     install → habilitado, texto original
  *     revert  → DESABILITADO (não há o que reverter)
- *
- * Esta é a ÚNICA fonte de verdade do estado visual desses pares.
  */
 function aplicarEstadoToggle(idInstall, idRevert) {
     var installBtn = document.getElementById('btn-' + idInstall);
@@ -1507,8 +2534,7 @@ function aplicarEstadoToggle(idInstall, idRevert) {
 
 /**
  * Marca um botão one-shot como concluído, reaplicando o estado
- * persistido do progresso. Usado por restaurarEstadoSessao() de
- * sessões que têm botões sem par "install/revert".
+ * persistido do progresso.
  */
 function _marcarBotaoConcluido(idComando) {
     var btn = document.getElementById('btn-' + idComando);
@@ -2101,17 +3127,11 @@ async function desinstalarPacote(idComando, comandoRemover, nomeExibicao) {
 // ============================================================
 //
 // Ponto ÚNICO de abertura de apps GUI no DAP. Todas as sessões
-// devem chamar esta função em vez de montar o comando sozinhas —
-// assim garantimos três invariantes em um só lugar:
+// devem chamar esta função em vez de montar o comando sozinhas.
 //
-//   1. `setsid -f` — o app ganha uma SESSÃO PRÓPRIA, desacoplada
-//      do DAP. Sem isso, o app morre quando o DAP é fechado.
-//
-//   2. Redirecionamento `> /tmp/dap-open-<id>.log 2>&1 < /dev/null`
-//      — o app não fica preso ao terminal do DAP.
-//
-//   3. `& ` no final do comando original é REMOVIDO — o `&` duplica
-//      o `setsid -f` e pode confundir o bash.
+//   1. `setsid -f` — o app ganha uma SESSÃO PRÓPRIA.
+//   2. Redirecionamento `> /tmp/dap-open-<id>.log 2>&1 < /dev/null`.
+//   3. `& ` no final do comando original é REMOVIDO.
 
 function abrirFerramentaExterna(comando, idLog, nomeExibicao) {
     var cmdFinal = (comando || '').trim();

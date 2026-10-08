@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DAP - Estado do Debian</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="sessao-container" id="sessao-estado-debian">
+<div class="sessao-titulo">
+<span class="sessao-label">Sessão</span>
+<span data-i18n="sessoes.estado-debian.titulo">🐧 Estado do Debian</span>
+</div>
+
+<!-- Aviso de escopo amplo: natureza da sessão (informativa) -->
+<div class="aviso-caixa" data-i18n-html="sessoes.estado-debian.aviso_geral">
+ℹ️ <strong>Esta sessão é informativa.</strong> Os comandos aqui apenas leem o estado do sistema. Nada é alterado sem você clicar explicitamente num botão — e os que alteram deixam claro o que fazem.
+</div>
+
+<!-- Acórdeão principal — descrição da sessão -->
+<div class="acordeao-principal">
+<span data-i18n="sessoes.estado-debian.descricao">Informações e ferramentas específicas do Debian: verificação da versão instalada, detecção de variantes (Stable/Testing/Sid) e do sistema de segurança AppArmor, que é o padrão do Debian para controle de acesso.</span>
+</div>
+
+<!-- ============================================================
+VERSÃO DO DEBIAN
+============================================================ -->
+<details class="acordeao" open>
+<summary data-i18n="sessoes.estado-debian.versao_titulo">📌 Versão do Debian</summary>
+<div class="acordeao-conteudo">
+
+<div class="bloco-comando">
+<div class="comando-info">
+<h3 data-i18n="sessoes.estado-debian.versao_h3">Verificação de compatibilidade</h3>
+<p data-i18n="sessoes.estado-debian.versao_desc">O DAP é desenvolvido e testado no Debian 13 (Trixie). Se você está numa versão diferente, alguns comandos podem se comportar de forma inesperada (pacotes renomeados, repositórios alterados, sintaxe nova). Esta verificação avisa quando isso acontece.</p>
+
+<div class="info-extra" data-i18n-html="sessoes.estado-debian.versao_info">
+ℹ️ <strong>Versões suportadas:</strong> Debian 13 (Trixie) e mais recentes. Versões mais antigas (12 Bookworm e anteriores) podem exigir ajustes manuais. O DAP continua funcionando, mas você pode precisar adaptar algum comando específico.
+</div>
+
+<div class="grupo-botoes" style="margin-bottom: 1rem;">
+<button class="btn-executar"
+onclick="verificarVersaoDebian()"
+data-comando="debian-version-check"
+data-logbox="log-sessao-estado-debian"
+id="btn-debian-version-check"
+data-i18n="sessoes.estado-debian.btn_verificar_versao">
+🔍 Verificar Versão do Debian
+</button>
+</div>
+
+<div id="diag-debian-version" style="display: none; margin-top: 1rem;"></div>
+</div>
+</div>
+
+</div>
+</details>
+
+<!-- ============================================================
+STABLE / TESTING / SID
+============================================================ -->
+<details class="acordeao">
+<summary data-i18n="sessoes.estado-debian.variante_titulo">🧊 Variante do Debian (Stable/Testing/Sid)</summary>
+<div class="acordeao-conteudo">
+
+<div class="bloco-comando">
+<div class="comando-info">
+<h3 data-i18n="sessoes.estado-debian.variante_h3">Detecção de variante e derivados</h3>
+<p data-i18n="sessoes.estado-debian.variante_desc">O Debian tem três canais principais: <strong>Stable</strong> (recomendado para uso geral), <strong>Testing</strong> (pré-lançamento) e <strong>Sid/Unstable</strong> (desenvolvimento). Também existem distribuições derivadas (MX Linux, LMDE, Kali, Raspberry Pi OS). O DAP foi desenvolvido para Debian Stable puro.</p>
+
+<div class="info-extra" data-i18n-html="sessoes.estado-debian.variante_info">
+ℹ️ <strong>Por que isso importa:</strong> o DAP instala pacotes que estão em repositórios estáveis. Se você está em Testing/Sid, alguns pacotes podem não existir ou ter nomes diferentes. Esta detecção avisa antes de você tentar algo que não vai funcionar.
+</div>
+
+<div class="grupo-botoes" style="margin-bottom: 1rem;">
+<button class="btn-executar"
+onclick="verificarVariante()"
+data-comando="variante-check"
+data-logbox="log-sessao-estado-debian"
+id="btn-variante-check"
+data-i18n="sessoes.estado-debian.btn_verificar_variante">
+🧊 Verificar Variante do Debian
+</button>
+</div>
+
+<div id="diag-variante-resultado" style="display: none; margin-top: 1rem;"></div>
+</div>
+</div>
+
+</div>
+</details>
+
+<!-- ============================================================
+APPARMOR
+============================================================ -->
+<details class="acordeao">
+<summary data-i18n="sessoes.estado-debian.apparmor_titulo">🛡️ AppArmor</summary>
+<div class="acordeao-conteudo">
+
+<div class="sessao-descricao" data-i18n="sessoes.estado-debian.apparmor_desc">
+O AppArmor é o sistema de controle de acesso obrigatório padrão do Debian. Ele restringe o que cada programa pode fazer com base em perfis por aplicação — mais simples que o SELinux do Fedora e ativado por padrão desde o Debian 10.
+</div>
+
+<!-- Status -->
+<div class="bloco-comando">
+<div class="comando-info">
+<h3 data-i18n="sessoes.estado-debian.apparmor_status_titulo">📊 Status Atual</h3>
+<p data-i18n="sessoes.estado-debian.apparmor_status_desc">Mostra o estado atual do AppArmor (enabled/disabled) e quantos perfis estão carregados.</p>
+
+<div class="info-extra" data-i18n-html="sessoes.estado-debian.apparmor_status_info">
+ℹ️ <strong>O que o AppArmor faz:</strong>
+<ul style="margin: 0.5rem 0 0 1.25rem; padding: 0;">
+<li><strong>Ativo</strong> — perfis carregados e bloqueando acessos fora do permitido. É o padrão do Debian e o recomendado.</li>
+<li><strong>Inativo</strong> — nenhum perfil carregado. Reduz a segurança do sistema. Investigue antes de ativar.</li>
+</ul>
+</div>
+
+<div class="grupo-botoes" style="margin-bottom: 1rem;">
+<button class="btn-executar"
+onclick="verificarAppArmorStatus()"
+data-comando="apparmor-status-check"
+data-logbox="log-sessao-estado-debian"
+id="btn-apparmor-status-check"
+data-i18n="sessoes.estado-debian.btn_apparmor_status">
+🛡️ Verificar Status do AppArmor
+</button>
+</div>
+
+<div id="diag-apparmor-status" style="display: none; margin-top: 1rem;"></div>
+</div>
+</div>
+
+<!-- Perfis do AppArmor -->
+<div class="bloco-comando">
+<div class="comando-info">
+<h3 data-i18n="sessoes.estado-debian.apparmor_profiles_titulo">🔍 Perfis Ativos</h3>
+<p data-i18n="sessoes.estado-debian.apparmor_profiles_desc">Lista os perfis do AppArmor que estão carregados no sistema. Útil para saber quais programas estão sendo monitorados pelo AppArmor.</p>
+
+<div class="grupo-botoes" style="margin-bottom: 1rem;">
+<button class="btn-executar"
+onclick="listarPerfisAppArmor()"
+data-comando="apparmor-profiles-list"
+data-logbox="log-sessao-estado-debian"
+id="btn-apparmor-profiles-list"
+data-i18n="sessoes.estado-debian.btn_apparmor_profiles">
+🔍 Listar Perfis Ativos
+</button>
+</div>
+
+<div id="diag-apparmor-perfis" style="display: none; margin-top: 1rem;"></div>
+</div>
+</div>
+
+<!-- Aviso sobre desabilitar -->
+<div class="bloco-comando">
+<div class="comando-info">
+<h3 data-i18n="sessoes.estado-debian.apparmor_desabilitar_titulo">⚠️ Sobre desabilitar o AppArmor</h3>
+<p data-i18n="sessoes.estado-debian.apparmor_desabilitar_desc">Muitos tutoriais na internet recomendam desabilitar o AppArmor quando algo não funciona. Isso <strong>não é uma boa prática</strong> no Debian — o sistema é projetado para funcionar com ele ativo, e desabilitar mascara problemas em vez de resolvê-los.</p>
+
+<div class="bloco-info">
+<strong>Antes de pensar em desabilitar, tente:</strong><br>
+1. Verificar o log do AppArmor (<code>journalctl -k | grep -i apparmor</code>) para identificar qual perfil está bloqueando.<br>
+2. Ler a mensagem de negação — o AppArmor registra o comando exato e o caminho que foi bloqueado.<br>
+3. Se for um caso específico, criar um perfil em modo <em>complain</em> (só registra, não bloqueia) com <code>aa-complain /caminho/do/programa</code>.<br>
+4. <strong>Só como último recurso</strong>, desabilitar temporariamente com <code>sudo aa-teardown</code> (até o próximo boot).
+</div>
+
+<div class="info-extra" data-i18n-html="sessoes.estado-debian.apparmor_desabilitar_info">
+ℹ️ <strong>Se precisar desabilitar permanentemente:</strong> edite <code>/etc/default/grub</code> e adicione <code>apparmor=0</code> à linha <code>GRUB_CMDLINE_LINUX_DEFAULT</code>, depois rode <code>sudo update-grub</code>. O DAP <strong>não faz isso automaticamente</strong> — é uma decisão sua.
+</div>
+</div>
+</div>
+
+</div>
+</details>
+
+<!-- Log único da sessão -->
+<div class="terminal-log sessao-compartilhado" id="log-sessao-estado-debian"></div>
+</div>
+
+<script>
+// ============================================================
+// SESSÃO: ESTADO DO DEBIAN
+// ============================================================
+
+function _t(chave, fallback) {
+    return (typeof tOr === 'function') ? tOr(chave, fallback) : fallback;
+}
+
+// ------------------------------------------------------------
+// Utilitário: chamada a endpoint com fallback silencioso
+// ------------------------------------------------------------
+async function _fetchJSON(endpoint) {
+    try {
+        var r = await fetch(API_URL + endpoint, { cache: 'no-store' });
+        if (!r.ok) return null;
+        return await r.json();
+    } catch (e) {
+        return null;
+    }
+}
+
+function _escapeHTML(s) {
+    if (s == null) return '';
+    return String(s).replace(/[&<>"']/g, function(c) {
+        return {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c];
+    });
+}
+
+// ------------------------------------------------------------
+// Executor genérico para comandos sempre-clicáveis que só leem
+// ------------------------------------------------------------
+async function _executarLeitura(idComando, comando, nomeAcao) {
+    var logBox = _getLogBox(idComando);
+    var btn = document.getElementById('btn-' + idComando);
+
+    if (!logBox) return null;
+
+    logBox.style.display = 'block';
+    _separadorLog(logBox, nomeAcao);
+
+    var header = document.createElement('div');
+    header.className = 'log-line info';
+    header.textContent = '🔍 ' + nomeAcao + '... (' + new Date().toLocaleTimeString() + ')';
+    logBox.appendChild(header);
+    logBox.scrollTop = logBox.scrollHeight;
+
+    if (btn) {
+        btn.disabled = true;
+        btn.textContent = '⏳ ' + nomeAcao + '...';
+        btn.style.opacity = '0.6';
+    }
+
+    conectarSSE(idComando, logBox);
+
+    try {
+        var response = await fetch(API_URL + '/executar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ comando: comando, idComando: idComando })
+        });
+
+        if (!response.ok) {
+            var errorLine = document.createElement('div');
+            errorLine.className = 'log-line error';
+            errorLine.textContent = '❌ Erro HTTP: ' + response.status;
+            logBox.appendChild(errorLine);
+            logBox.scrollTop = logBox.scrollHeight;
+            return null;
+        }
+
+        var sucesso = await aguardarConclusaoReal(idComando, 20000);
+        return sucesso;
+
+    } catch (e) {
+        var errorLine2 = document.createElement('div');
+        errorLine2.className = 'log-line error';
+        errorLine2.textContent = '❌ Erro de conexão: ' + e.message;
+        logBox.appendChild(errorLine2);
+        logBox.scrollTop = logBox.scrollHeight;
+        return null;
+
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.textContent = _textoOriginalTraduzido(btn) || nomeAcao;
+            btn.style.opacity = '1';
+        }
+    }
+}
+
+// ============================================================
+// VERSÃO DO DEBIAN
+// ============================================================
+
+async function verificarVersaoDebian() {
+    var idComando = 'debian-version-check';
+    var resultadoEl = document.getElementById('diag-debian-version');
+
+    var sys = await _fetchJSON('/system-info');
+
+    var debian = (sys && sys.debian) ? sys.debian : null;
+    var debianVersion = (sys && sys.debian_version) ? sys.debian_version : null;
+    var kernel = (sys && sys.kernel) ? sys.kernel : null;
+
+    if (!debian) {
+        var comando = 'cat /etc/debian_version 2>/dev/null || echo "Não foi possível determinar a versão"';
+        await _executarLeitura(idComando, comando, _t('sessoes.estado-debian.btn_verificar_versao', '🔍 Verificar Versão do Debian'));
+    }
+
+    var versaoNumero = null;
+    if (debianVersion) {
+        var match = String(debianVersion).match(/^(\d+)/);
+        if (match) versaoNumero = parseInt(match[1], 10);
+    }
+
+    if (resultadoEl) {
+        resultadoEl.style.display = 'block';
+
+        var html = '';
+        if (!debian) {
+            html = '<div class="aviso-caixa">⚠️ Não foi possível determinar a versão do Debian. Confira o log acima para detalhes.</div>';
+        } else {
+            var statusClass = 'aviso-caixa';
+            var statusTexto = '';
+
+            if (versaoNumero != null) {
+                if (versaoNumero >= 13) {
+                    statusClass = 'aviso-sucesso';
+                    statusTexto = '✅ Versão suportada. O DAP foi desenvolvido e testado nesta faixa.';
+                } else if (versaoNumero === 12) {
+                    statusTexto = '⚠️ Debian 12 (Bookworm). O DAP foi testado no 13 (Trixie). Alguns comandos podem precisar de ajustes.';
+                } else if (versaoNumero < 12) {
+                    statusTexto = '⚠️ Versão antiga (' + versaoNumero + '). Alguns comandos podem falhar. Considere atualizar o Debian.';
+                } else {
+                    statusTexto = '⚠️ Versão muito nova (> 13). Pode haver mudanças não testadas. Se encontrar problemas, reporte.';
+                }
+            }
+
+            html =
+                '<div class="' + statusClass + '">' + statusTexto + '</div>' +
+                '<ul class="lista-info">' +
+                '<li><span class="label">Distribuição</span><span class="valor">' + _escapeHTML(debian) + '</span></li>' +
+                '<li><span class="label">Versão</span><span class="valor">' + (debianVersion || '—') + '</span></li>' +
+                '<li><span class="label">Kernel</span><span class="valor">' + _escapeHTML(kernel || '—') + '</span></li>' +
+                '<li><span class="label">Suporte do DAP</span><span class="valor">13 (Trixie) e mais novo</span></li>' +
+                '</ul>';
+        }
+
+        resultadoEl.innerHTML = html;
+    }
+}
+
+// ============================================================
+// VARIANTE (Stable / Testing / Sid / derivados)
+// ============================================================
+
+async function verificarVariante() {
+    var idComando = 'variante-check';
+    var resultadoEl = document.getElementById('diag-variante-resultado');
+
+    var comando =
+        'IS_DEBIAN=false; ' +
+        'ID=$(grep "^ID=" /etc/os-release 2>/dev/null | cut -d= -f2 | tr -d \'"\'); ' +
+        'ID_LIKE=$(grep "^ID_LIKE=" /etc/os-release 2>/dev/null | cut -d= -f2 | tr -d \'"\'); ' +
+        'CODENAME=$(grep "^VERSION_CODENAME=" /etc/os-release 2>/dev/null | cut -d= -f2 | tr -d \'"\'); ' +
+        'PRETTY=$(grep "^PRETTY_NAME=" /etc/os-release 2>/dev/null | cut -d= -f2 | tr -d \'"\'); ' +
+        'if [ "$ID" = "debian" ]; then IS_DEBIAN=true; fi; ' +
+        'echo "DISTRO_ID=$ID"; ' +
+        'echo "DISTRO_LIKE=$ID_LIKE"; ' +
+        'echo "DISTRO_CODENAME=$CODENAME"; ' +
+        'echo "DISTRO_PRETTY=$PRETTY"; ' +
+        'if [ "$IS_DEBIAN" = "true" ]; then ' +
+        '  echo "DETECCAO: DEBIAN PURO"; ' +
+        '  case "$CODENAME" in ' +
+        '    testing) echo "VARIANTE: Testing (pré-lançamento)"; ;; ' +
+        '    sid|unstable) echo "VARIANTE: Sid/Unstable (desenvolvimento)"; ;; ' +
+        '    trixie) echo "VARIANTE: Stable (Trixie)"; ;; ' +
+        '    bookworm) echo "VARIANTE: Stable (Bookworm — versão anterior)"; ;; ' +
+        '    *) echo "VARIANTE: $CODENAME"; ;; ' +
+        '  esac; ' +
+        'elif echo "$ID_LIKE" | grep -qi debian; then ' +
+        '  echo "DETECCAO: DERIVADO DO DEBIAN"; ' +
+        '  echo "VARIANTE: $PRETTY"; ' +
+        'else ' +
+        '  echo "DETECCAO: NAO E DEBIAN"; ' +
+        '  echo "VARIANTE: $PRETTY"; ' +
+        'fi';
+
+    await _executarLeitura(idComando, comando, _t('sessoes.estado-debian.btn_verificar_variante', '🧊 Verificar Variante do Debian'));
+
+    setTimeout(function() {
+        var logBox = _getLogBox(idComando);
+        var id = '';
+        var codename = '';
+        var pretty = '';
+        var deteccao = '';
+        var variante = '';
+
+        if (logBox) {
+            var linhas = logBox.querySelectorAll('.log-line.output');
+            linhas.forEach(function(l) {
+                var txt = l.textContent || '';
+                if (txt.indexOf('DISTRO_ID=') === 0) id = txt.replace('DISTRO_ID=', '');
+                if (txt.indexOf('DISTRO_CODENAME=') === 0) codename = txt.replace('DISTRO_CODENAME=', '');
+                if (txt.indexOf('DISTRO_PRETTY=') === 0) pretty = txt.replace('DISTRO_PRETTY=', '');
+                if (txt.indexOf('DETECCAO:') === 0) deteccao = txt.replace('DETECCAO:', '').trim();
+                if (txt.indexOf('VARIANTE:') === 0) variante = txt.replace('VARIANTE:', '').trim();
+            });
+        }
+
+        if (resultadoEl) {
+            resultadoEl.style.display = 'block';
+
+            var html = '';
+            if (deteccao === 'DEBIAN PURO') {
+                if (variante.indexOf('Testing') !== -1 || variante.indexOf('Sid') !== -1 || variante.indexOf('Unstable') !== -1) {
+                    html =
+                        '<div class="aviso-caixa">' +
+                        '⚠️ <strong>Variante de desenvolvimento detectada.</strong> Você está usando <strong>' + _escapeHTML(variante) + '</strong>. ' +
+                        'O DAP foi desenvolvido para Debian Stable. A maioria dos comandos deve funcionar, ' +
+                        'mas alguns pacotes podem ter nomes ou versões diferentes.' +
+                        '</div>';
+                } else if (variante.indexOf('Bookworm') !== -1) {
+                    html =
+                        '<div class="aviso-caixa">' +
+                        '⚠️ <strong>Versão anterior do Debian.</strong> Você está usando <strong>' + _escapeHTML(variante) + '</strong>. ' +
+                        'O DAP foi desenvolvido para Debian 13 (Trixie). Alguns comandos podem precisar de ajustes.' +
+                        '</div>';
+                } else {
+                    html =
+                        '<div class="aviso-sucesso">' +
+                        '✅ <strong>Debian Stable detectado.</strong> ' + _escapeHTML(variante) + '. Compatível com o DAP.' +
+                        '</div>';
+                }
+            } else if (deteccao === 'DERIVADO DO DEBIAN') {
+                html =
+                    '<div class="aviso-caixa">' +
+                    '⚠️ <strong>Distribuição derivada detectada.</strong> Você está usando <strong>' + _escapeHTML(pretty) + '</strong>, ' +
+                    'que é baseada no Debian mas tem particularidades próprias (repositórios extras, pacotes renomeados, ' +
+                    'configurações diferentes). O DAP não tem suporte oficial para derivados — a maioria dos comandos ' +
+                    'deve funcionar, mas não há garantia.' +
+                    '</div>';
+            } else if (deteccao === 'NAO E DEBIAN') {
+                html =
+                    '<div class="aviso-caixa" style="border-color: #ef4444; color: #ef4444;">' +
+                    '❌ <strong>Sistema não identificado como Debian.</strong> O DAP foi desenvolvido exclusivamente para Debian Linux. ' +
+                    'Os comandos podem não funcionar corretamente.' +
+                    '</div>';
+            } else {
+                html = '<div class="aviso-caixa">⚠️ Não foi possível determinar a variante. Confira o log acima para detalhes.</div>';
+            }
+
+            html +=
+                '<ul class="lista-info">' +
+                '<li><span class="label">Distribuição</span><span class="valor">' + _escapeHTML(pretty || id || '—') + '</span></li>' +
+                '<li><span class="label">ID</span><span class="valor"><code>' + _escapeHTML(id || '—') + '</code></span></li>' +
+                '<li><span class="label">Codename</span><span class="valor"><code>' + _escapeHTML(codename || '—') + '</code></span></li>' +
+                '<li><span class="label">Variante</span><span class="valor">' + _escapeHTML(variante || '—') + '</span></li>' +
+                '</ul>';
+
+            resultadoEl.innerHTML = html;
+        }
+    }, 1500);
+}
+
+// ============================================================
+// APPARMOR — STATUS
+// ============================================================
+
+async function verificarAppArmorStatus() {
+    var idComando = 'apparmor-status-check';
+    var resultadoEl = document.getElementById('diag-apparmor-status');
+    var logBox = _getLogBox(idComando);
+
+    if (logBox) {
+        logBox.style.display = 'block';
+        _separadorLog(logBox, _t('sessoes.estado-debian.btn_apparmor_status', '🛡️ Verificar Status do AppArmor'));
+        var header = document.createElement('div');
+        header.className = 'log-line info';
+        header.textContent = '🔍 Consultando status do AppArmor...';
+        logBox.appendChild(header);
+        logBox.scrollTop = logBox.scrollHeight;
+    }
+
+    // Usa `aa-status` se disponível, senão cai no módulo kernel
+    var comando =
+        'if command -v aa-status > /dev/null 2>&1; then ' +
+        '  echo "AA_STATUS_OK"; ' +
+        '  sudo aa-status 2>/dev/null | head -1; ' +
+        '  echo "---"; ' +
+        '  sudo aa-status 2>/dev/null | grep -E "profiles are loaded|profiles are in complain|profiles are in enforce"; ' +
+        'else ' +
+        '  echo "AA_STATUS_MISSING"; ' +
+        '  if [ -d /sys/module/apparmor ]; then ' +
+        '    echo "MODULE_PRESENT=true"; ' +
+        '    cat /sys/module/apparmor/parameters/enabled 2>/dev/null; ' +
+        '  else ' +
+        '    echo "MODULE_PRESENT=false"; ' +
+        '  fi; ' +
+        'fi';
+
+    await _executarLeitura(idComando, comando, _t('sessoes.estado-debian.btn_apparmor_status', '🛡️ Verificar Status do AppArmor'));
+
+    setTimeout(function() {
+        var logBox2 = _getLogBox(idComando);
+        var status = '';
+        var perfisCarregados = 0;
+        var perfisComplain = 0;
+        var perfisEnforce = 0;
+        var aaStatusOk = false;
+        var modulePresent = false;
+
+        if (logBox2) {
+            var linhas = logBox2.querySelectorAll('.log-line.output');
+            linhas.forEach(function(l) {
+                var txt = l.textContent || '';
+                if (txt.indexOf('AA_STATUS_OK') === 0) aaStatusOk = true;
+                if (txt.indexOf('MODULE_PRESENT=true') === 0) modulePresent = true;
+                if (txt.indexOf('apparmor module is loaded') !== -1) status = 'loaded';
+                if (txt.indexOf('apparmor module is not loaded') !== -1) status = 'not_loaded';
+
+                var m1 = txt.match(/(\d+)\s+profiles are loaded/);
+                if (m1) perfisCarregados = parseInt(m1[1], 10);
+                var m2 = txt.match(/(\d+)\s+profiles are in complain mode/);
+                if (m2) perfisComplain = parseInt(m2[1], 10);
+                var m3 = txt.match(/(\d+)\s+profiles are in enforce mode/);
+                if (m3) perfisEnforce = parseInt(m3[1], 10);
+            });
+        }
+
+        if (resultadoEl) {
+            resultadoEl.style.display = 'block';
+
+            var html = '';
+
+            if (!aaStatusOk && !modulePresent) {
+                html = '<div class="aviso-caixa">⚠️ <strong>AppArmor não detectado.</strong> O módulo não está carregado no kernel. ' +
+                    'Isso pode acontecer se o kernel foi compilado sem suporte a AppArmor (raro no Debian) ou se o AppArmor ' +
+                    'foi desabilitado nos parâmetros do kernel.</div>';
+            } else if (status === 'loaded' || aaStatusOk) {
+                html =
+                    '<div class="aviso-sucesso">' +
+                    '✅ <strong>AppArmor ativo.</strong> ' +
+                    (perfisCarregados > 0 ? perfisCarregados + ' perfil(is) carregado(s)' : 'Nenhum perfil carregado no momento') +
+                    (perfisEnforce > 0 ? ' — ' + perfisEnforce + ' em modo enforce' : '') +
+                    (perfisComplain > 0 ? ' — ' + perfisComplain + ' em modo complain' : '') +
+                    '.</div>';
+            } else if (status === 'not_loaded') {
+                html = '<div class="aviso-caixa" style="border-color: #ef4444; color: #ef4444;">❌ <strong>AppArmor inativo.</strong> ' +
+                    'O módulo está presente mas não está carregado. Verifique os parâmetros do kernel.</div>';
+            } else {
+                html = '<div class="aviso-caixa">⚠️ Status indeterminado. Confira o log acima para detalhes.</div>';
+            }
+
+            html +=
+                '<ul class="lista-info">' +
+                '<li><span class="label">Status</span><span class="valor">' + (status === 'loaded' || aaStatusOk ? 'Ativo' : status === 'not_loaded' ? 'Inativo' : '—') + '</span></li>' +
+                '<li><span class="label">Perfis carregados</span><span class="valor">' + (perfisCarregados || '—') + '</span></li>' +
+                '<li><span class="label">Em enforce</span><span class="valor">' + (perfisEnforce || '—') + '</span></li>' +
+                '<li><span class="label">Em complain</span><span class="valor">' + (perfisComplain || '—') + '</span></li>' +
+                '</ul>';
+
+            resultadoEl.innerHTML = html;
+        }
+    }, 1500);
+}
+
+// ============================================================
+// APPARMOR — PERFIS ATIVOS
+// ============================================================
+
+async function listarPerfisAppArmor() {
+    var idComando = 'apparmor-profiles-list';
+    var resultadoEl = document.getElementById('diag-apparmor-perfis');
+    var logBox = _getLogBox(idComando);
+
+    if (logBox) {
+        logBox.style.display = 'block';
+        _separadorLog(logBox, _t('sessoes.estado-debian.btn_apparmor_profiles', '🔍 Listar Perfis Ativos'));
+        var header = document.createElement('div');
+        header.className = 'log-line info';
+        header.textContent = '🔍 Listando perfis do AppArmor...';
+        logBox.appendChild(header);
+        logBox.scrollTop = logBox.scrollHeight;
+    }
+
+    var comando =
+        'if command -v aa-status > /dev/null 2>&1; then ' +
+        '  sudo aa-status 2>/dev/null | grep -E "^\\s+/" | head -30; ' +
+        'else ' +
+        '  echo "aa-status não encontrado. Instale o pacote apparmor-utils."; ' +
+        'fi';
+
+    await _executarLeitura(idComando, comando, _t('sessoes.estado-debian.btn_apparmor_profiles', '🔍 Listar Perfis Ativos'));
+
+    setTimeout(function() {
+        var logBox2 = _getLogBox(idComando);
+        var perfis = [];
+
+        if (logBox2) {
+            var linhas = logBox2.querySelectorAll('.log-line.output');
+            linhas.forEach(function(l) {
+                var txt = (l.textContent || '').trim();
+                if (txt.indexOf('/') === 0 || txt.indexOf('/usr/') === 0 || txt.indexOf('/etc/') === 0 || txt.indexOf('/opt/') === 0) {
+                    perfis.push(txt);
+                }
+            });
+        }
+
+        if (resultadoEl) {
+            resultadoEl.style.display = 'block';
+
+            if (perfis.length === 0) {
+                resultadoEl.innerHTML =
+                    '<div class="aviso-caixa">' +
+                    'ℹ️ Nenhum perfil do AppArmor listado. Isso pode significar que o <code>aa-status</code> não está instalado ' +
+                    'ou que nenhum perfil foi carregado. Confira o log acima para detalhes.' +
+                    '</div>';
+                return;
+            }
+
+            var html = '<strong>Perfis carregados (' + perfis.length + '):</strong><ul class="lista-info" style="margin-top: 0.5rem;">';
+            perfis.forEach(function(p) {
+                html += '<li><span class="label" style="word-break: break-all;"><code>' + _escapeHTML(p) + '</code></span></li>';
+            });
+            html += '</ul>';
+
+            resultadoEl.innerHTML = html;
+        }
+    }, 1500);
+}
+
+// ============================================================
+// RESTAURAR ESTADO DA SESSÃO
+// ============================================================
+function restaurarEstadoSessao() {
+    // Todos os comandos são de leitura — sempre clicáveis.
+    ['debian-version-check', 'variante-check', 'apparmor-status-check', 'apparmor-profiles-list'].forEach(function(id) {
+        var btn = document.getElementById('btn-' + id);
+        if (btn) {
+            btn.disabled = false;
+            btn.style.opacity = '1';
+            btn.style.cursor = 'pointer';
+        }
+    });
+
+    // Auto-verifica a versão do Debian ao entrar
+    setTimeout(function() {
+        verificarVersaoDebian();
+    }, 400);
+}
+
+// ============================================================
+// INICIALIZAÇÃO
+// ============================================================
+(function() {
+    document.querySelectorAll('.btn-executar').forEach(function(btn) {
+        if (!btn.hasAttribute('data-texto-original')) {
+            btn.setAttribute('data-texto-original', btn.textContent);
+        }
+    });
+
+    restaurarEstadoSessao();
+
+    console.log('📦 Componente estado-debian carregado!');
+})();
+</script>
+</body>
+</html>

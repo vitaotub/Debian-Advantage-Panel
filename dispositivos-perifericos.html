@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DAP - Dispositivos e Periféricos</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="sessao-container" id="sessao-dispositivos-perifericos">
+<div class="sessao-titulo">
+<span class="sessao-label">Sessão</span>
+<span data-i18n="sessoes.dispositivos-perifericos.titulo">🔌 Dispositivos e Periféricos</span>
+</div>
+
+<!-- Acórdeão principal — descrição da sessão -->
+<div class="acordeao-principal">
+<span data-i18n="sessoes.dispositivos-perifericos.descricao">Detecta hardware que pode precisar de drivers ou firmwares adicionais (não incluídos no Debian por questões de licenciamento), oferece suplementos seguros e permite configurar periféricos específicos. Nada é instalado automaticamente — cada sugestão tem botões separados de instalar e reverter.</span>
+</div>
+
+<!-- ============================================================
+ACORDEÃO 1: DETECÇÃO AUTOMÁTICA
+============================================================ -->
+<details class="acordeao" open>
+<summary data-i18n="sessoes.dispositivos-perifericos.deteccao_titulo">🎯 Detecção automática de hardware</summary>
+<div class="acordeao-conteudo">
+
+<div class="sessao-descricao" data-i18n-html="sessoes.dispositivos-perifericos.deteccao_desc">
+Clique no botão abaixo para escanear seu computador. O DAP vai identificar GPUs, placas de rede e adaptadores USB que podem precisar de drivers adicionais, cruzando os IDs de hardware com um mapa mantido pela comunidade. <strong>Nada é instalado automaticamente</strong> — cada sugestão aparece como um card separado, com botões explícitos de instalar e reverter.
+</div>
+
+<div class="grupo-botoes" style="margin-bottom: 1rem;">
+<button class="btn-executar"
+onclick="executarHardwareScan()"
+data-comando="hw-scan"
+id="btn-hw-scan"
+data-i18n="sessoes.dispositivos-perifericos.btn_escanear">
+🔍 Detectar meu hardware
+</button>
+</div>
+
+<div id="hw-repo-aviso" style="display: none;"></div>
+
+<div id="hw-scan-resultado" style="display: none;">
+<!-- Cards gerados dinamicamente pelo JS -->
+</div>
+
+</div>
+</details>
+
+<!-- ============================================================
+ACORDEÃO 2: SUPLEMENTOS SEGUROS
+============================================================ -->
+<details class="acordeao">
+<summary data-i18n="sessoes.dispositivos-perifericos.suplementos_titulo">📦 Firmwares e suplementos seguros</summary>
+<div class="acordeao-conteudo">
+
+<div class="sessao-descricao" data-i18n="sessoes.dispositivos-perifericos.suplementos_desc">
+Estes pacotes complementam o <code>linux-firmware</code> padrão do Debian. São seguros para instalar em qualquer sistema — não conflitam com drivers existentes e cobrem hardware que a Red Hat não distribui por questões de licenciamento ou por não fazer parte do escopo do Debian.
+</div>
+
+<!-- linux-firmware completo -->
+<div class="bloco-comando">
+<div class="comando-info">
+<h3 data-i18n="sessoes.dispositivos-perifericos.firmware_vendor_titulo">Firmwares adicionais de fabricantes</h3>
+<p data-i18n-html="sessoes.dispositivos-perifericos.firmware_vendor_desc">
+O pacote <code>firmware-linux</code> traz firmware que não está no pacote principal do Debian — chips Wi-Fi Realtek recentes (RTL8852), alguns modelos Intel, e firmwares de fabricantes que exigem redistribuição restrita. É complementar ao <code>linux-firmware</code>, não o substitui.
+</p>
+<div class="grupo-botoes">
+<button class="btn-executar"
+onclick="executarSuplemento('firmware-vendor-install')"
+data-comando="firmware-vendor-install"
+data-logbox="log-sessao-dispositivos-perifericos"
+id="btn-firmware-vendor-install"
+data-i18n="sessoes.dispositivos-perifericos.btn_firmware_vendor_instalar">
+📦 Instalar firmwares adicionais
+</button>
+<button class="btn-executar vermelho"
+onclick="executarSuplementoRemover('firmware-vendor-remove')"
+data-comando="firmware-vendor-remove"
+data-logbox="log-sessao-dispositivos-perifericos"
+id="btn-firmware-vendor-remove"
+data-i18n="sessoes.dispositivos-perifericos.btn_firmware_vendor_reverter">
+↩️ Reverter
+</button>
+</div>
+</div>
+<div class="progress-container" id="progress-firmware-vendor-install"><div class="progress-bar"><div class="progress-fill" id="progress-fill-firmware-vendor-install"></div></div><div class="progress-text"><span class="status" id="progress-status-firmware-vendor-install">⏳ Iniciando...</span><span class="percentage" id="progress-percent-firmware-vendor-install">0%</span></div></div>
+<div class="progress-container" id="progress-firmware-vendor-remove"><div class="progress-bar"><div class="progress-fill" id="progress-fill-firmware-vendor-remove"></div></div><div class="progress-text"><span class="status" id="progress-status-firmware-vendor-remove">⏳ Iniciando...</span><span class="percentage" id="progress-percent-firmware-vendor-remove">0%</span></div></div>
+</div>
+
+</div>
+</details>
+
+<!-- ============================================================
+ACORDEÃO 3: DRIVERS DE HARDWARE ESPECÍFICOS
+============================================================ -->
+<details class="acordeao">
+<summary data-i18n="sessoes.dispositivos-perifericos.copr_titulo">🌐 Drivers de hardware específicos</summary>
+<div class="acordeao-conteudo">
+
+<div class="aviso-caixa" data-i18n-html="sessoes.dispositivos-perifericos.copr_aviso">
+⚠️ <strong>Atenção antes de continuar:</strong><br>
+• Estes drivers são específicos para <strong>hardware</strong> — só instale se você tiver o dispositivo indicado.<br>
+• Alguns substituem o driver open-source do kernel (ex.: <code>broadcom-sta-dkms</code> substitui <code>brcmfmac</code>). Isso pode <strong>quebrar um Wi-Fi que já funcionava</strong>.<br>
+• Se você não sabe se precisa, use primeiro a <strong>detecção automática</strong> no acordeão acima — ela identifica o modelo exato.<br>
+• Todos os drivers aqui estão nos repositórios oficiais do Debian (<code>main</code>, <code>non-free</code> ou <code>non-free-firmware</code>) — não há dependência de COPR ou repo de terceiros.
+</div>
+
+<!-- Broadcom BCM43xx -->
+<div class="bloco-comando">
+<div class="comando-info">
+<h3 data-i18n="sessoes.dispositivos-perifericos.broadcom_titulo">Broadcom BCM43xx (Wi-Fi)</h3>
+<p data-i18n-html="sessoes.dispositivos-perifericos.broadcom_desc">
+Driver proprietário <code>broadcom-sta-dkms</code> para chips Wi-Fi Broadcom (comuns em notebooks antigos e MacBooks). Vive no <code>non-free</code> do Debian. Só instale se o driver open-source (<code>brcmfmac</code>/<code>b43</code>) não funcionar.
+</p>
+<div class="grupo-botoes">
+<button class="btn-executar" onclick="executarDriverBroadcom('driver-broadcom-wl-install')" data-comando="driver-broadcom-wl-install" data-logbox="log-sessao-dispositivos-perifericos" id="btn-driver-broadcom-wl-install" data-i18n="sessoes.dispositivos-perifericos.btn_broadcom_instalar">📦 Instalar broadcom-sta-dkms</button>
+<button class="btn-executar vermelho" onclick="executarReverterBroadcom('driver-broadcom-wl-remove', 'driver-broadcom-wl-install')" data-comando="driver-broadcom-wl-remove" data-logbox="log-sessao-dispositivos-perifericos" id="btn-driver-broadcom-wl-remove" data-i18n="sessoes.dispositivos-perifericos.btn_broadcom_reverter">🗑️ Reverter</button>
+</div>
+</div>
+<div class="progress-container" id="progress-driver-broadcom-wl-install"><div class="progress-bar"><div class="progress-fill" id="progress-fill-driver-broadcom-wl-install"></div></div><div class="progress-text"><span class="status" id="progress-status-driver-broadcom-wl-install">⏳ Iniciando...</span><span class="percentage" id="progress-percent-driver-broadcom-wl-install">0%</span></div></div>
+<div class="progress-container" id="progress-driver-broadcom-wl-remove"><div class="progress-bar"><div class="progress-fill" id="progress-fill-driver-broadcom-wl-remove"></div></div><div class="progress-text"><span class="status" id="progress-status-driver-broadcom-wl-remove">⏳ Iniciando...</span><span class="percentage" id="progress-percent-driver-broadcom-wl-remove">0%</span></div></div>
+</div>
+
+</div>
+</details>
+
+<!-- ============================================================
+ACORDEÃO 4: CONTROLES E PERIFÉRICOS
+============================================================ -->
+<details class="acordeao">
+<summary data-i18n="sessoes.dispositivos-perifericos.controles_titulo">🎮 Controles e periféricos</summary>
+<div class="acordeao-conteudo">
+
+<div class="bloco-comando">
+<div class="comando-info">
+<h3 data-i18n="sessoes.dispositivos-perifericos.input_add_titulo">Adicionar usuário ao grupo input</h3>
+<p data-i18n="sessoes.dispositivos-perifericos.input_add_desc">Necessário para Steam Input, xpadneo e drivers de controle reconhecerem o usuário. Funciona para controles Xbox, PlayStation e Nintendo que usam os drivers do kernel.</p>
+<div class="aviso-caixa" data-i18n="sessoes.dispositivos-perifericos.input_add_aviso">
+ℹ️ Requer logout/login para ter efeito.
+</div>
+<div class="botoes-flex">
+<button class="btn-executar"
+onclick="executarInputAdd()"
+data-comando="input-group-add"
+data-logbox="log-sessao-dispositivos-perifericos"
+id="btn-input-group-add"
+data-i18n="sessoes.dispositivos-perifericos.btn_input_add">
+👤 Adicionar ao grupo input
+</button>
+<button class="btn-executar vermelho"
+onclick="executarInputRemove()"
+data-comando="input-group-remove"
+data-logbox="log-sessao-dispositivos-perifericos"
+id="btn-input-group-remove"
+data-i18n="sessoes.dispositivos-perifericos.btn_input_remove">
+↩️ Remover do grupo input
+</button>
+</div>
+</div>
+<div class="progress-container" id="progress-input-group-add"><div class="progress-bar"><div class="progress-fill" id="progress-fill-input-group-add"></div></div><div class="progress-text"><span class="status" id="progress-status-input-group-add">⏳ Iniciando...</span><span class="percentage" id="progress-percent-input-group-add">0%</span></div></div>
+<div class="progress-container" id="progress-input-group-remove"><div class="progress-bar"><div class="progress-fill" id="progress-fill-input-group-remove"></div></div><div class="progress-text"><span class="status" id="progress-status-input-group-remove">⏳ Iniciando...</span><span class="percentage" id="progress-percent-input-group-remove">0%</span></div></div>
+</div>
+
+<div class="bloco-comando">
+<div class="comando-info">
+<h3 data-i18n="sessoes.dispositivos-perifericos.steam_devices_titulo">Regras Udev para Controles (Steam Devices)</h3>
+<p data-i18n="sessoes.dispositivos-perifericos.steam_devices_desc">Instala as regras udev do pacote <code>steam-devices</code>, que permitem ao sistema reconhecer corretamente controles Xbox, PlayStation e Nintendo ao usá-los com o Steam.</p>
+
+<div class="info-extra" data-i18n-html="sessoes.dispositivos-perifericos.steam_devices_info">
+ℹ️ <strong>O que isso resolve:</strong> sem essas regras, alguns controles podem não ser detectados pelo Steam, mesmo conectados. É um pacote pequeno e complementar ao grupo <code>input</code> acima — o grupo dá permissão ao seu usuário, e este pacote ensina o sistema a identificar cada modelo de controle.
+</div>
+
+<div class="botoes-flex">
+<button class="btn-executar"
+onclick="executarSteamDevices()"
+data-comando="steam-devices-install"
+data-logbox="log-sessao-dispositivos-perifericos"
+id="btn-steam-devices-install"
+data-i18n="sessoes.dispositivos-perifericos.btn_steam_devices">
+🎮 Instalar Regras para Controles
+</button>
+<button class="btn-executar vermelho"
+onclick="executarSteamDevicesRemove()"
+data-comando="steam-devices-remove"
+data-logbox="log-sessao-dispositivos-perifericos"
+id="btn-steam-devices-remove"
+data-i18n="sessoes.dispositivos-perifericos.btn_steam_devices_reverter">
+🗑️ Reverter Regras
+</button>
+</div>
+</div>
+<div class="progress-container" id="progress-steam-devices-install"><div class="progress-bar"><div class="progress-fill" id="progress-fill-steam-devices-install"></div></div><div class="progress-text"><span class="status" id="progress-status-steam-devices-install">⏳ Iniciando...</span><span class="percentage" id="progress-percent-steam-devices-install">0%</span></div></div>
+<div class="progress-container" id="progress-steam-devices-remove"><div class="progress-bar"><div class="progress-fill" id="progress-fill-steam-devices-remove"></div></div><div class="progress-text"><span class="status" id="progress-status-steam-devices-remove">⏳ Iniciando...</span><span class="percentage" id="progress-percent-steam-devices-remove">0%</span></div></div>
+</div>
+
+</div>
+</details>
+
+<!-- Log único da sessão -->
+<div class="terminal-log sessao-compartilhado" id="log-sessao-dispositivos-perifericos"></div>
+</div>
+
+<script>
+// ============================================================
+// SESSÃO: DISPOSITIVOS E PERIFÉRICOS
+// ============================================================
+
+function _t(chave, fallback) {
+    return (typeof tOr === 'function') ? tOr(chave, fallback) : fallback;
+}
+function _tVars(chave, fallback, vars) {
+    return (typeof tOr === 'function') ? tOr(chave, fallback, vars) : fallback;
+}
+
+function _escapeHTML(s) {
+    if (s == null) return '';
+    return String(s).replace(/[&<>"']/g, function(c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+}
+
+// ============================================================
+// DETECÇÃO DE HARDWARE
+// ============================================================
+
+async function executarHardwareScan() {
+    var btn = document.getElementById('btn-hw-scan');
+    var resultado = document.getElementById('hw-scan-resultado');
+    var aviso = document.getElementById('hw-repo-aviso');
+
+    if (btn) {
+        btn.disabled = true;
+        btn.textContent = '⏳ ' + _t('sessoes.dispositivos-perifericos.escaneando', 'Escaneando hardware...');
+        btn.style.opacity = '0.6';
+    }
+
+    if (resultado) {
+        resultado.style.display = 'block';
+        resultado.innerHTML = '<div class="loading-sessao"><div class="spinner"></div><p>' +
+            _t('sessoes.dispositivos-perifericos.escaneando', 'Escaneando hardware...') + '</p></div>';
+    }
+
+    try {
+        var r = await fetch(API_URL + '/hardware-scan', { cache: 'no-store' });
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+
+        var data = await r.json();
+        _renderHardwareCards(data, resultado, aviso);
+    } catch (e) {
+        if (resultado) {
+            resultado.innerHTML = '<div class="aviso-caixa">❌ ' +
+                _tVars('comum.erro_conexao', 'Erro de conexão: {msg}', { msg: e.message }) +
+                '</div>';
+        }
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.textContent = _t('sessoes.dispositivos-perifericos.btn_escanear', '🔍 Detectar meu hardware');
+            btn.style.opacity = '1';
+        }
+    }
+}
+
+function _renderHardwareCards(data, container, avisoContainer) {
+    if (!container) return;
+    container.innerHTML = '';
+
+    // Banner: non-free desativado
+    if (avisoContainer) {
+        if (data && data.repos && (!data.repos.non_free || !data.repos.non_free_firmware)) {
+            avisoContainer.style.display = 'block';
+            avisoContainer.innerHTML =
+                '<div class="aviso-caixa">' +
+                '⚠️ <strong>' + _t('sessoes.dispositivos-perifericos.aviso_rpmfusion_titulo', 'Repositório non-free não está ativo') + '</strong><br>' +
+                _t('sessoes.dispositivos-perifericos.aviso_rpmfusion_corpo', 'Alguns drivers (NVIDIA, Broadcom) exigem o repositório non-free. Ative-o na sessão Primeiros Passos antes de instalar estes drivers.') +
+                '</div>';
+        } else {
+            avisoContainer.style.display = 'none';
+            avisoContainer.innerHTML = '';
+        }
+    }
+
+    if (!data || !data.devices || data.devices.length === 0) {
+        container.innerHTML =
+            '<div class="bloco-info">✅ ' +
+            _t('sessoes.dispositivos-perifericos.sem_dispositivos', 'Nenhum dispositivo com sugestão de driver adicional foi detectado. Seu hardware funciona com os drivers padrão do Debian.') +
+            '</div>';
+        return;
+    }
+
+    data.devices.forEach(function(device) {
+        container.appendChild(_buildCard(device));
+    });
+}
+
+function _buildCard(device) {
+    var card = document.createElement('div');
+    card.className = 'bloco-comando';
+    card.style.borderLeft = '4px solid ' + _corCategoria(device.category);
+
+    var icon = _iconeCategoria(device.category);
+    var tipo = device.type === 'PCI' ? 'PCI' : 'USB';
+    var meta = tipo + ' • ' + _nomeCategoria(device.category);
+    if (device.driver_in_use) {
+        meta += ' • ' +
+            _t('sessoes.dispositivos-perifericos.driver_atual', 'driver atual') +
+            ': ' + device.driver_in_use;
+    }
+
+    var statusHtml = '';
+    var acoesHtml = '';
+
+    if (device.driver_default_working) {
+        statusHtml =
+            '<div class="bloco-info" style="border-left-color: #34d399;">✅ ' +
+            _tVars('sessoes.dispositivos-perifericos.ja_funciona',
+                'Este dispositivo já funciona com o driver padrão ({driver}). Não recomendamos instalar o driver proprietário — pode causar conflito.',
+                { driver: device.driver_in_use }) +
+            '</div>';
+    } else if (device.installed) {
+        statusHtml =
+            '<div class="bloco-info" style="border-left-color: #34d399;">✅ ' +
+            _t('sessoes.dispositivos-perifericos.ja_instalado', 'O driver sugerido já está instalado neste sistema.') +
+            '</div>';
+
+        var idRemove = _idRemoveForDevice(device);
+        if (idRemove) {
+            acoesHtml =
+                '<button class="btn-executar vermelho" onclick="executarDriverRemover(\'' + idRemove + '\')" ' +
+                'data-comando="' + idRemove + '" data-logbox="log-sessao-dispositivos-perifericos" ' +
+                'id="btn-' + idRemove + '">↩️ ' +
+                _t('sessoes.dispositivos-perifericos.btn_driver_reverter', 'Reverter driver') +
+                '</button>';
+        }
+    } else {
+        var pacoteExibicao = (device.packages && device.packages[0]) || '?';
+        statusHtml =
+            '<p>' + _tVars('sessoes.dispositivos-perifericos.precisa_driver',
+                'Este dispositivo pode precisar do pacote <code>{pkg}</code>. Instale se o hardware não estiver funcionando corretamente.',
+                { pkg: pacoteExibicao }) + '</p>';
+
+        if (device.repo_required && device.repo_required !== 'main') {
+            statusHtml +=
+                '<div class="aviso-caixa" style="font-size: 0.85rem;">⚠️ ' +
+                _tVars('sessoes.dispositivos-perifericos.repo_necessario',
+                    'Este driver vive no repositório <code>{repo}</code> do Debian. Ative em Primeiros Passos antes de instalar.',
+                    { repo: device.repo_required }) +
+                '</div>';
+        }
+
+        var idInstall = _idInstallForDevice(device);
+        if (idInstall) {
+            acoesHtml =
+                '<button class="btn-executar" onclick="executarDriverInstalar(\'' + idInstall + '\')" ' +
+                'data-comando="' + idInstall + '" data-logbox="log-sessao-dispositivos-perifericos" ' +
+                'id="btn-' + idInstall + '">📦 ' +
+                _tVars('sessoes.dispositivos-perifericos.btn_instalar_driver',
+                    'Instalar {pkg}', { pkg: pacoteExibicao }) +
+                '</button>';
+        }
+    }
+
+    var notasTexto = device.notes_key
+        ? _t(device.notes_key, device.notes || '')
+        : (device.notes || '');
+
+    card.innerHTML =
+        '<div class="comando-info">' +
+        '<h3>' + icon + ' ' + _escapeHTML(device.name) + '</h3>' +
+        '<p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">' +
+        _escapeHTML(meta) +
+        '</p>' +
+        statusHtml +
+        (notasTexto
+            ? '<div class="info-extra">' + _escapeHTML(notasTexto) + '</div>'
+            : '') +
+        (acoesHtml ? '<div class="botoes-flex" style="margin-top: 0.75rem;">' + acoesHtml + '</div>' : '') +
+        '</div>';
+
+    return card;
+}
+
+function _idInstallForDevice(device) {
+    // Mapeia vendor_id → idComando de instalação
+    var map = {
+        '10de': 'driver-nvidia-install',         // NVIDIA (tratado na sessão Hardware)
+        '1002': 'driver-amd-vaapi-install',      // AMD
+        '1022': 'driver-amd-vaapi-install',      // AMD APU
+        '8086': 'driver-intel-media-install',    // Intel
+        '14e4': 'driver-broadcom-wl-install',    // Broadcom
+        '10ec': 'driver-realtek-r8168-install'   // Realtek Ethernet
+    };
+    if (device.device_id) {
+        var vid = device.device_id.split(':')[0];
+        return map[vid] || null;
+    }
+    return null;
+}
+
+function _idRemoveForDevice(device) {
+    var install = _idInstallForDevice(device);
+    return install ? install.replace('-install', '-remove') : null;
+}
+
+function _corCategoria(cat) {
+    if (cat === 'gpu') return '#3c67e3';
+    if (cat === 'wifi') return '#8b5cf6';
+    if (cat === 'ethernet') return '#10b981';
+    return '#6b7280';
+}
+
+function _iconeCategoria(cat) {
+    if (cat === 'gpu') return '🎮';
+    if (cat === 'wifi') return '📶';
+    if (cat === 'ethernet') return '🔌';
+    return '💻';
+}
+
+function _nomeCategoria(cat) {
+    if (cat === 'gpu') return 'GPU';
+    if (cat === 'wifi') return 'Wi-Fi';
+    if (cat === 'ethernet') return 'Ethernet';
+    return cat;
+}
+
+// ============================================================
+// EXECUÇÃO DE DRIVERS
+// ============================================================
+
+var DRIVER_COMMANDS = {
+    'driver-nvidia-install': 'echo "Redirecionado para sessão Hardware"',
+    'driver-amd-vaapi-install': 'sudo apt install -y mesa-va-drivers mesa-vdpau-drivers',
+    'driver-amd-vaapi-remove': 'sudo apt purge -y mesa-va-drivers mesa-vdpau-drivers',
+    'driver-intel-media-install': 'sudo apt install -y intel-media-va-driver intel-media-va-driver-non-free',
+    'driver-intel-media-remove': 'sudo apt purge -y intel-media-va-driver intel-media-va-driver-non-free',
+    'driver-realtek-r8168-install': 'sudo apt install -y firmware-realtek',
+    'driver-realtek-r8168-remove': 'sudo apt purge -y firmware-realtek',
+    'driver-broadcom-wl-install': 'sudo apt install -y broadcom-sta-dkms',
+    'driver-broadcom-wl-remove': 'sudo apt purge -y broadcom-sta-dkms && sudo modprobe brcmfmac 2>/dev/null || true'
+};
+
+var SUPLEMENTO_COMMANDS = {
+    'firmware-vendor-install': 'sudo apt install -y firmware-linux firmware-linux-nonfree firmware-misc-nonfree',
+    'firmware-vendor-remove': 'sudo apt purge -y firmware-linux firmware-linux-nonfree firmware-misc-nonfree && sudo apt autoremove -y'
+};
+
+async function executarDriverInstalar(idComando) {
+    var cmd = DRIVER_COMMANDS[idComando];
+    if (!cmd) {
+        console.warn('[dispositivos] Comando não mapeado:', idComando);
+        return;
+    }
+
+    var idRemove = idComando.replace('-install', '-remove');
+
+    await executarComandoGenerico(idComando, cmd,
+        _t('sessoes.dispositivos-perifericos.instalando_driver', 'Instalando driver...'),
+        async function () {
+            await executarHardwareScan();
+            aplicarEstadoItemCompleto(null, idComando, idRemove);
+        });
+}
+
+async function executarDriverRemover(idComando) {
+    var cmd = DRIVER_COMMANDS[idComando];
+    if (!cmd) return;
+
+    if (!confirm(_t('sessoes.dispositivos-perifericos.confirmar_reverter',
+        '⚠️ Atenção!\n\nVocê está prestes a reverter um driver.\n\nSe o dispositivo depende deste driver para funcionar (por exemplo, um adaptador Wi-Fi), você vai perder a funcionalidade após o reboot.\n\nTenha uma conexão alternativa disponível antes de continuar.\n\nContinuar?'))) return;
+
+    await executarComandoGenerico(idComando, cmd,
+        _t('sessoes.dispositivos-perifericos.revertendo_driver', 'Revertendo driver...'),
+        async function () { await executarHardwareScan(); });
+}
+
+// ============================================================
+// SUPLEMENTOS SEGUROS
+// ============================================================
+
+async function executarSuplemento(idComando) {
+    var cmd = SUPLEMENTO_COMMANDS[idComando];
+    if (!cmd) return;
+    await executarComandoGenerico(idComando, cmd,
+        _t('sessoes.dispositivos-perifericos.instalando_suplemento', 'Instalando suplemento...'),
+        function() {
+            var idRevert = idComando.replace('-install', '-remove');
+            aplicarEstadoToggle(idComando, idRevert);
+        });
+}
+
+async function executarSuplementoRemover(idComando) {
+    var cmd = SUPLEMENTO_COMMANDS[idComando];
+    if (!cmd) return;
+
+    if (!confirm(_t('sessoes.dispositivos-perifericos.confirmar_reverter',
+        '⚠️ Atenção!\n\nVocê está prestes a reverter um firmware adicional.\n\nSe o dispositivo depende deste firmware para funcionar, você pode perder funcionalidade após o reboot.\n\nContinuar?'))) return;
+
+    await executarComandoGenerico(idComando, cmd,
+        _t('sessoes.dispositivos-perifericos.revertendo_suplemento', 'Revertendo suplemento...'),
+        function() {
+            var idInstall = idComando.replace('-remove', '-install');
+            desmarcarComoExecutado(idInstall).then(function() {
+                aplicarEstadoToggle(idInstall, idComando);
+            }).catch(function(e) {
+                console.warn('[toggle] Erro ao limpar estado do install:', e);
+                aplicarEstadoToggle(idInstall, idComando);
+            });
+        });
+}
+
+// ============================================================
+// BROADCOM (tratamento especial — sem repo separado)
+// ============================================================
+
+async function executarDriverBroadcom(idComando) {
+    var cmd = DRIVER_COMMANDS[idComando];
+    if (!cmd) return;
+
+    await executarComandoGenerico(idComando, cmd,
+        _t('sessoes.dispositivos-perifericos.instalando_driver', 'Instalando driver...'),
+        function() {
+            // Broadcom não tem repo separado — usa non-free (já ativado em Primeiros Passos)
+            aplicarEstadoItemCompleto(null, idComando, 'driver-broadcom-wl-remove');
+        });
+}
+
+async function executarReverterBroadcom(idRemoveComando, idInstallComando) {
+    var cmd = DRIVER_COMMANDS[idRemoveComando];
+    if (!cmd) return;
+
+    if (!confirm(_t('sessoes.dispositivos-perifericos.confirmar_reverter',
+        '⚠️ Atenção!\n\nVocê está prestes a reverter o driver Broadcom.\n\nSe o Wi-Fi depende deste driver, você vai perder a conexão após o reboot.\n\nTenha uma conexão alternativa disponível antes de continuar.\n\nContinuar?'))) return;
+
+    await executarComandoGenerico(idRemoveComando, cmd,
+        _t('sessoes.dispositivos-perifericos.revertendo_driver', 'Revertendo driver...'),
+        function() {
+            desmarcarComoExecutado(idInstallComando).then(function() {
+                aplicarEstadoItemCompleto(null, idInstallComando, idRemoveComando);
+            }).catch(function(e) {
+                console.warn('[reverter] Erro ao limpar estado:', e);
+                aplicarEstadoItemCompleto(null, idInstallComando, idRemoveComando);
+            });
+        });
+}
+
+// ============================================================
+// CONTROLES (grupo input + steam-devices)
+// ============================================================
+
+async function executarInputAdd() {
+    var idComando = 'input-group-add';
+    var comando = 'sudo usermod -aG input $USER';
+    await executarComandoGenerico(idComando, comando,
+        _t('sessoes.dispositivos-perifericos.btn_input_add', '👤 Adicionar ao grupo input'),
+        function () {
+            aplicarEstadoToggle('input-group-add', 'input-group-remove');
+        });
+}
+
+async function executarInputRemove() {
+    var idComando = 'input-group-remove';
+    var comando = 'sudo gpasswd -d $USER input';
+    await executarComandoGenerico(idComando, comando,
+        _t('sessoes.dispositivos-perifericos.btn_input_remove', '↩️ Remover do grupo input'),
+        function () {
+            desmarcarComoExecutado('input-group-add').then(function() {
+                aplicarEstadoToggle('input-group-add', 'input-group-remove');
+            }).catch(function(e) {
+                console.warn('[toggle] Erro ao limpar estado do install:', e);
+                aplicarEstadoToggle('input-group-add', 'input-group-remove');
+            });
+        });
+}
+
+async function executarSteamDevices() {
+    var idComando = 'steam-devices-install';
+    var comando = 'sudo apt install -y steam-devices';
+    await executarComandoGenerico(idComando, comando,
+        _t('sessoes.dispositivos-perifericos.btn_steam_devices', '🎮 Instalar Regras para Controles'),
+        function() {
+            aplicarEstadoToggle('steam-devices-install', 'steam-devices-remove');
+        });
+}
+
+async function executarSteamDevicesRemove() {
+    var idComando = 'steam-devices-remove';
+    var comando = 'sudo apt purge -y steam-devices && sudo apt autoremove -y';
+    await executarComandoGenerico(idComando, comando,
+        _t('sessoes.dispositivos-perifericos.btn_steam_devices_reverter', '🗑️ Reverter Regras'),
+        function() {
+            desmarcarComoExecutado('steam-devices-install').then(function() {
+                aplicarEstadoToggle('steam-devices-install', 'steam-devices-remove');
+            }).catch(function(e) {
+                console.warn('[toggle] Erro ao limpar estado do install:', e);
+                aplicarEstadoToggle('steam-devices-install', 'steam-devices-remove');
+            });
+        });
+}
+
+// ============================================================
+// ESTADO DOS ITENS COM REPO + PACOTE
+// ============================================================
+//
+// Cada item pode ter até 2 botões:
+//   - Instalar pacote
+//   - Reverter tudo
+//
+// Regra de estado:
+//   Estado inicial: instalar ATIVO, reverter DESABILITADO
+//   Após instalar:  instalar feito, reverter ATIVO
+//   Após reverter:  volta ao estado inicial
+
+function aplicarEstadoItemCompleto(idRepoAtivar, idInstall, idRemove) {
+    var installBtn = idInstall ? document.getElementById('btn-' + idInstall) : null;
+    var removeBtn  = idRemove  ? document.getElementById('btn-' + idRemove)  : null;
+
+    var pacoteFeito = idInstall ? isExecutado(idInstall) : false;
+
+    if (installBtn) {
+        var textoInstallOriginal = installBtn.getAttribute('data-texto-original') || installBtn.textContent;
+        if (pacoteFeito) {
+            installBtn.textContent = getTextoAposExecucao(idInstall) ||
+                _t('sessoes.dispositivos-perifericos.btn_pacote_instalado', '✅ Pacote instalado');
+            installBtn.style.backgroundColor = '#4b5563';
+            installBtn.style.cursor = 'default';
+            installBtn.disabled = true;
+            installBtn.style.opacity = '1';
+        } else {
+            installBtn.textContent = textoInstallOriginal;
+            installBtn.style.backgroundColor = '';
+            installBtn.style.cursor = 'pointer';
+            installBtn.disabled = false;
+            installBtn.style.opacity = '1';
+        }
+    }
+
+    if (removeBtn) {
+        var textoRemoveOriginal = removeBtn.getAttribute('data-texto-original') || removeBtn.textContent;
+        removeBtn.textContent = textoRemoveOriginal;
+        if (pacoteFeito) {
+            removeBtn.style.backgroundColor = '';
+            removeBtn.style.cursor = 'pointer';
+            removeBtn.disabled = false;
+            removeBtn.style.opacity = '1';
+        } else {
+            removeBtn.style.backgroundColor = '';
+            removeBtn.style.cursor = 'not-allowed';
+            removeBtn.disabled = true;
+            removeBtn.style.opacity = '0.5';
+        }
+    }
+}
+
+// ============================================================
+// RESTAURAR ESTADO DA SESSÃO
+// ============================================================
+
+function restaurarEstadoSessao() {
+    // Suplementos: toggles via aplicarEstadoToggle
+    aplicarEstadoToggle('firmware-vendor-install', 'firmware-vendor-remove');
+
+    // Controles: toggles
+    aplicarEstadoToggle('input-group-add', 'input-group-remove');
+    aplicarEstadoToggle('steam-devices-install', 'steam-devices-remove');
+
+    // Broadcom: install/revert
+    aplicarEstadoItemCompleto(null, 'driver-broadcom-wl-install', 'driver-broadcom-wl-remove');
+}
+
+// ============================================================
+// INICIALIZAÇÃO
+// ============================================================
+
+(function () {
+    document.querySelectorAll('.btn-executar').forEach(function (btn) {
+        if (!btn.hasAttribute('data-texto-original')) {
+            btn.setAttribute('data-texto-original', btn.textContent);
+        }
+    });
+
+    restaurarEstadoSessao();
+
+    console.log('📦 Componente dispositivos-perifericos carregado!');
+})();
+</script>
+</body>
+</html>

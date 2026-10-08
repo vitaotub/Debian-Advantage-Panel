@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DAP - Codecs e Compatibilidade</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<!-- ===== CONTEÚDO DA SESSÃO ===== -->
+<div class="sessao-container" id="sessao-codecs">
+<div class="sessao-titulo">
+<span class="sessao-label">Sessão</span>
+<span data-i18n="sessoes.codecs.titulo">🔤 Codecs e Compatibilidade</span>
+</div>
+
+<!-- Acórdeão principal — descrição da sessão -->
+<div class="acordeao-principal">
+<span data-i18n="sessoes.codecs.descricao">Esta sessão reúne o que o Debian precisa para lidar com conteúdo que não está nos repositórios oficiais: codecs de mídia, reprodução de DVDs comerciais e fontes do Windows (para compatibilidade com documentos e programas que dependem delas).</span>
+</div>
+
+<!-- ============================================================
+CODECS E REPRODUÇÃO
+============================================================ -->
+<details class="acordeao">
+<summary data-i18n="sessoes.codecs.acordeao_codecs_titulo">🎞️ Codecs de Mídia e Reprodução</summary>
+<div class="acordeao-conteudo">
+
+<!-- Codecs essenciais -->
+<div class="bloco-comando">
+<div class="comando-info">
+<h3 data-i18n="sessoes.codecs.codecs_titulo">Codecs Multimídia Essenciais</h3>
+<p data-i18n="sessoes.codecs.codecs_desc">Instala o conjunto completo de codecs multimídia do Debian, incluindo plugins GStreamer essenciais e o pacote de codecs não-livres do repositório <code>non-free</code>.</p>
+
+<div class="info-extra" data-i18n-html="sessoes.codecs.codecs_info">
+ℹ️ <strong>O que isso resolve:</strong> vídeos em MP4, MKV, AVI, WebM e outros formatos tocam em qualquer player (VLC, MPV, Firefox, Chromium). Sem esses codecs, muitos arquivos simplesmente não abrem ou tocam sem áudio/vídeo. Também é pré-requisito para edição de vídeo em ferramentas como Kdenlive e Shotcut.
+</div>
+
+<div class="grupo-botoes">
+<button class="btn-executar"
+onclick="executarCodecs()"
+data-comando="codecs-essenciais"
+data-logbox="log-sessao-codecs"
+id="btn-codecs-essenciais"
+data-i18n="sessoes.codecs.btn_instalar_codecs">
+📦 Instalar Codecs
+</button>
+</div>
+</div>
+
+<div class="progress-container" id="progress-codecs-essenciais">
+<div class="progress-bar"><div class="progress-fill" id="progress-fill-codecs-essenciais"></div></div>
+<div class="progress-text"><span class="status" id="progress-status-codecs-essenciais">⏳ Iniciando...</span><span class="percentage" id="progress-percent-codecs-essenciais">0%</span></div>
+</div>
+</div>
+
+<!-- Extras: DVD + firmware -->
+<div class="bloco-comando">
+<div class="comando-info">
+<h3 data-i18n="sessoes.codecs.extras_titulo">Reprodução de DVD Comercial e Firmware Adicional</h3>
+<p data-i18n-html="sessoes.codecs.extras_desc">Instala a <code>libdvdcss2</code> (para leitura de DVDs comerciais com proteção CSS) e o pacote <code>firmware-linux</code> completo para hardware que depende de firmware proprietário.</p>
+
+<div class="info-extra" data-i18n-html="sessoes.codecs.extras_info">
+ℹ️ <strong>O que isso resolve:</strong> sem a <code>libdvdcss2</code>, o Debian não consegue ler DVDs comerciais (com proteção CSS) — apenas DVDs caseiros ou arquivos de vídeo. O <code>firmware-linux</code> complementa o firmware já instalado e cobre dispositivos que precisam de redistribuição restrita.
+</div>
+
+<div class="aviso-caixa" data-i18n-html="sessoes.codecs.extras_aviso">
+⚠️ A <code>libdvdcss2</code> não está no repositório oficial do Debian por questões legais. Ela é distribuída pelo <strong>deb-multimedia</strong>, um repositório de terceiros. Instale apenas se você precisa reproduzir DVDs comerciais.
+</div>
+
+<div class="grupo-botoes">
+<button class="btn-executar"
+onclick="executarExtrasDVD()"
+data-comando="extras-dvd"
+data-logbox="log-sessao-codecs"
+id="btn-extras-dvd"
+data-i18n="sessoes.codecs.btn_instalar_extras">
+📦 Instalar Extras
+</button>
+</div>
+</div>
+
+<div class="progress-container" id="progress-extras-dvd">
+<div class="progress-bar"><div class="progress-fill" id="progress-fill-extras-dvd"></div></div>
+<div class="progress-text"><span class="status" id="progress-status-extras-dvd">⏳ Iniciando...</span><span class="percentage" id="progress-percent-extras-dvd">0%</span></div>
+</div>
+</div>
+
+</div>
+</details>
+
+<!-- ============================================================
+FONTES MICROSOFT + SUBSTITUTOS + FONTCONFIG
+============================================================ -->
+<details class="acordeao">
+<summary data-i18n="sessoes.codecs.acordeao_fontes_titulo">🖋️ Fontes Microsoft e Renderização</summary>
+<div class="acordeao-conteudo">
+
+<!-- Fontes MS + caladea/carlito -->
+<div class="bloco-comando">
+<div class="comando-info">
+<h3 data-i18n="sessoes.codecs.fontes_titulo">Fontes Microsoft e Substitutos Métricos</h3>
+<p data-i18n-html="sessoes.codecs.fontes_desc">Instala o <code>ttf-mscorefonts-installer</code> (Arial, Times New Roman, Verdana, etc.) e os substitutos métricos <code>fonts-crosextra-caladea</code> (para Cambria) e <code>fonts-crosextra-carlito</code> (para Calibri).</p>
+
+<div class="aviso-caixa" data-i18n="sessoes.codecs.fontes_aviso">
+⚠️ Este processo baixa e instala fontes proprietárias da Microsoft. Certifique-se de estar em conformidade com os termos de licenciamento.
+</div>
+
+<div class="info-extra" data-i18n-html="sessoes.codecs.fontes_info">
+ℹ️ <strong>Fontes instaladas:</strong> Arial, Times New Roman, Calibri, Cambria, Candara, Consolas, Constantia, Corbel, e outras. <strong>O que isso resolve:</strong> documentos do LibreOffice, OnlyOffice e outros programas ficam com a aparência correta — sem essas fontes, o sistema substitui por alternativas que podem quebrar a formatação. <strong>Os substitutos métricos</strong> (<code>caladea</code> para Cambria, <code>carlito</code> para Calibri) preenchem lacunas do pacote MS original e são instalados junto.
+</div>
+
+<div class="grupo-botoes">
+<button class="btn-executar"
+onclick="executarFontesMS()"
+data-comando="fontes-ms-all"
+data-logbox="log-sessao-codecs"
+id="btn-fontes-ms-all"
+data-i18n="sessoes.codecs.btn_instalar_fontes">
+📦 Instalar Fontes MS + Substitutos
+</button>
+</div>
+</div>
+
+<div class="progress-container" id="progress-fontes-ms-all">
+<div class="progress-bar"><div class="progress-fill" id="progress-fill-fontes-ms-all"></div></div>
+<div class="progress-text"><span class="status" id="progress-status-fontes-ms-all">⏳ Iniciando...</span><span class="percentage" id="progress-percent-fontes-ms-all">0%</span></div>
+</div>
+</div>
+
+<!-- Fontconfig customizado -->
+<div class="bloco-comando">
+<div class="comando-info">
+<h3 data-i18n="sessoes.codecs.fontconfig_titulo">Melhorar Renderização de Fontes</h3>
+<p data-i18n-html="sessoes.codecs.fontconfig_desc">Aplica um perfil <code>fontconfig</code> otimizado para telas LCD: <em>antialiasing</em> ligado, <em>hinting</em> suave (<code>hintslight</code>), <em>lcd filter</em> padrão (<code>lcddefault</code>) e subpixel RGB.</p>
+
+<div class="info-extra" data-i18n-html="sessoes.codecs.fontconfig_info">
+ℹ️ <strong>O que isso resolve:</strong> a renderização padrão de fontes no Debian costuma ser considerada "áspera" ou "borrada" por usuários vindos de outras distribuições. Este perfil melhora a nitidez sem alterar o espaçamento das letras. Aplica-se ao seu usuário (<code>~/.config/fontconfig/fonts.conf</code>), não afeta outros usuários do sistema.
+</div>
+
+<div class="grupo-botoes">
+<button class="btn-executar"
+onclick="executarFontconfig()"
+data-comando="fontconfig-tweaks"
+data-logbox="log-sessao-codecs"
+id="btn-fontconfig-tweaks"
+data-i18n="sessoes.codecs.btn_fontconfig">
+🖋️ Aplicar Perfil de Renderização
+</button>
+</div>
+</div>
+
+<div class="progress-container" id="progress-fontconfig-tweaks">
+<div class="progress-bar"><div class="progress-fill" id="progress-fill-fontconfig-tweaks"></div></div>
+<div class="progress-text"><span class="status" id="progress-status-fontconfig-tweaks">⏳ Iniciando...</span><span class="percentage" id="progress-percent-fontconfig-tweaks">0%</span></div>
+</div>
+</div>
+
+</div>
+</details>
+
+<!-- Log único da sessão -->
+<div class="terminal-log sessao-compartilhado" id="log-sessao-codecs"></div>
+</div>
+
+<!-- ===== JAVASCRIPT ESPECÍFICO DA SESSÃO ===== -->
+<script>
+// ============================================================
+// SESSÃO: CODECS E COMPATIBILIDADE
+// ============================================================
+
+function _t(chave, fallback) {
+    return (typeof tOr === 'function') ? tOr(chave, fallback) : fallback;
+}
+
+// ============================================================
+// REGISTRO DE APPS REMOVÍVEIS (lixeira unificada)
+// ============================================================
+
+registrarAppRemovivel('codecs-essenciais', {
+    tipo: 'dnf',
+    pacotes: ['gstreamer1.0-plugins-good', 'gstreamer1.0-plugins-bad', 'gstreamer1.0-plugins-ugly', 'gstreamer1.0-libav', 'libavcodec-extra'],
+    nome: 'Codecs Multimídia Essenciais'
+});
+
+registrarAppRemovivel('fontes-ms-all', {
+    tipo: 'dnf',
+    pacotes: ['ttf-mscorefonts-installer', 'fonts-crosextra-caladea', 'fonts-crosextra-carlito'],
+    nome: 'Fontes Microsoft e Substitutos',
+    confirmMsg: '⚠️ Remover as fontes Microsoft e os substitutos métricos?\n\n' +
+                'Documentos em LibreOffice/OnlyOffice podem quebrar a formatação ' +
+                'até que as fontes sejam reinstaladas.\n\n' +
+                'Continuar?'
+});
+
+// ============================================================
+// CODECS MULTIMÍDIA ESSENCIAIS
+// ============================================================
+//
+// No Debian, o `ffmpeg` já está em main. Os codecs que faltam
+// são:
+//   - plugins GStreamer "good" (base)
+//   - plugins GStreamer "bad" (mais formatos, alguns instáveis)
+//   - plugins GStreamer "ugly" (formatos patenteados, no non-free)
+//   - plugin GStreamer libav (integração com ffmpeg)
+//   - libavcodec-extra (extras do ffmpeg, no non-free)
+//
+// Requer o repositório non-free ativo (Sessão 1).
+
+async function executarCodecs() {
+    var idComando = 'codecs-essenciais';
+
+    var comando =
+        'sudo apt install -y ' +
+        'gstreamer1.0-plugins-good ' +
+        'gstreamer1.0-plugins-bad ' +
+        'gstreamer1.0-plugins-ugly ' +
+        'gstreamer1.0-libav ' +
+        'libavcodec-extra ' +
+        'gstreamer1.0-vaapi ' +
+        'libavformat-extra';
+
+    await executarComandoGenerico(idComando, comando,
+        _t('sessoes.codecs.btn_instalar_codecs', '📦 Instalar Codecs'),
+        function() { aplicarEstadoInstalavel(idComando, null); });
+}
+
+// ============================================================
+// EXTRAS: DVD COMERCIAL + FIRMWARE ADICIONAL
+// ============================================================
+//
+// A libdvdcss2 vive no deb-multimedia, um repositório de terceiros.
+// O comando:
+//   1. Baixa e instala a chave GPG do deb-multimedia
+//   2. Escreve o sources no formato deb822
+//   3. Faz apt update
+//   4. Instala a libdvdcss2
+//   5. Instala firmware-linux completo
+//
+// Se o repositório já estiver configurado, o passo 1-3 é no-op.
+
+async function executarExtrasDVD() {
+    var idComando = 'extras-dvd';
+
+    var comando =
+        // 1. Baixa e instala a chave do deb-multimedia (idempotente)
+        'if [ ! -f /usr/share/keyrings/deb-multimedia-keyring.pgp ]; then ' +
+        '  echo "🔑 Baixando chave GPG do deb-multimedia..."; ' +
+        '  cd /tmp && ' +
+        '  wget -q https://www.deb-multimedia.org/pool/main/d/deb-multimedia-keyring/deb-multimedia-keyring_2024.9.1_all.deb && ' +
+        '  sudo dpkg -i deb-multimedia-keyring_2024.9.1_all.deb && ' +
+        '  rm -f deb-multimedia-keyring_2024.9.1_all.deb; ' +
+        'else ' +
+        '  echo "ℹ️ Chave do deb-multimedia já instalada."; ' +
+        'fi && ' +
+
+        // 2. Adiciona o repositório em formato deb822 (idempotente)
+        'ARQUIVO="/etc/apt/sources.list.d/dmo.sources"; ' +
+        'if [ ! -f "$ARQUIVO" ]; then ' +
+        '  CODENAME=$(grep "^VERSION_CODENAME=" /etc/os-release | cut -d= -f2 | tr -d \'"\'); ' +
+        '  echo "📦 Adicionando repositório deb-multimedia ($CODENAME)..."; ' +
+        '  sudo tee "$ARQUIVO" > /dev/null <<EOF\n' +
+        'Types: deb\n' +
+        'URIs: https://www.deb-multimedia.org\n' +
+        'Suites: ${CODENAME}\n' +
+        'Components: main non-free\n' +
+        'Signed-By: /usr/share/keyrings/deb-multimedia-keyring.pgp\n' +
+        'Enabled: yes\n' +
+        'EOF\n' +
+        '  sudo apt update; ' +
+        'else ' +
+        '  echo "ℹ️ Repositório deb-multimedia já configurado."; ' +
+        'fi && ' +
+
+        // 3. Instala libdvdcss2 + firmware adicional
+        'echo "" && ' +
+        'echo "📦 Instalando libdvdcss2 e firmware adicional..." && ' +
+        'sudo apt install -y libdvdcss2 && ' +
+        'sudo apt install -y firmware-linux firmware-linux-nonfree firmware-misc-nonfree 2>/dev/null || ' +
+        'sudo apt install -y firmware-linux';
+
+    await executarComandoGenerico(idComando, comando,
+        _t('sessoes.codecs.btn_instalar_extras', '📦 Instalar Extras'),
+        function() { aplicarEstadoInstalavel(idComando, null); });
+}
+
+// ============================================================
+// FONTES MICROSOFT + SUBSTITUTOS MÉTRICOS
+// ============================================================
+//
+// `ttf-mscorefonts-installer` faz o download das fontes direto
+// do SourceForge (não estão nos repositórios por questões de
+// licenciamento). O `apt install` abre uma tela de aceite da EULA
+// — usamos `debconf-set-selections` antes para aceitar
+// automaticamente.
+//
+// `fonts-crosextra-caladea` e `fonts-crosextra-carlito` são
+// substitutos métricos de Cambria e Calibri, respectivamente.
+// São livres e complementam o pacote MS.
+
+async function executarFontesMS() {
+    var idComando = 'fontes-ms-all';
+
+    var comando =
+        // Pré-aceita a EULA do ttf-mscorefonts-installer
+        'echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" | sudo debconf-set-selections && ' +
+        'sudo apt install -y ttf-mscorefonts-installer fonts-crosextra-caladea fonts-crosextra-carlito && ' +
+        'echo "" && ' +
+        'echo "✅ Fontes instaladas." && ' +
+        'echo "   Reconstruindo cache de fontes..." && ' +
+        'sudo fc-cache -f';
+
+    await executarComandoGenerico(idComando, comando,
+        _t('sessoes.codecs.btn_instalar_fontes', '📦 Instalar Fontes MS + Substitutos'),
+        function() { aplicarEstadoInstalavel(idComando, null); });
+}
+
+// ============================================================
+// FONTCONFIG CUSTOMIZADO
+// ============================================================
+//
+// Escreve um `~/.config/fontconfig/fonts.conf` com perfil LCD
+// otimizado. Idempotente: se o arquivo já existir com o mesmo
+// conteúdo, não muda nada. Faz backup se houver um arquivo
+// customizado do usuário.
+
+async function executarFontconfig() {
+    var idComando = 'fontconfig-tweaks';
+
+    var comando =
+        'CONF_DIR="$HOME/.config/fontconfig"; ' +
+        'CONF_FILE="$CONF_DIR/fonts.conf"; ' +
+        'mkdir -p "$CONF_DIR" && ' +
+        // Backup se já existir um fonts.conf customizado
+        'if [ -f "$CONF_FILE" ] && ! grep -q "DAP - perfil de renderiza" "$CONF_FILE"; then ' +
+        '  cp "$CONF_FILE" "$CONF_FILE.dap-backup-$(date +%Y%m%d-%H%M%S)"; ' +
+        '  echo "💾 Backup do fonts.conf anterior criado."; ' +
+        'fi && ' +
+        // Escreve o perfil
+        'cat > "$CONF_FILE" << \'FONTCONF_EOF\'\n' +
+        '<?xml version="1.0"?>\n' +
+        '<!DOCTYPE fontconfig SYSTEM "fonts.dtd">\n' +
+        '<!-- DAP - perfil de renderização LCD -->\n' +
+        '<fontconfig>\n' +
+        '  <match target="font">\n' +
+        '    <edit mode="assign" name="antialias"><bool>true</bool></edit>\n' +
+        '    <edit mode="assign" name="embeddedbitmap"><bool>false</bool></edit>\n' +
+        '    <edit mode="assign" name="hinting"><bool>true</bool></edit>\n' +
+        '    <edit mode="assign" name="hintstyle"><const>hintslight</const></edit>\n' +
+        '    <edit mode="assign" name="lcdfilter"><const>lcddefault</const></edit>\n' +
+        '    <edit mode="assign" name="rgba"><const>rgb</const></edit>\n' +
+        '  </match>\n' +
+        '</fontconfig>\n' +
+        'FONTCONF_EOF\n' +
+        'echo "" && ' +
+        'echo "✅ Perfil de renderização aplicado em $CONF_FILE." && ' +
+        'echo "   Reinicie os apps abertos para ver a diferença."';
+
+    await executarComandoGenerico(idComando, comando,
+        _t('sessoes.codecs.btn_fontconfig', '🖋️ Aplicar Perfil de Renderização'));
+}
+
+// ============================================================
+// RESTAURAR ESTADO DA SESSÃO
+// ============================================================
+
+function restaurarEstadoSessao() {
+    // Os 4 blocos são one-shot sem par "abrir" — aplica estado 3
+    // (cinza + lixeira) para os que têm lixeira registrada.
+    aplicarEstadoInstalavel('codecs-essenciais', null);
+    aplicarEstadoInstalavel('fontes-ms-all', null);
+
+    // Blocos sem lixeira (não instalam pacotes — configuram coisas):
+    // 'extras-dvd' e 'fontconfig-tweaks' só marcam como concluído.
+    ['extras-dvd', 'fontconfig-tweaks'].forEach(function(id) {
+        if (isExecutado(id)) {
+            var btn = document.getElementById('btn-' + id);
+            if (btn) {
+                btn.textContent = getTextoAposExecucao(id);
+                btn.style.backgroundColor = '#4b5563';
+                btn.style.cursor = 'default';
+                btn.disabled = true;
+                btn.style.opacity = '1';
+            }
+        }
+    });
+}
+
+// ===== INICIALIZAÇÃO =====
+(function() {
+    document.querySelectorAll('.btn-executar').forEach(function(btn) {
+        if (!btn.hasAttribute('data-texto-original')) {
+            btn.setAttribute('data-texto-original', btn.textContent);
+        }
+    });
+
+    restaurarEstadoSessao();
+
+    console.log('📦 Componente codecs carregado!');
+})();
+</script>
+</body>
+</html>

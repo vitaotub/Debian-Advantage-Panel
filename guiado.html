@@ -20,10 +20,14 @@
 <div class="container modo-guiado">
 
 <!-- ===== HEADER ===== -->
+<!--
+    O título "Debian Advantage Panel" é FIXO em qualquer idioma,
+    por decisão de projeto. Só o restante da UI é traduzido.
+-->
 <div class="header-guide">
     <div class="titulo">
         <img src="icone_app.png" alt="DAP" style="width: 40px; height: 40px; border-radius: 50%; object-fit: contain; flex-shrink: 0;" onerror="this.style.display='none'">
-        <h1 data-i18n="guiado.titulo">Configuração do Debian</h1>
+        <h1>Debian Advantage Panel</h1>
         <span class="badge-modo" data-i18n="guiado.badge_modo">🧭 Passo a Passo</span>
         <span class="progresso-global" id="progresso-global" title="—">0/0</span>
         <span style="color: var(--text-muted); font-size: 0.8rem; white-space: nowrap;">v<span class="dap-version"></span></span>
@@ -48,11 +52,6 @@
 </div>
 
 <!-- ===== MENU DE SESSÕES FIXO ===== -->
-<!--
-    Substitui as bolinhas coloridas (.sessao-indicador).
-    Criado dinamicamente via JS (criarMenuSessoes).
-    Permanece visível durante a rolagem (position: sticky).
--->
 <div class="session-menu-wrapper" id="session-menu-wrapper" style="display: none;">
     <div class="session-menu" id="session-menu" role="tablist" aria-label="Sessões"></div>
 </div>
@@ -101,9 +100,6 @@ var sessoesCarregadas = {};
 // Token de geração: cada chamada a carregarSessao() incrementa
 // este contador. Se outra chamada começar antes desta terminar,
 // a mais antiga percebe que foi cancelada e não escreve no DOM.
-// Sem isso, o carregamento da sessão 0 (disparado no boot) e o
-// de outra sessão (via ?session=X) podiam competir e deixar a
-// tela em branco.
 var _geracaoCarregamento = 0;
 
 // ------------------------------------------------------------
@@ -121,22 +117,32 @@ var _geracaoCarregamento = 0;
 // no menu (o chip fica com o número e o label, sem emoji).
 //
 // ============================================================
-// FASE 1 — MAPA VAZIO
+// FASE 6 — ÍCONES DAS SESSÕES REGISTRADAS
 // ============================================================
 //
-// Na Fase 1 não há sessões registradas. A Fase 2 vai preencher
-// com os ícones das 8 sessões do escopo:
+// Na Fase 6 há onze sessões registradas. Ainda pendentes:
 //
-//   'sobre-dap': '📖'
-//   'primeiros-passos': '🚀'
-//   'codecs': '🔤'
-//   'hardware': '🖥️'
-//   'aplicativos': '📦'
-//   'casa-escritorio': '🏠'
-//   'gaming': '🎮'
-//   'diagnostico': '📊'
+//   - aplicativos: '📦'              (criação adiada)
+//   - dispositivos-perifericos: '🔌' (fase posterior)
+//
+// A chave de cada entrada deve bater EXATAMENTE com o `id` da
+// sessão registrada no array SESSOES em script.js.
 // ------------------------------------------------------------
-var ICONES_SESSOES = {};
+var ICONES_SESSOES = {
+    'primeiros-passos': '🚀',
+    'aplicativos': '📦',
+    'codecs': '🔤',
+    'hardware': '🖥️',
+    'dispositivos-perifericos': '🔌',
+    'gaming': '🎮',
+    'casa-escritorio': '🏠',
+    'diagnostico': '📊',
+    'producao-multimidia': '🎬',
+    'virtualizacao': '💻',
+    'ajustes-manutencao': '🛠️',
+    'estado-debian': '🐧',
+    'sobre-dap': '📖'
+};
 
 // ------------------------------------------------------------
 // i18n helpers locais (wrappers sobre tOr global)
@@ -160,15 +166,14 @@ async function carregarSessao(index) {
 
     var nomeSessao = SESSOES_PRINCIPAIS[index];
 
-    // FASE 1: sem sessões registradas. Mostra um placeholder
-    // amigável em vez de tentar carregar um arquivo inexistente.
+    // Se não houver sessão registrada, mostra placeholder.
     if (!nomeSessao) {
         container.innerHTML = `
             <div class="sessao-container" style="text-align:center; padding: 3rem 1rem;">
                 <h3 style="color: var(--accent); margin-bottom: 1rem;">🐧 Debian Advantage Panel</h3>
                 <p style="color: var(--text-muted); line-height: 1.6;">
-                    Fase 1 do desenvolvimento concluída.<br>
-                    As sessões serão adicionadas na próxima fase.
+                    Nenhuma sessão registrada.<br>
+                    Verifique o array SESSOES em script.js.
                 </p>
             </div>
         `;
@@ -205,7 +210,7 @@ async function carregarSessao(index) {
 
         container.innerHTML = conteudoSemScripts;
 
-        // FIX #1: capturar textos originais ANTES de rodar os scripts da sessão
+        // Capturar textos originais ANTES de rodar os scripts da sessão
         container.querySelectorAll('.btn-executar').forEach(function(btn) {
             if (!btn.hasAttribute('data-texto-original')) {
                 btn.setAttribute('data-texto-original', btn.textContent);
@@ -272,15 +277,9 @@ async function carregarSessao(index) {
 // ------------------------------------------------------------
 // Decide em qual sessão abrir no boot
 // ------------------------------------------------------------
-//
-// Prioridade:
-//   1. Parâmetro ?session=X na URL (deep-link) — se válido
-//   2. Chave 'dap_sessao_ativa' no localStorage — se válida
-//   3. Sessão 0 (fallback)
 function irParaSessaoInicial() {
     var total = SESSOES_PRINCIPAIS.length;
 
-    // FASE 1: sem sessões. Mostra o placeholder e retorna.
     if (total === 0) {
         carregarSessao(0);
         return;
@@ -316,8 +315,6 @@ function irParaSessaoInicial() {
 function irParaSessao(index) {
     var total = SESSOES_PRINCIPAIS.length;
 
-    // FASE 1: sem sessões. Chama carregarSessao(0) que mostra o
-    // placeholder, e atualiza a UI para refletir o estado vazio.
     if (total === 0) {
         sessaoAtual = 0;
         carregarSessao(0);
@@ -407,12 +404,10 @@ function criarMenuSessoes() {
     var menu = document.getElementById('session-menu');
     if (!wrapper || !menu) return;
 
-    // Se já foi criado, não duplica
     if (menu.children.length > 0) return;
 
     var total = SESSOES_PRINCIPAIS.length;
 
-    // FASE 1: sem sessões. Esconde o wrapper e retorna.
     if (total === 0) {
         wrapper.style.display = 'none';
         return;
